@@ -1,0 +1,28 @@
+[safe]
+	directory = *
+	directory = *
+[user]
+	name = comsoi
+	email = 40598925+comsoi@users.noreply.github.com
+	signingKey = ""
+[gpg]
+	program = gpg
+[commit]
+	gpgSign = false
+[tag]
+	forceSignAnnotated = false
+[difftool "sourcetree"]
+	cmd = "'' "
+[mergetool "sourcetree"]
+	cmd = "'' "
+	trustExitCode = true
+[core]
+	quotepath = false
+[i18n]
+	commitencoding = utf-8
+	logoutputencoding = utf-8
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
