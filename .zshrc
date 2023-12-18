@@ -27,6 +27,16 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -143,6 +153,9 @@ export ARCHFLAGS="-arch x86_64"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 alias ipy='ipython'
 alias wo='win32yank.exe -o'
 alias wi='win32yank.exe -i'
@@ -159,7 +172,7 @@ function noproxy {
 
 function setproxy {
     # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-    host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
+    host_ip="127.0.0.1"
     host_port="2080"
     export all_proxy="http://$host_ip:$host_port"
     export ALL_PROXY="http://$host_ip:$host_port"
