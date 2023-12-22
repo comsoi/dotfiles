@@ -4,18 +4,51 @@
     "actions": [
         {
             "command": {
-                "action": "copy",
-                "singleLine": false
+                "action": "moveFocus",
+                "direction": "down"
             },
-            "keys": "ctrl+c"
+            "keys": "alt+j"
         },
         {
-            "command": "paste",
-            "keys": "ctrl+v"
+            "command": {
+                "action": "splitPane",
+                "split": "right"
+            },
+            "keys": "alt+\\"
+        },
+        {
+            "command": {
+                "action": "copy",
+                "singleLine": false
+            }
+        },
+        {
+            "command": {
+                "action": "moveFocus",
+                "direction": "up"
+            },
+            "keys": "alt+k"
+        },
+        {
+            "command": {
+                "action": "moveFocus",
+                "direction": "up"
+            },
+            "keys": "alt+up"
+        },
+        {
+            "command": "paste"
         },
         {
             "command": "find",
             "keys": "ctrl+shift+f"
+        },
+        {
+            "command": {
+                "action": "resizePane",
+                "direction": "left"
+            },
+            "keys": "alt+shift+h"
         },
         {
             "command": {
@@ -30,6 +63,76 @@
                 "action": "globalSummon"
             },
             "keys": "alt+t"
+        },
+        {
+            "command": {
+                "action": "splitPane",
+                "split": "down"
+            },
+            "keys": "alt+minus"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+shift+plus"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+shift+minus"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+shift+\\"
+        },
+        {
+            "command": "unbound",
+            "keys": "ctrl+shift+w"
+        },
+        {
+            "command": "unbound",
+            "keys": "ctrl+v"
+        },
+        {
+            "command": "unbound",
+            "keys": "ctrl+c"
+        },
+        {
+            "command": {
+                "action": "moveFocus",
+                "direction": "right"
+            },
+            "keys": "alt+l"
+        },
+        {
+            "command": {
+                "action": "moveFocus",
+                "direction": "left"
+            },
+            "keys": "alt+g"
+        },
+        {
+            "command": {
+                "action": "resizePane",
+                "direction": "right"
+            },
+            "keys": "alt+shift+l"
+        },
+        {
+            "command": "closePane",
+            "keys": "alt+x"
+        },
+        {
+            "command": {
+                "action": "resizePane",
+                "direction": "down"
+            },
+            "keys": "alt+shift+j"
+        },
+        {
+            "command": {
+                "action": "resizePane",
+                "direction": "up"
+            },
+            "keys": "alt+shift+k"
         }
     ],
     "alwaysOnTop": false,
@@ -51,7 +154,12 @@
     "profiles": {
         "defaults": {
             "colorScheme": "Fedora",
-            "useAtlasEngine": true
+            "font": {
+                "face": "FiraCode Nerd Font"
+            },
+            "opacity": 80,
+            "useAcrylic": true,
+            "useAtlasEngine": false
         },
         "list": [
             {
@@ -63,7 +171,7 @@
                 },
                 "guid": "{c891c3d2-b798-4857-83c0-89bf2ea34021}",
                 "icon": "D:\\Scoop\\apps\\git\\current\\mingw64\\share\\git\\git-for-windows.ico",
-                "name": "Git Zsh",
+                "name": "zsh",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
@@ -92,7 +200,7 @@
                 "colorScheme": "Ubuntu-18.04-ColorScheme",
                 "commandline": "C:\\WINDOWS\\system32\\wsl.exe -d Ubuntu-18.04 -e fish",
                 "font": {
-                    "face": "Cascadia Mono",
+                    "face": "FiraCode Nerd Font",
                     "size": 13.0
                 },
                 "guid": "{74d6d88e-fbc6-477b-a7aa-1d770ef52e39}",
@@ -134,7 +242,7 @@
             {
                 "closeOnExit": "graceful",
                 "colorScheme": "Dracula",
-                "commandline": "D:/Scoop/apps/msys2/current/msys2_shell.cmd -defterm -no-start  -here -ucrt64 -shell fish",
+                "commandline": "D:/Scoop/apps/msys2/current/msys2_shell.cmd -defterm -no-start  -here -ucrt64 -shell zsh",
                 "cursorColor": "#FD9D4F",
                 "font": {
                     "face": "Cascadia Mono"
@@ -158,7 +266,10 @@
             },
             {
                 "colorScheme": "Dracula",
-                "commandline": "C:\\WINDOWS\\system32\\wsl.exe -d ArchWSL -e bash",
+                "commandline": "C:\\WINDOWS\\system32\\wsl.exe -d ArchWSL -e fish",
+                "font": {
+                    "face": "FiraCode Nerd Font"
+                },
                 "guid": "{31cd966a-fdf7-5982-bacd-b7767ffce74b}",
                 "hidden": false,
                 "icon": "D:\\data\\wsl\\icons8-arch-linux-48.png",
@@ -177,7 +288,7 @@
             {
                 "commandline": "C:\\Windows\\system32\\wsl.exe -d Debian -e bash",
                 "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
-                "hidden": false,
+                "hidden": true,
                 "name": "Debian",
                 "source": "Windows.Terminal.Wsl"
             },
@@ -190,20 +301,24 @@
                     "light": "Fedora"
                 },
                 "commandline": "%SystemRoot%\\System32\\cmd.exe /k title Cmder/Cmd & \"%CMDER_ROOT%\\vendor\\init.bat\"",
-                "cursorShape": "bar",
-                "font": {
-                    "face": "Cascadia Mono",
-                    "size": 12.0
-                },
                 "guid": "{2db58c57-60e7-40f3-8664-150deddac96c}",
                 "hidden": false,
                 "historySize": 9001,
                 "name": "Cmder/Cmd",
-                "opacity": 80,
-                "padding": "8, 8, 8, 8",
                 "snapOnInput": true,
-                "startingDirectory": "%USERPROFILE%",
-                "useAcrylic": true
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "colorScheme": "Dracula",
+                "commandline": "D:\\Scoop\\shims\\nu.exe",
+                "cursorShape": "filledBox",
+                "font": {
+                    "face": "FiraCode Nerd Font"
+                },
+                "guid": "{5fca3c4d-0eae-4dd0-9e0f-0e23bc893c5f}",
+                "hidden": false,
+                "name": "nushell",
+                "startingDirectory": "%USERPROFILE%"
             }
         ]
     },

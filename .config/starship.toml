@@ -1,0 +1,39 @@
+# Use custom format
+right_format = """$time"""
+[username]
+style_user = "white bold"
+style_root = "black bold"
+format = "[$user](bold blue) [on](italic dimmed white) "
+disabled = false
+show_always = true
+
+[directory]
+truncation_length = 12
+truncation_symbol = "…/"
+
+[fill]
+symbol = ' '
+style = 'bold green'
+
+[hostname]
+ssh_only = false
+format =  "  "
+trim_at = ".companyname.com"
+disabled = false
+
+[status]
+style = "bg:blue"
+symbol = " "
+format = '[\[$symbol $common_meaning$signal_name$maybe_int\]]($style) '
+map_symbol = true
+disabled = false
+
+[time]
+disabled = false
+format = '🕙[\[ $time \]]($style) '
+time_format = "%T"
+utc_time_offset = "+8"
+
+[c]
+# [ [ 'cc', '--version' ], [ 'gcc', '--version' ], [ 'clang', '--version' ] ]
+commands = [['','']]
