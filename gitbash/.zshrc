@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 export PATH="/d/Scoop/apps/tdm-gcc/current/bin:$PATH"
 
 # Path to your oh-my-zsh installation.
@@ -164,6 +164,12 @@ function noproxy {
     echo "Proxy settings removed."
 }
 
+tmux() {
+  # execute tmux with script
+  TMUX="command tmux ${@}"
+  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
+}
+
 function setproxy {
     # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
     host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
@@ -187,5 +193,3 @@ if [ -f '/d/programs/conda/Scripts/conda.exe' ]; then
     eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.zsh' 'hook' | sed -e 's/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@"/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@" | tr -d \x27\\r\x27/g')"
 fi
 # <<< conda initialize <<<
-
-

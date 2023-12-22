@@ -21,7 +21,6 @@ function setproxy
     set -x HTTP_PROXY "http://$host_ip:$host_port"
     set -x https_proxy "http://$host_ip:$host_port"
     set -x HTTPS_PROXY "http://$host_ip:$host_port"
-
     echo "Proxy set to: $host_ip:$host_port"
 end
 

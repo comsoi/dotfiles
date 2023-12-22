@@ -104,7 +104,11 @@ alias l='ls -CF'
 
 #==============================================================================
 
-
+tmux() {
+  # execute tmux with script
+  TMUX="command tmux ${@}"
+  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
+}
 
 function noproxy {
     unset all_proxy
