@@ -1,16 +1,12 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-rem 初始化变量
-set msys2_arg=
-set msys2_shiftCounter=
-set msys2_full_cmd=
 
-rem 设置用户环境变量
 set HOME=/c/Users/Lenod
 set LANG=zh_CN.UTF-8
+set CHERE_INVOKING=1
+set aliases=
 
-rem 设置登录 shell 为 zsh
 set LOGINSHELL=zsh
 
 rem 设置 MSYS2 不使用 start 命令启动
