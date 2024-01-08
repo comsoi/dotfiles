@@ -154,6 +154,22 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ipy='ipython'
 
+tmux() {
+  # execute tmux with script
+  TMUX="command tmux ${@}"
+  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
+}
+
+function ya {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    yazi $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp
+    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
+        Set-Location -Path $cwd
+    }
+    Remove-Item -Path $tmp
+}
+
 function noproxy {
     unset all_proxy
     unset ALL_PROXY
@@ -164,11 +180,7 @@ function noproxy {
     echo "Proxy settings removed."
 }
 
-tmux() {
-  # execute tmux with script
-  TMUX="command tmux ${@}"
-  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
-}
+
 
 function setproxy {
     # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
