@@ -191,14 +191,15 @@ if ! shopt -oq posix; then
   fi
 fi
 
-#==============================================================================
-
-
-# export winhost=$(cat /etc/resolv.conf | grep nameserver | awk '{ print $2 }')
-# if [ ! -n "$(grep -P "[[:space:]]winhost" /etc/hosts)" ]; then
-#         printf "%s\t%s\n" "$winhost" "winhost" | sudo tee -a "/etc/hosts"
-# fi
-
+function ya {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    yazi $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp
+    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
+        Set-Location -Path $cwd
+    }
+    Remove-Item -Path $tmp
+}
 
 function noproxy {
     unset all_proxy
@@ -212,7 +213,7 @@ function noproxy {
 
 function setproxy {
     # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-    host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
+    host_ip="127.0.0.1"
     host_port="2080"
     export all_proxy="http://$host_ip:$host_port"
     export ALL_PROXY="http://$host_ip:$host_port"
@@ -222,5 +223,3 @@ function setproxy {
     export HTTPS_PROXY="http://$host_ip:$host_port"
     echo "Proxy set to: $host_ip:$host_port"
 }
-
-
