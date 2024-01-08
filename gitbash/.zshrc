@@ -160,14 +160,13 @@ tmux() {
   SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
 }
 
-function ya {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    yazi $args --cwd-file="$tmp"
-    $cwd = Get-Content -Path $tmp
-    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
-        Set-Location -Path $cwd
-    }
-    Remove-Item -Path $tmp
+function ya() {
+    tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+    yazi "$@" --cwd-file="$tmp"
+    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        cd -- "$cwd"
+    fi
+    rm -f -- "$tmp"
 }
 
 function noproxy {
@@ -179,7 +178,6 @@ function noproxy {
     unset HTTPS_PROXY
     echo "Proxy settings removed."
 }
-
 
 
 function setproxy {
@@ -194,10 +192,8 @@ function setproxy {
     export HTTPS_PROXY="http://$host_ip:$host_port"
     echo "Proxy set to: $host_ip:$host_port"
 }
-# export LS_COLORS="rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:"
 
 setproxy > /dev/null
-
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

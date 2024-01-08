@@ -87,98 +87,20 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
 # Functions
 #
 # Some people use a different file for functions
 if [ -f "${HOME}/.bash_functions" ]; then
     source "${HOME}/.bash_functions"
 fi
-#
-# Some example functions:
-#
-# a) function settitle
-# settitle ()
-# {
-#   echo -ne "\e]2;$@\a\e]1;$@\a";
-# }
-#
-# b) function cd_func
-# This function defines a 'cd' replacement function capable of keeping,
-# displaying and accessing history of visited directories, up to 10 entries.
-# To use it, uncomment it, source this file and try 'cd --'.
-# acd_func 1.0.5, 10-nov-2004
-# Petar Marinov, http:/geocities.com/h2428, this is public domain
-cd_func ()
-{
-  local x2 the_new_dir adir index
-  local -i cnt
-
-  if [[ $1 ==  "--" ]]; then
-    dirs -v
-    return 0
-  fi
-
-  the_new_dir=$1
-  [[ -z $1 ]] && the_new_dir=$HOME
-
-  if [[ ${the_new_dir:0:1} == '-' ]]; then
-    #
-    # Extract dir N from dirs
-    index=${the_new_dir:1}
-    [[ -z $index ]] && index=1
-    adir=$(dirs +$index)
-    [[ -z $adir ]] && return 1
-    the_new_dir=$adir
-  fi
-
-  #
-  # '~' has to be substituted by ${HOME}
-  [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
-
-  #
-  # Now change to the new dir and add to the top of the stack
-  pushd "${the_new_dir}" > /dev/null
-  [[ $? -ne 0 ]] && return 1
-  the_new_dir=$(pwd)
-
-  #
-  # Trim down everything beyond 11th entry
-  popd -n +11 2>/dev/null 1>/dev/null
-
-  #
-  # Remove any other occurence of this dir, skipping the top of the stack
-  for ((cnt=1; cnt <= 10; cnt++)); do
-    x2=$(dirs +${cnt} 2>/dev/null)
-    [[ $? -ne 0 ]] && return 0
-    [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
-    if [[ "${x2}" == "${the_new_dir}" ]]; then
-      popd -n +$cnt 2>/dev/null 1>/dev/null
-      cnt=cnt-1
-    fi
-  done
-
-  return 0
-}
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
-
-alias cd=cd_func
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -190,36 +112,3 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-function ya {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    yazi $args --cwd-file="$tmp"
-    $cwd = Get-Content -Path $tmp
-    if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
-        Set-Location -Path $cwd
-    }
-    Remove-Item -Path $tmp
-}
-
-function noproxy {
-    unset all_proxy
-    unset ALL_PROXY
-    unset http_proxy
-    unset HTTP_PROXY
-    unset https_proxy
-    unset HTTPS_PROXY
-    echo "Proxy settings removed."
-}
-
-function setproxy {
-    # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-    host_ip="127.0.0.1"
-    host_port="2080"
-    export all_proxy="http://$host_ip:$host_port"
-    export ALL_PROXY="http://$host_ip:$host_port"
-    export http_proxy="http://$host_ip:$host_port"
-    export HTTP_PROXY="http://$host_ip:$host_port"
-    export https_proxy="http://$host_ip:$host_port"
-    export HTTPS_PROXY="http://$host_ip:$host_port"
-    echo "Proxy set to: $host_ip:$host_port"
-}
