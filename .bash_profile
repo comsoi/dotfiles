@@ -2,7 +2,7 @@
 # ~/.bash_profile
 #
 
-# [[ -f ~/.bashrc ]] && . ~/.bashrc
+[[ -f ~/.bashrc ]] && . ~/.bashrc
 
 # Set PATH so it includes user's private bin if it exists
 # if [ -d "${HOME}/bin" ] ; then
