@@ -10,8 +10,6 @@ HISTSIZE=10000
 SAVEHIST=10000
 setopt INC_APPEND_HISTORY_TIME
 
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -123,27 +121,13 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+# source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+# source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-export LANG=zh_CN.UTF-8
-#export LC_ALL=zh_CN.UTF-8
-#export LANGUAGE=zh_CN.UTF-8
-export PYTHONIOENCODING=UTF-8
-export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
-
-Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='lvim'
-fi
-
-# Compilation flags
-export ARCHFLAGS="-arch x86_64"
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh

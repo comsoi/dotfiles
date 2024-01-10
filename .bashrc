@@ -2,17 +2,10 @@
 # ~/.bashrc
 #
 
+[[ -f ~/.zshenv ]] && . ~/.zshenv
+
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
-
-if tty -s; then
-    export LANG="en_US.UTF-8"
-else
-    export LANG="zh_CN.UTF-8"
-fi
-
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options

@@ -107,7 +107,6 @@ plugins=(
     node
     npm
     nvm
-    yarn
     volta
     vscode
     sudo
