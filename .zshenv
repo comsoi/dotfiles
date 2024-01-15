@@ -1,7 +1,15 @@
-export GNUTERM=sixel
-export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
+ZDOTDIR=$HOME/.config/zsh
 
-# You may need to manually set your language environment
+export HISTCONTROL=ignoreboth
+
+# Zsh related
+HISTFILE=$ZDOTDIR/.history
+HISTSIZE=10000
+SAVEHIST=10000
+KEYTIMEOUT=1  # makes the switch between modes quicker
+HISTORY_SUBSTRING_SEARCH_PREFIXED=1  # enables prefixed search for zsh-history-substring-search
+
+# Set language environment
 if tty -s; then
     export LANG="en_US.UTF-8"
 else
@@ -9,8 +17,6 @@ else
 fi
 #export LC_ALL=zh_CN.UTF-8
 #export LANGUAGE=zh_CN.UTF-8
-export PYTHONIOENCODING=UTF-8
-export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then

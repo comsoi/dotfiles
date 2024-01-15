@@ -912,7 +912,8 @@
 
 
 import:
-  - ./dracula.toml
+  - ~/.config/alacritty/dracula.yml
+
 live_config_reload: true
 # Tab 缩进
 tabspaces: 4
@@ -935,19 +936,23 @@ working_directory: C:/Users/Lenod/
 window:
   # 窗口大小
   dimensions:
-    columns: 100
-    lines: 32
+    columns: 135
+    lines: 40
 
   # 边缘空白
   padding:
     x: 10
     y: 15
+  opacity: 0.85
   dynamic_padding: true
   startup_mode: Maximized
   # 窗口修饰
   # - full: 有边界 + 标题栏
   # - none: 无边界 + 标题栏
   decorations: none
+  position:
+    x: 200
+    y: 200
 
 scrolling:
   # 历史保留行数
@@ -977,53 +982,3 @@ font:
   bold_{i}talic:
     family: 'FiraCode Nerd Font'
     style: Bold Italic
-
-colors:
-  primary:
-    background: "#282a36"
-    foreground: "#f8f8f2"
-    bright_foreground: "#ffffff"
-  cursor:
-    text: "#282a36"
-    cursor: "#f8f8f2"
-  vi_mode_cursor:
-    text: "CellBackground"
-    cursor: "CellForeground"
-  selection:
-    text: "CellForeground"
-    background: "#44475a"
-  normal:
-    black: "#21222c"
-    red: "#ff5555"
-    green: "#50fa7b"
-    yellow: "#f1fa8c"
-    blue: "#bd93f9"
-    magenta: "#ff79c6"
-    cyan: "#8be9fd"
-    white: "#f8f8f2"
-  bright:
-    black: "#6272a4"
-    red: "#ff6e6e"
-    green: "#69ff94"
-    yellow: "#ffffa5"
-    blue: "#d6acff"
-    magenta: "#ff92df"
-    cyan: "#a4ffff"
-    white: "#ffffff"
-  search:
-    matches:
-      foreground: "#44475a"
-      background: "#50fa7b"
-    focused_match:
-      foreground: "#44475a"
-      background: "#ffb86c"
-  footer_bar:
-    background: "#282a36"
-    foreground: "#f8f8f2"
-  hints:
-    start:
-      foreground: "#282a36"
-      background: "#f1fa8c"
-    end:
-      foreground: "#f1fa8c"
-      background: "#282a36"
