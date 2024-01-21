@@ -6,6 +6,7 @@ setopt SHARE_HISTORY
 unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -13,13 +14,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-
 # PATH
-export PATH=$HOME/.local/bin:$PATH
-export PATH=$HOME/.cargo/bin:$PATH
-export PATH=$HOME/go/bin:$PATH
 if [[ "$(uname -sm)" = "Darwin arm64" ]] then export PATH=/opt/homebrew/bin:$PATH; fi
-
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ${ZDOTDIR}/.p10k.zsh ]] || source ${ZDOTDIR}/.p10k.zsh
@@ -131,8 +127,9 @@ else
     source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 # User configuration
-# Auto completion
+
 # Initialize tools
 source $ZDOTDIR/function.zsh
+source $ZDOTDIR/.aliases
 
 setproxy > /dev/null

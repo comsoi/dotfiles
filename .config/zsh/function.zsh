@@ -1,36 +1,10 @@
+#
 # Functions
+#
 
-function noproxy {
-	unset all_proxy
-	unset ALL_PROXY
-	unset http_proxy
-	unset HTTP_PROXY
-	unset https_proxy
-	unset HTTPS_PROXY
-	echo "Proxy settings removed."
-}
-
-function setproxy {
-	# host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	host_ip="127.0.0.1"
-	host_port="2080"
-	export all_proxy="http://$host_ip:$host_port"
-	export ALL_PROXY="http://$host_ip:$host_port"
-	export http_proxy="http://$host_ip:$host_port"
-	export HTTP_PROXY="http://$host_ip:$host_port"
-	export https_proxy="http://$host_ip:$host_port"
-	export HTTPS_PROXY="http://$host_ip:$host_port"
-	echo "Proxy set to: $host_ip:$host_port"
-}
-
-function ya() {
-	tmp="$(mktemp -t "yazi-cwd")"
-	~/Desktop/yazi/target/debug/yazi --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
+if [ -f "${HOME}/.bash_functions" ]; then
+	source "${HOME}/.bash_functions"
+fi
 
 function gpr() {
 	local username=$(git config user.name)
@@ -64,13 +38,13 @@ function gpr() {
 # https://scarff.id.au/blog/2019/zsh-history-conditional-on-command-success/
 
 function __fd18et_prevent_write() {
-  __fd18et_LASTHIST=$1
-  return 2
+	__fd18et_LASTHIST=$1
+	return 2
 }
 function __fd18et_save_last_successed() {
-  if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]] ; then
-	print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
-  fi
+	if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]] ; then
+		print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
+	fi
 }
 add-zsh-hook zshaddhistory __fd18et_prevent_write
 add-zsh-hook precmd __fd18et_save_last_successed

@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local launch_menu = {}
 local default_prog = {}
-local set_environment_variables = {}
+local set_environment_variables = {CHERE_INVOKING= "1"}
 local term = "xterm-256color"
 local wsl_domains = wezterm.default_wsl_domains()
 
@@ -11,7 +11,7 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     default_prog = {"nu.exe"}
     table.insert(launch_menu, {
         label = "Zsh",
-        args = {"D:/Scoop/apps/git/current/usr/bin/zsh.exe --login"}
+        args = {"D:/Scoop/apps/git/current/usr/bin/zsh.exe","-l"}
     })
     table.insert(launch_menu, {
         label = "PowerShell",
@@ -332,7 +332,7 @@ local config = {
         action = wezterm.action.CopyTo 'Clipboard'
     }},
 
-    set_environment_variables = {},
+    set_environment_variables = set_environment_variables,
     wsl_domains = wsl_domains
     -- default_domain = "WSL:ubuntu-18.04",
 }
