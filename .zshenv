@@ -1,8 +1,7 @@
 ZDOTDIR=$HOME/.config/zsh
 
-export HISTCONTROL=ignoreboth
-
-# Zsh related
+# don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
 HISTFILE=$ZDOTDIR/.history
 HISTSIZE=10000
 SAVEHIST=10000
@@ -28,4 +27,6 @@ fi
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
 
-[[ -f ${ZDOTDIR}/.aliases ]] && . ${ZDOTDIR}/.aliases
+# PATH
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
