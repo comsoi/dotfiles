@@ -80,24 +80,44 @@ function ya() {
 
 
 function noproxy {
-	unset all_proxy
 	unset ALL_PROXY
-	unset http_proxy
 	unset HTTP_PROXY
-	unset https_proxy
 	unset HTTPS_PROXY
+	unset NO_PROXY
 	echo "Proxy settings removed."
 }
 
+
 function setproxy {
-	# host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	host_ip="127.0.0.1"
-	host_port="2080"
-	export all_proxy="http://$host_ip:$host_port"
-	export ALL_PROXY="http://$host_ip:$host_port"
-	export http_proxy="http://$host_ip:$host_port"
-	export HTTP_PROXY="http://$host_ip:$host_port"
-	export https_proxy="http://$host_ip:$host_port"
-	export HTTPS_PROXY="http://$host_ip:$host_port"
-	echo "Proxy set to: $host_ip:$host_port"
+	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	IP="127.0.0.1"
+	PORT="2080"
+	PROT="socks5"
+
+	for arg in "$@"; do
+		case "$arg" in
+			"-socks" | "-socks5")     # set socks proxy (local DNS)
+				PROT="socks5"
+				;;
+			"-socks5h")               # set socks proxy (remote DNS)
+				PROT="socks5h"
+				;;
+			"-http")                  # set HTTP proxy
+				PROT="http"
+				;;
+			*)
+				if [[ "$arg" != -* ]]; then
+					PORT="$arg"
+				fi
+				;;
+		esac
+	done
+
+	PROXY="$PROT://$IP:$PORT"
+
+	export HTTP_PROXY="$PROXY"
+	export HTTPS_PROXY="$PROXY"
+	export ALL_PROXY="$PROXY"
+	export NO_PROXY="localhost,127.0.0.1"
+	echo "Proxy set to: $PROXY"
 }
