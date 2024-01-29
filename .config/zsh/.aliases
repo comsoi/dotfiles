@@ -33,9 +33,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-if [ "$(command -v exa)" ]; then
-    alias l="exa -a --icons --group-directories-first"
-    alias ll="exa -al --icons --group-directories-first"
+if [ "$(command -v eza)" ]; then
+    alias l="eza -a --icons --group-directories-first"
+    alias ll="eza -al --icons --group-directories-first"
 fi
 
 alias tree="tree -aC"
