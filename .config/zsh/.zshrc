@@ -11,7 +11,7 @@ unsetopt EXTENDED_HISTORY
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 # PATH
@@ -120,12 +120,30 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
     )
 
     source $ZSH/oh-my-zsh.sh
-else
+elif [[ -r /usr/share/zsh/plugins ]]; then
     # Plugins
-    source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
     source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
     source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+    source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
+
+# NOTICE .powerlevel10k/ !!!
+if [[ -r "${ZDOTDIR}/.powerlevel10k" ]]; then
+    POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+    source ${ZDOTDIR}/.powerlevel10k/powerlevel10k.zsh-theme
+    elif [[ -r /usr/share/zsh-theme-powerlevel10k ]]; then
+    POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+    source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+    elif [[ -r "${HOME}/.powerlevel10k" ]]; then
+    POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+    source ${HOME}/.powerlevel10k/powerlevel10k.zsh-theme
+    else
+    echo 'powerlevel10k not found'
+fi
+
+
 # User configuration
 
 # Initialize tools

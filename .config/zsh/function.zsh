@@ -46,6 +46,9 @@ function __fd18et_save_last_successed() {
 		print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
 	fi
 }
+
+autoload -U add-zsh-hook
+
 add-zsh-hook zshaddhistory __fd18et_prevent_write
 add-zsh-hook precmd __fd18et_save_last_successed
 add-zsh-hook zshexit __fd18et_save_last_successed
