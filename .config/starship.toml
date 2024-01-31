@@ -1,12 +1,11 @@
-# [](#725e82)\
+# ░
 format = """
-[░▒▓█](#725e82)\
+[▒▓█](#725e82)\
 $os\
 $username\
 $directory\
 $git_branch\
 $git_status\
-
 $status\
 [](fg:#789262) \
 $fill \
@@ -15,9 +14,9 @@ $golang\
 $java\
 $nodejs\
 $python\
-$conda\
 $ocaml\
 $rust\
+$conda\
 [](#4c8dae)\
 $shell\
 [](bg:#4c8dae fg:#789262)\
@@ -113,7 +112,7 @@ format = "[$symbol ]($style)"
 # symbol = "🐍 "
 symbol = "🅒"
 style = "fg:#ffc773"
-format = "[[$symbol]($style) $environment ]($style)"
+format = "[[$symbol]($style) $environment]($style)"
 ignore_base = false
 
 [python]
@@ -130,7 +129,7 @@ format = "[$symbol $switch_name \\($version\\) ]($style)"
 [rust]
 symbol = ""
 style = "fg:#ffc773"
-format = "[$symbol ($version) ]($style)"
+format = "[$symbol ]($style)"
 
 # 竹青
 [status]
@@ -174,14 +173,14 @@ style = "bg:#789262"
 [cmd_duration]
 min_time = 500
 style = "bg:#e29c45"
-format = "[  $duration ]($style)"
+format = "[  $duration ]($style)"
 
 # 海棠
 [time]
 disabled = false
 time_format = "%R"
 style = "bg:#db5a6b"
-format = "[ ♥ $time ]($style)"
+format = "[  $time ]($style)"
 
 # 豆青
 [character]
