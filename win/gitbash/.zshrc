@@ -190,6 +190,7 @@ function noproxy {
 	unset ALL_PROXY
 	unset HTTP_PROXY
 	unset HTTPS_PROXY
+	unset NO_PROXY
 	echo "Proxy settings removed."
 }
 
@@ -228,6 +229,10 @@ function setproxy() {
 }
 
 setproxy > /dev/null
+
+eval "$(zoxide init zsh)"
+
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "/d/Scoop/apps/vscode/current/resources/app/out/vs/workbench/contrib/terminal/browser/media/shellIntegration-rc.zsh"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
