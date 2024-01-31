@@ -24,13 +24,13 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias ls='ls --color=auto'
+	alias dir='dir --color=auto'
+	alias vdir='vdir --color=auto'
+	alias grep='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
 fi
 
 # Set list of themes to pick from when loading at random
@@ -94,27 +94,27 @@ fi
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    adb
-    conda-zsh-completion
-    command-not-found
-    extract
-    deno
-    docker
-    git
-    github
-    gitignore
-    history-substring-search
-    node
-    npm
-    nvm
-    volta
-    vscode
-    sudo
-    web-search
-    z
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    ohmyzsh-full-autoupdate
+	adb
+	conda-zsh-completion
+	command-not-found
+	extract
+	deno
+	docker
+	git
+	github
+	gitignore
+	history-substring-search
+	node
+	npm
+	nvm
+	volta
+	vscode
+	sudo
+	web-search
+	z
+	zsh-autosuggestions
+	zsh-syntax-highlighting
+	ohmyzsh-full-autoupdate
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -148,48 +148,83 @@ export ARCHFLAGS="-arch x86_64"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias ll='ls -alF'
 alias la='ls -A'
-alias l='ls -CF'
+alias l='ls -aCF'
+alias ll='ls -alF'
 alias ipy='ipython'
+if [ "$(command -v eza)" ]; then
+	alias l="eza -a --icons --group-directories-first"
+	alias ll="eza -al --icons --group-directories-first"
+fi
+alias lvim='pwsh --NoProfile -c "c:\users\lenod\.local\bin\lvim.ps1"'
 
-tmux() {
-  # execute tmux with script
-  TMUX="command tmux ${@}"
-  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
+function tmux() {
+	# execute tmux with script
+	local TMUX="command tmux ${@}"
+	local SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
 }
 
 function ya() {
-    tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
+	tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
+}
+
+function lvim() {
+	local XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+	local XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+	local XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+
+	local LUNARVIM_RUNTIME_DIR=${LUNARVIM_RUNTIME_DIR:-$XDG_DATA_HOME/lunarvim}
+	local LUNARVIM_CONFIG_DIR=${LUNARVIM_CONFIG_DIR:-$XDG_CONFIG_HOME/lvim}
+	local LUNARVIM_CACHE_DIR=${LUNARVIM_CACHE_DIR:-$XDG_CACHE_HOME/lvim}
+	local LUNARVIM_BASE_DIR=${LUNARVIM_BASE_DIR:-$LUNARVIM_RUNTIME_DIR/lvim}
+
+	nvim -u "$LUNARVIM_BASE_DIR/init.lua" "$@"
 }
 
 function noproxy {
-    unset all_proxy
-    unset ALL_PROXY
-    unset http_proxy
-    unset HTTP_PROXY
-    unset https_proxy
-    unset HTTPS_PROXY
-    echo "Proxy settings removed."
+	unset ALL_PROXY
+	unset HTTP_PROXY
+	unset HTTPS_PROXY
+	echo "Proxy settings removed."
 }
 
+function setproxy() {
+	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	local IP="127.0.0.1"
+	local PORT="2080"
+	local PROT="socks5"
 
-function setproxy {
-    # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-    host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
-    host_port="2080"
-    export all_proxy="http://$host_ip:$host_port"
-    export ALL_PROXY="http://$host_ip:$host_port"
-    export http_proxy="http://$host_ip:$host_port"
-    export HTTP_PROXY="http://$host_ip:$host_port"
-    export https_proxy="http://$host_ip:$host_port"
-    export HTTPS_PROXY="http://$host_ip:$host_port"
-    echo "Proxy set to: $host_ip:$host_port"
+	for arg in "$@"; do
+		case "$arg" in
+			"-socks" | "-socks5")     # set socks proxy (local DNS)
+				PROT="socks5"
+				;;
+			"-socks5h")               # set socks proxy (remote DNS)
+				PROT="socks5h"
+				;;
+			"-http" | "-https")                  # set HTTP proxy
+				PROT="http"
+				;;
+			*)
+				if [[ "$arg" != -* ]]; then
+					PORT="$arg"
+				fi
+				;;
+		esac
+	done
+
+	local PROXY="$PROT://$IP:$PORT"
+
+	export HTTP_PROXY="$PROXY"
+	export HTTPS_PROXY="$PROXY"
+	export ALL_PROXY="$PROXY"
+	export NO_PROXY="localhost,127.0.0.1"
+	echo "Proxy set to: $PROXY"
 }
 
 setproxy > /dev/null
@@ -197,6 +232,6 @@ setproxy > /dev/null
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 if [ -f '/d/programs/conda/Scripts/conda.exe' ]; then
-    eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.zsh' 'hook' | sed -e 's/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@"/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@" | tr -d \x27\\r\x27/g')"
+	eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.zsh' 'hook' | sed -e 's/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@"/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@" | tr -d \x27\\r\x27/g')"
 fi
 # <<< conda initialize <<<

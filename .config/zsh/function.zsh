@@ -6,6 +6,14 @@ if [ -f "${HOME}/.bash_functions" ]; then
 	source "${HOME}/.bash_functions"
 fi
 
+# oh-my-zsh seems to enable this by default, not desired for
+# workflow of controlling terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+function set_terminal_title() {
+	echo -en "\e]2;$@\a"
+}
+
 function gpr() {
 	local username=$(git config user.name)
 	if [ -z "$username" ]; then

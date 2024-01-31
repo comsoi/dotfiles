@@ -3,12 +3,13 @@ format = """
 [░▒▓█](#725e82)\
 $os\
 $username\
-[](fg:#725e82 bg:#db5a6b)\
 $directory\
-[](fg:#db5a6b bg:#e29c45)\
 $git_branch\
 $git_status\
-[ ](fg:#e29c45 bg:#ffc773)\
+
+$status\
+[](fg:#789262) \
+$fill \
 $c\
 $golang\
 $java\
@@ -17,10 +18,6 @@ $python\
 $conda\
 $ocaml\
 $rust\
-[](fg:#ffc773 bg:#789262)\
-$status\
-[](fg:#789262)\
-$fill\
 [](#4c8dae)\
 $shell\
 [](bg:#4c8dae fg:#789262)\
@@ -29,16 +26,17 @@ $battery\
 $cmd_duration\
 [](bg:#e29c45 fg:#db5a6b)\
 $time\
-[ ](fg:#db5a6b)
+[](fg:#db5a6b) \
+$line_break\
 $character\
 """
-
+command_timeout = 1000
 continuation_prompt = "▶▶ "
 add_newline = true
 
 
 [fill]
-symbol = " "
+symbol = "·"
 
 
 # 乌色
@@ -64,14 +62,14 @@ Macos = " "# \ue711
 show_always = true
 style_user = "bg:#725e82"
 style_root = "bg:#725e82"
-format = "[$user ]($style)"
+format = "[$user [](fg:#725e82)]($style)"
 
 # 海棠
 [directory]
 style = "bg:#db5a6b"
 fish_style_pwd_dir_length = 1
 # format = "[][ $path ]($style)"
-format = "[ $path[$read_only]($read_only_style) ]($style)"
+format = "[[](fg:#2e3440 bg:#db5a6b) $path[$read_only]($read_only_style) [](fg:#db5a6b)]($style)"
 read_only = "🔒"
 # read_only_style = "bg:#ff3322 fg:#EEEEEE"
 read_only_style = "bg:#db5a6b"
@@ -85,53 +83,53 @@ truncate_to_repo = true
 [git_branch]
 symbol = ""
 style = "bg:#e29c45"
-format = "[ $symbol $branch ]($style)"
+format = "[[](fg:#2e3440 bg:#e29c45) $symbol $branch ]($style)"
 
 [git_status]
 style = "bg:#e29c45"
-format = "[($all_status$ahead_behind )]($style)"
+format = "[$all_status$ahead_behind [](fg:#e29c45)]($style)"
 
 # 姜黄
 [c]
 symbol = ""
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 format = "[$symbol ]($style)"
 
 [java]
-style = "bg:#ffc773 fg:black"
-format = "[$symbol ($version) ]($style)"
+style = "fg:#ffc773"
+format = "[$symbol ]($style)"
 
 [golang]
-style = "bg:#ffc773 fg:black"
-format = "[$symbol ($version) ]($style)"
+style = "fg:#ffc773"
+format = "[$symbol($version) ]($style)"
 
 [nodejs]
 symbol = ""
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 not_capable_style = "bg:#ffc773 fg:bold red"
 format = "[$symbol ]($style)"
 
 [conda]
 # symbol = "🐍 "
 symbol = "🅒"
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 format = "[[$symbol]($style) $environment ]($style)"
 ignore_base = false
 
 [python]
 # symbol = ""
 symbol = ""
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 format = "[$symbol ]($style)"
 
 [ocaml]
 symbol = ""
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 format = "[$symbol $switch_name \\($version\\) ]($style)"
 
 [rust]
 symbol = ""
-style = "bg:#ffc773 fg:black"
+style = "fg:#ffc773"
 format = "[$symbol ($version) ]($style)"
 
 # 竹青
@@ -144,15 +142,17 @@ not_found_symbol = "" # \ueb4e
 sigint_symbol = ""
 signal_symbol = ""
 style = "bg:#789262"
-format = "[ $symbol $common_meaning$signal_name$maybe_int]($style)"
+format = "[[](fg:#2e3440 bg:#789262) $symbol $common_meaning$signal_name$maybe_int]($style)"
 map_symbol = true
 
 # 群青
 [shell]
 disabled = false
-bash_indicator = " "
-powershell_indicator = " "
-cmd_indicator = " "
+bash_indicator = ""
+powershell_indicator = ""
+cmd_indicator = ""
+zsh_indicator = "%"
+fish_indicator = "fish"
 style = "bg:#4c8dae"
 format = "[ $indicator ]($style)"
 
@@ -187,3 +187,4 @@ format = "[ ♥ $time ]($style)"
 [character]
 success_symbol = "[❯](bold #96ce54)"
 error_symbol = "[❯](bold #db5a6b)"
+vimcmd_symbol = "[❮](bold #96ce54)"

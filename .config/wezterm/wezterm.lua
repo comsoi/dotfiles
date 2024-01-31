@@ -26,8 +26,8 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
         args = {"nu.exe"}
     })
     table.insert(launch_menu, {
-        label = "wsl:ubuntu-18.04",
-        args = {"wezterm.exe", "ssh", "wsl@127.0.0.1:2222"}
+        label = "wsl:ubuntu-20.04",
+        args = {"wezterm.exe", "ssh", "ubuntu@127.0.0.1:2222"}
     })
 
     -- Find installed visual studio version(s) and add their compilation
