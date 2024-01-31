@@ -79,7 +79,7 @@ function ya() {
 }
 
 
-function noproxy {
+function noproxy() {
 	unset ALL_PROXY
 	unset HTTP_PROXY
 	unset HTTPS_PROXY
@@ -88,11 +88,11 @@ function noproxy {
 }
 
 
-function setproxy {
+function setproxy() {
 	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	IP="127.0.0.1"
-	PORT="2080"
-	PROT="socks5"
+	local IP="127.0.0.1"
+	local PORT="2080"
+	local PROT="socks5"
 
 	for arg in "$@"; do
 		case "$arg" in
@@ -102,7 +102,7 @@ function setproxy {
 			"-socks5h")               # set socks proxy (remote DNS)
 				PROT="socks5h"
 				;;
-			"-http")                  # set HTTP proxy
+			"-http" | "-https")                  # set HTTP proxy
 				PROT="http"
 				;;
 			*)
@@ -113,7 +113,7 @@ function setproxy {
 		esac
 	done
 
-	PROXY="$PROT://$IP:$PORT"
+	local PROXY="$PROT://$IP:$PORT"
 
 	export HTTP_PROXY="$PROXY"
 	export HTTPS_PROXY="$PROXY"

@@ -1,9 +1,13 @@
-# if [ -f "$HOME/.bashrc" ]; then
-# . "$HOME/.bashrc"
-# fi
+#
+# ~/.bash_profile
+#
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+if [ -f "$HOME/.bashrc" ]; then
+. "$HOME/.bashrc"
+fi
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -30,7 +34,7 @@ shopt -s checkwinsize
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
+	xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -39,14 +43,14 @@ esac
 #force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
 	color_prompt=yes
-    else
+	else
 	color_prompt=
-    fi
+	fi
 fi
 
 # Shows Git branch name in prompt.
@@ -55,20 +59,20 @@ parse_git_branch() {
 }
 
 shorten_path() {
-    # 将 IFS（内部字段分隔符）设置为斜杠，并将路径读入数组
-    IFS='/' read -ra ADDR <<< "$1"
-    shortpath=""
-    for i in "${ADDR[@]:1}"; do # 从索引1开始以跳过空的首元素
-        shortpath+="/${i:0:1}"  # 连接每个部分的首字母
-    done
-    echo $shortpath
+	# 将 IFS（内部字段分隔符）设置为斜杠，并将路径读入数组
+	IFS='/' read -ra ADDR <<< "$1"
+	shortpath=""
+	for i in "${ADDR[@]:1}"; do # 从索引1开始以跳过空的首元素
+		shortpath+="/${i:0:1}"  # 连接每个部分的首字母
+	done
+	echo $shortpath
 }
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(shorten_path "\w")\[\033[00m\]$(parse_git_branch)\$ '
-    # PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+	PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]$(shorten_path "\w")\[\033[00m\]$(parse_git_branch)\$ '
+	# PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
 else
-    PS1='\u@\h:\w\$ '
+	PS1='\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
 
@@ -76,21 +80,21 @@ unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-    xterm*|rxvt*)
-        PS1="\[\e]0;\u@\h: \w\a\]$PS1"
-        ;;
-    *)
-        ;;
+	xterm*|rxvt*)
+		PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+		;;
+	*)
+		;;
 esac
 
 if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+	alias ls='ls --color=auto'
+	alias dir='dir --color=auto'
+	alias vdir='vdir --color=auto'
+	alias grep='grep --color=auto'
+	alias fgrep='fgrep --color=auto'
+	alias egrep='egrep --color=auto'
 fi
 
 # colored GCC warnings and errors
@@ -104,42 +108,42 @@ alias l='ls -CF'
 
 #==============================================================================
 
-tmux() {
+function tmux() {
   # execute tmux with script
   TMUX="command tmux ${@}"
   SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
 }
 
 function ya() {
-    tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-    yazi "$@" --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        cd -- "$cwd"
-    fi
-    rm -f -- "$tmp"
+	local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
 }
 
 function noproxy {
-    unset all_proxy
-    unset ALL_PROXY
-    unset http_proxy
-    unset HTTP_PROXY
-    unset https_proxy
-    unset HTTPS_PROXY
-    echo "Proxy settings removed."
+	unset all_proxy
+	unset ALL_PROXY
+	unset http_proxy
+	unset HTTP_PROXY
+	unset https_proxy
+	unset HTTPS_PROXY
+	echo "Proxy settings removed."
 }
 
 function setproxy {
-    # host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-    host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
-    host_port="2080"
-    export all_proxy="http://$host_ip:$host_port"
-    export ALL_PROXY="http://$host_ip:$host_port"
-    export http_proxy="http://$host_ip:$host_port"
-    export HTTP_PROXY="http://$host_ip:$host_port"
-    export https_proxy="http://$host_ip:$host_port"
-    export HTTPS_PROXY="http://$host_ip:$host_port"
-    echo "Proxy set to: $host_ip:$host_port"
+	# host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
+	host_port="2080"
+	export all_proxy="http://$host_ip:$host_port"
+	export ALL_PROXY="http://$host_ip:$host_port"
+	export http_proxy="http://$host_ip:$host_port"
+	export HTTP_PROXY="http://$host_ip:$host_port"
+	export https_proxy="http://$host_ip:$host_port"
+	export HTTPS_PROXY="http://$host_ip:$host_port"
+	echo "Proxy set to: $host_ip:$host_port"
 }
 
 
@@ -156,11 +160,11 @@ function setproxy {
 
 alias python3='python'
 alias ipy='ipython'
+alias lvim='pwsh --NoProfile -c "c:\users\lenod\.local\bin\lvim.ps1"'
 
+export LANG=zh_CN.UTF-8
+export LANGUAGE=zh_CN.UTF-8
 #export LC_ALL=zh_CN.UTF-8
-#export LANG=zh_CN.UTF-8
-#export LANGUAGE=zh_CN.UTF-8
-export PATH="/D/Scoop/apps/tdm-gcc/current/bin:$PATH"
 
 
 # export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
@@ -176,6 +180,6 @@ setproxy > /dev/null
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 if [ -f '/d/programs/conda/Scripts/conda.exe' ]; then
-    eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.bash' 'hook')"
+	eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.bash' 'hook')"
 fi
 # <<< conda initialize <<<
