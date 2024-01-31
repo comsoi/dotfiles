@@ -55,7 +55,7 @@ fi
 
 # Shows Git branch name in prompt.
 parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
 shorten_path() {
@@ -76,7 +76,6 @@ else
 fi
 unset color_prompt force_color_prompt
 
-[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path bash)"
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -124,26 +123,45 @@ function ya() {
 }
 
 function noproxy {
-	unset all_proxy
 	unset ALL_PROXY
-	unset http_proxy
 	unset HTTP_PROXY
-	unset https_proxy
 	unset HTTPS_PROXY
+	unset NO_PROXY
 	echo "Proxy settings removed."
 }
 
-function setproxy {
-	# host_ip=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	host_ip="127.0.0.1" # Uncomment this line if you want to use a static IP address
-	host_port="2080"
-	export all_proxy="http://$host_ip:$host_port"
-	export ALL_PROXY="http://$host_ip:$host_port"
-	export http_proxy="http://$host_ip:$host_port"
-	export HTTP_PROXY="http://$host_ip:$host_port"
-	export https_proxy="http://$host_ip:$host_port"
-	export HTTPS_PROXY="http://$host_ip:$host_port"
-	echo "Proxy set to: $host_ip:$host_port"
+function setproxy() {
+	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	local IP="127.0.0.1"
+	local PORT="2080"
+	local PROT="socks5"
+
+	for arg in "$@"; do
+		case "$arg" in
+			"-socks" | "-socks5")     # set socks proxy (local DNS)
+				PROT="socks5"
+				;;
+			"-socks5h")               # set socks proxy (remote DNS)
+				PROT="socks5h"
+				;;
+			"-http" | "-https")                  # set HTTP proxy
+				PROT="http"
+				;;
+			*)
+				if [[ "$arg" != -* ]]; then
+					PORT="$arg"
+				fi
+				;;
+		esac
+	done
+
+	local PROXY="$PROT://$IP:$PORT"
+
+	export HTTP_PROXY="$PROXY"
+	export HTTPS_PROXY="$PROXY"
+	export ALL_PROXY="$PROXY"
+	export NO_PROXY="localhost,127.0.0.1"
+	echo "Proxy set to: $PROXY"
 }
 
 
@@ -171,11 +189,14 @@ export LANGUAGE=zh_CN.UTF-8
 # chcp.com 65001
 export PROMPT_COMMAND='history -a'
 
-setproxy > /dev/null
 
 # if [ -t 1 ]; then
 #   exec zsh
 # fi
+eval "$(zoxide init bash)"
+
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path bash)"
+
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
