@@ -31,6 +31,3 @@ if executable('win32yank.exe')
     autocmd TextYankPost * if v:event.operator ==# 'y' | call system('win32yank.exe -i --crlf', @0) | endif
   augroup END
 endif
-
-let mapleader = " "
-inoremap <silent> jj <esc>

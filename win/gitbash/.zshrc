@@ -173,19 +173,6 @@ function ya() {
 	rm -f -- "$tmp"
 }
 
-function lvim() {
-	local XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
-	local XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
-	local XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
-
-	local LUNARVIM_RUNTIME_DIR=${LUNARVIM_RUNTIME_DIR:-$XDG_DATA_HOME/lunarvim}
-	local LUNARVIM_CONFIG_DIR=${LUNARVIM_CONFIG_DIR:-$XDG_CONFIG_HOME/lvim}
-	local LUNARVIM_CACHE_DIR=${LUNARVIM_CACHE_DIR:-$XDG_CACHE_HOME/lvim}
-	local LUNARVIM_BASE_DIR=${LUNARVIM_BASE_DIR:-$LUNARVIM_RUNTIME_DIR/lvim}
-
-	nvim -u "$LUNARVIM_BASE_DIR/init.lua" "$@"
-}
-
 function noproxy {
 	unset ALL_PROXY
 	unset HTTP_PROXY
