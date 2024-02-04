@@ -19,8 +19,6 @@ xnoremap <Leader>p "+p
 xnoremap <Leader>P "+P
 
 
-inoremap jj <esc>
-
 
 " Turn syntax highlighting on.
 syntax on
@@ -49,6 +47,27 @@ set relativenumber
 
 " Highlight cursor line underneath the cursor horizontally.
 set cursorline
+" function s:SetCursorLine()
+"     set cursorline
+"     hi cursorline cterm=none ctermfg=white
+" endfunction
+" autocmd VimEnter * call s:SetCursorLine()
+
+" Use a line cursor within insert mode and a block cursor everywhere else.
+"
+" Reference chart of values:
+"   Ps = 0  -> blinking block.
+"   Ps = 1  -> blinking block (default).
+"   Ps = 2  -> steady block.
+"   Ps = 3  -> blinking underline.
+"   Ps = 4  -> steady underline.
+"   Ps = 5  -> blinking bar (xterm).
+"   Ps = 6  -> steady bar (xterm).
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+" set line when leave vim
+autocmd VimLeave * call system('printf "\e[5 q" > $TTY')
+
 " Uses a visual bell instead of an audible bell.
 set visualbell
 
