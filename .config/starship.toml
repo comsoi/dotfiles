@@ -112,7 +112,7 @@ format = "[$symbol ]($style)"
 # symbol = "🐍 "
 symbol = "🅒"
 style = "fg:#ffc773"
-format = "[[$symbol]($style) $environment]($style)"
+format = "[[$symbol]($style) $environment ]($style)"
 ignore_base = false
 
 [python]

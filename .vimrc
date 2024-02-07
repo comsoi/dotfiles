@@ -1,4 +1,48 @@
-" set clipboard+=unnamedplus
+if has('win32') || has('win64')
+    set runtimepath-=~/vimfiles
+    set runtimepath^=~/.vim
+    set runtimepath-=~/vimfiles/after
+    set runtimepath+=~/.vim/after
+
+    " need uutils-coreutils or something else
+    autocmd VimEnter * silent !printf "\e[2 q"
+    " insert mode
+    let &t_SI = "\e[6 q"
+    " replace
+    let &t_SR = "\e[4 q"
+    " oherwise
+    let &t_EI = "\e[2 q"
+    " leave vim
+    " pwsh support echo(Write-Output) "`e[6 q" but not useful in gvim
+    " you can use printf.exe to print "\e[6 q"
+    autocmd VimLeave * :!printf "\e[6 q"
+endif
+
+if &term =~ '^xterm'
+    " Use a line cursor within insert mode and a block cursor everywhere else.
+    "
+    " Reference chart of values:
+    "   Ps = 0  -> blinking block.
+    "   Ps = 1  -> blinking block (default).
+    "   Ps = 2  -> steady block.
+    "   Ps = 3  -> blinking underline.
+    "   Ps = 4  -> steady underline.
+    "   Ps = 5  -> blinking bar (xterm).
+    "   Ps = 6  -> steady bar (xterm).
+    "
+    " enter vim
+    autocmd VimEnter * silent ! echo -ne "\033[2 q"
+    " insert
+    let &t_SI = "\e[6 q"
+    " replace
+    let &t_SR = "\e[4 q"
+    " oherwise
+    let &t_EI = "\e[2 q"
+    " leave vim
+    " need \033 in git bash. \e do not support.
+    autocmd VimLeave * silent !echo -ne "\033[6 q"
+endif
+
 let mapleader = " "
 " ---------- 正常模式 ---------- ---
 nnoremap <silent> <Leader>y "+y
@@ -17,8 +61,6 @@ vnoremap <Leader>P "+P
 xnoremap <Leader>y "+y
 xnoremap <Leader>p "+p
 xnoremap <Leader>P "+P
-
-
 
 " Turn syntax highlighting on.
 syntax on
@@ -45,30 +87,28 @@ set textwidth=80
 set number
 set relativenumber
 
+" colorscheme evening
+" colorscheme desert
 " Highlight cursor line underneath the cursor horizontally.
+" enable 256 color
+set t_Co=256
 set cursorline
+
+colorscheme sacredforest
+set termguicolors
+
+"colorscheme one
+" set background=dark " for the dark version
+" set background=light " for the light version
+
 " function s:SetCursorLine()
 "     set cursorline
 "     hi cursorline cterm=none ctermfg=white
 " endfunction
 " autocmd VimEnter * call s:SetCursorLine()
 
-" Use a line cursor within insert mode and a block cursor everywhere else.
-"
-" Reference chart of values:
-"   Ps = 0  -> blinking block.
-"   Ps = 1  -> blinking block (default).
-"   Ps = 2  -> steady block.
-"   Ps = 3  -> blinking underline.
-"   Ps = 4  -> steady underline.
-"   Ps = 5  -> blinking bar (xterm).
-"   Ps = 6  -> steady bar (xterm).
-let &t_SI = "\e[6 q"
-let &t_EI = "\e[2 q"
-" set line when leave vim
-autocmd VimLeave * call system('printf "\e[5 q" > $TTY')
 
-" Uses a visual bell instead of an audible bell.
+
 set visualbell
 
 " fix backspace
@@ -76,18 +116,17 @@ set backspace=indent,eol,start
 
 " - linebreak: Wraps long lines at a character in 'breakat' option.
 set linebreak
-" Allows modelines to be used in the file to set local options.
 
+
+" Allows modelines to be used in the file to set local options.
 set modeline
 " Specifies the number of lines at the beginning and end of the file to check for modelines.
 set modelines=2
 " Specifies the minimum number of lines to keep above and below the cursor when scrolling.
-set scrolloff=3
+set scrolloff=0
 
 " enable mouse
 set mouse=a
-
-
 
 " Automatically indents new lines based on the previous line's indentation.
 set smartindent
