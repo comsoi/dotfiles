@@ -7,6 +7,11 @@ setopt SHARE_HISTORY
 unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
+bindkey -v
+bindkey '^R' history-incremental-search-backward
+bindkey  "^[[H"   beginning-of-line
+bindkey  "^[[F"   end-of-line
+bindkey  "^[[3~"  delete-char
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]

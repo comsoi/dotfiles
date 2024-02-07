@@ -156,7 +156,6 @@ if [ "$(command -v eza)" ]; then
 	alias l="eza -a --icons --group-directories-first -I='NTUSER.*|ntuser.*'"
 	alias ll="eza -al --icons --group-directories-first"
 fi
-alias lvim='pwsh --NoProfile -c "c:\users\lenod\.local\bin\lvim.ps1"'
 
 function tmux() {
 	# execute tmux with script
