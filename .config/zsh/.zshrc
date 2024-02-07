@@ -7,11 +7,40 @@ setopt SHARE_HISTORY
 unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
-bindkey -v
-bindkey '^R' history-incremental-search-backward
-bindkey  "^[[H"   beginning-of-line
-bindkey  "^[[F"   end-of-line
-bindkey  "^[[3~"  delete-char
+# bindkey -v
+
+# If NumLock is off, translate keys to make them appear the same as with NumLock on.
+bindkey -s '^[OM' '^M'  # enter
+bindkey -s '^[Ok' '+'
+bindkey -s '^[Om' '-'
+bindkey -s '^[Oj' '*'
+bindkey -s '^[Oo' '/'
+bindkey -s '^[OX' '='
+
+# If someone switches our terminal to application mode (smkx), translate keys to make
+# them appear the same as in raw mode (rmkx).
+bindkey -s '^[OH' '^[[H'  # home
+bindkey -s '^[OF' '^[[F'  # end
+bindkey -s '^[OA' '^[[A'  # up
+bindkey -s '^[OB' '^[[B'  # down
+bindkey -s '^[OD' '^[[D'  # left
+bindkey -s '^[OC' '^[[C'  # right
+
+# TTY sends different key codes. Translate them to regular.
+bindkey -s '^[[1~' '^[[H'  # home
+bindkey -s '^[[4~' '^[[F'  # end
+
+# Make Home/End work in xterm.
+bindkey '^[[H'    beginning-of-line
+bindkey '^[[F'    end-of-line
+# Make ^R search history backward.
+bindkey '^R'      history-incremental-search-backward
+# Make delete work like in bash.
+bindkey '^[[3~'   delete-char
+bindkey '^H'      backward-kill-word
+# Make Ctrl-Left and Ctrl-Right jump words.
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -160,3 +189,6 @@ source $ZDOTDIR/function.zsh
 source $ZDOTDIR/.aliases
 
 setproxy > /dev/null
+
+eval "$(zoxide init zsh)"
+eval $(thefuck --alias)
