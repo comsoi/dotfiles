@@ -32,6 +32,14 @@ bindkey -s '^[OC' '^[[C'  # right
 bindkey -s '^[[1~' '^[[H'  # home
 bindkey -s '^[[4~' '^[[F'  # end
 
+# `up-line-or-beginning-search` 函数绑定到向上箭头键，允许您搜索先前的命令。
+# `down-line-or-beginning-search` 函数绑定到向下箭头键，允许您搜索下一个命令。
+# 这些函数是自动加载的，并与 `up-line-or-beginning-search` 和 `down-line-or-beginning-search` ZLE 小部件关联。
+autoload -Uz up-line-or-beginning-search
+autoload -Uz down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
 # Make Home/End work in xterm.
 bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
 bindkey '^[[F'    end-of-line                          # end        go to the end of line
