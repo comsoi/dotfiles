@@ -9,6 +9,8 @@ unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
 # bindkey -v
 
+# Refence:
+# https://www.reddit.com/r/zsh/comments/eblqvq/comment/fb7337q/
 # If NumLock is off, translate keys to make them appear the same as with NumLock on.
 bindkey -s '^[OM' '^M'  # enter
 bindkey -s '^[Ok' '+'
@@ -31,16 +33,23 @@ bindkey -s '^[[1~' '^[[H'  # home
 bindkey -s '^[[4~' '^[[F'  # end
 
 # Make Home/End work in xterm.
-bindkey '^[[H'    beginning-of-line
-bindkey '^[[F'    end-of-line
+bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
+bindkey '^[[F'    end-of-line                          # end        go to the end of line
 # Make ^R search history backward.
-bindkey '^R'      history-incremental-search-backward
+bindkey '^R'      history-incremental-search-backward  # ctrl+r     search history backward
 # Make delete work like in bash.
-bindkey '^[[3~'   delete-char
-bindkey '^H'      backward-kill-word
+bindkey '^?'      backward-delete-char                 # bs         delete one char backward
+bindkey '^[[3~'   delete-char                          # delete     delete one char forward
+bindkey '^H'      backward-kill-word                   # ctrl+bs    delete previous word
 # Make Ctrl-Left and Ctrl-Right jump words.
-bindkey "^[[1;5C" forward-word
-bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word                         # ctrl+right go forward one word
+bindkey "^[[1;5D" backward-word                        # ctrl+left  go backward one word
+
+# default key bindings
+# bindkey '^[[D'    backward-char                 # left       move cursor one char backward
+# bindkey '^[[C'    forward-char                  # right      move cursor one char forward
+# bindkey '^[[A'    up-line-or-beginning-search   # up         prev command in history
+# bindkey '^[[B'    down-line-or-beginning-search # down       next command in history
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
