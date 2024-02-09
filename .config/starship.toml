@@ -1,13 +1,13 @@
-# ░ 
+# ░▒▓█    
 format = """
-[▒▓█](#725e82)\
+[█](#725e82)\
 $os\
 $username\
 $directory\
 $git_branch\
 $git_status\
 $status\
-[](fg:#789262) \
+[](fg:#789262) \
 $fill \
 $c\
 $golang\
@@ -25,7 +25,7 @@ $battery\
 $cmd_duration\
 [](bg:#e29c45 fg:#db5a6b)\
 $time\
-[](fg:#db5a6b) \
+[](fg:#db5a6b) \
 $line_break\
 $character\
 """
