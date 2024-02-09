@@ -89,7 +89,7 @@ function noproxy() {
 
 
 function setproxy() {
-	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	# local IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	local IP="127.0.0.1"
 	local PORT="2080"
 	local PROT="socks5"

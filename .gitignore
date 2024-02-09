@@ -1,2 +1,5 @@
 .history
+.z
+.zsh_history
+.bash_history
 .zcompdump*
