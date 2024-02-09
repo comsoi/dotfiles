@@ -1,3 +1,5 @@
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 setopt AUTO_CD
 setopt INTERACTIVE_COMMENTS
 setopt MENU_COMPLETE
@@ -7,7 +9,7 @@ setopt SHARE_HISTORY
 unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
-# bindkey -v
+unsetopt flowcontrol
 
 # Refence:
 # https://www.reddit.com/r/zsh/comments/eblqvq/comment/fb7337q/
@@ -40,20 +42,40 @@ autoload -Uz down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-# Make Home/End work in xterm.
+bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
+bindkey '^X'      forward-word                         # ctrl+m     go forward one word
+
+
+# emacs key bindings
+# ctrl+key
+bindkey '^A'      beginning-of-line                    # ctrl+a     go to the beginning of line
+bindkey '^E'      end-of-line                          # ctrl+e     go to the end of line
+# <- and -> arrows
+bindkey '^F'      forward-char                         # ctrl+f     move cursor one char forward
+bindkey '^B'      backward-char                        # ctrl+b     move cursor one char backward
+# up and down arrows
+bindkey '^P'      up-line-or-beginning-search          # ctrl+p     prev command in history
+bindkey '^N'      down-line-or-beginning-search        # ctrl+n     next command in history
+# search
+bindkey '^R'      history-incremental-search-backward  # ctrl+r     search history backward
+bindkey '^S'      history-incremental-search-forward   # ctrl+s     search history forward
+bindkey '^Q'      push-line-or-edit                    # ctrl+q     push line
+# delete
+bindkey '^U'      backward-kill-line                   # ctrl+u     delete from cursor to beginning of line  (default ^U)
+bindkey '^K'      kill-line                            # ctrl+k     delete from cursor to end of line
+bindkey '^W'      backward-kill-word                   # ctrl+w     delete previous word
+# [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}"  delete-char  # another way to bind delete
+bindkey '^D'      delete-char                          # ctrl+d     delete one char forward
+bindkey '^[[3~'   delete-char                          # delete     delete one char forward
+# Make Ctrl-Left and Ctrl-Right jump words.
+bindkey '^[[1;5C' forward-word                         # ctrl+right go forward one word
+bindkey '^[[1;5D' backward-word                        # ctrl+left  go backward one word
 bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
 bindkey '^[[F'    end-of-line                          # end        go to the end of line
-# Make ^R search history backward.
-bindkey '^R'      history-incremental-search-backward  # ctrl+r     search history backward
-# Make delete work like in bash.
-bindkey '^?'      backward-delete-char                 # bs         delete one char backward
-bindkey '^[[3~'   delete-char                          # delete     delete one char forward
-bindkey '^H'      backward-kill-word                   # ctrl+bs    delete previous word
-# Make Ctrl-Left and Ctrl-Right jump words.
-bindkey "^[[1;5C" forward-word                         # ctrl+right go forward one word
-bindkey "^[[1;5D" backward-word                        # ctrl+left  go backward one word
 
 # default key bindings
+# bindkey '^?'      backward-delete-char                 # bs         delete one char backward                (default ^?)
+# bindkey '^L'      clear-screen                         # ctrl+l     clear screen                             (default ^L)
 # bindkey '^[[D'    backward-char                 # left       move cursor one char backward
 # bindkey '^[[C'    forward-char                  # right      move cursor one char forward
 # bindkey '^[[A'    up-line-or-beginning-search   # up         prev command in history
@@ -69,7 +91,7 @@ fi
 # PATH
 if [[ "$(uname -sm)" = "Darwin arm64" ]] then export PATH=/opt/homebrew/bin:$PATH; fi
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# To customize prompt, run `p10k configure` or edit .p10k.zsh.
 [[ ! -f ${ZDOTDIR}/.p10k.zsh ]] || source ${ZDOTDIR}/.p10k.zsh
 
 # Oh My Zsh
@@ -197,6 +219,7 @@ fi
 
 
 # User configuration
+
 # case-insensitive auto-complete matches
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit

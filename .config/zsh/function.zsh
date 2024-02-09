@@ -14,6 +14,22 @@ function set_terminal_title() {
 	echo -en "\e]2;$@\a"
 }
 
+sudo-command-line() {
+	[[ -z $BUFFER ]] && zle up-history
+	local cmd="sudo "
+	if [[ ${BUFFER} == ${cmd}* ]]; then
+		CURSOR=$(( CURSOR-${#cmd} ))
+		BUFFER="${BUFFER#$cmd}"
+	else
+		BUFFER="${cmd}${BUFFER}"
+		CURSOR=$(( CURSOR+${#cmd} ))
+	fi
+	zle reset-prompt
+}
+zle     -N   sudo-command-line
+# Ctrl-S
+bindkey '^S' sudo-command-line
+
 function gpr() {
 	local username=$(git config user.name)
 	if [ -z "$username" ]; then
