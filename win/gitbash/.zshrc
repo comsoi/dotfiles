@@ -111,7 +111,7 @@ plugins=(
 	vscode
 	sudo
 	web-search
-	z
+	# z
 	zsh-autosuggestions
 	zsh-syntax-highlighting
 	ohmyzsh-full-autoupdate
