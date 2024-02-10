@@ -47,7 +47,7 @@ bindkey '^R'      history-incremental-search-backward  # ctrl+r     search histo
 bindkey '^S'      history-incremental-search-forward   # ctrl+s     search history forward
 bindkey '^Q'      push-line-or-edit                    # ctrl+q     push line
 # delete
-bindkey '^U'      backward-kill-line                   # ctrl+u     delete from cursor to beginning of line  (default ^U)
+bindkey '^U'      kill-whole-line                      # ctrl+u     delete the whole line                     (zsh ^U)
 bindkey '^K'      kill-line                            # ctrl+k     delete from cursor to end of line
 bindkey '^W'      backward-kill-word                   # ctrl+w     delete previous word
 # [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}"  delete-char  # another way to bind delete
@@ -58,14 +58,32 @@ bindkey '^[[1;5C' forward-word                         # ctrl+right go forward o
 bindkey '^[[1;5D' backward-word                        # ctrl+left  go backward one word
 bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
 bindkey '^[[F'    end-of-line                          # end        go to the end of line
+# Ctrl + y - Paste
+# Ctrl + _ - Undo
 
 # default key bindings
 # bindkey '^?'      backward-delete-char                 # bs         delete one char backward                (default ^?)
-# bindkey '^L'      clear-screen                         # ctrl+l     clear screen                             (default ^L)
+# bindkey '^L'      clear-screen                         # ctrl+l     clear screen                            (default ^L)
 # bindkey '^[[D'    backward-char                 # left       move cursor one char backward
 # bindkey '^[[C'    forward-char                  # right      move cursor one char forward
 # bindkey '^[[A'    up-line-or-beginning-search   # up         prev command in history
 # bindkey '^[[B'    down-line-or-beginning-search # down       next command in history
+
+# alt+key
+bindkey '^[f'     forward-word                         # alt+f      go forward one word
+bindkey '^[b'     backward-word                        # alt+b      go backward one word
+bindkey '^[d'     kill-word                            # alt+d      delete next word
+bindkey '^[^?'    backward-kill-word                   # alt+bs     delete previous word
+bindkey '^[^H'    backward-kill-word                   # alt+bs     delete previous word
+# bindkey '^U'      backward-kill-line                   # ctrl+u     delete from cursor to beginning of line  (bash default ^U)
+bindkey '^[^W'    backward-kill-line                   # alt+w      delete from cursor to beginning of line (zsh ^[^U)
+bindkey '^[.'     insert-last-word                     # alt+.      insert last word of previous command
+# Alt +. or !$ - Previous commands last arguement !* - All arguments of previous command
+# Alt + l/u - Lowercase/Uppercase word
+# Alt + c - Capitalize Word
+# Alt + Del - Delete previous word
+# Alt + d - Delete next word
+# Alt + t - Swap current word with previous word
 
 # key bindings
 bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
