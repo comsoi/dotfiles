@@ -18,7 +18,7 @@ fi
 #export LANGUAGE=zh_CN.UTF-8
 
 # Preferred editor for local and remote sessions
-EDITOR='vim'
+export EDITOR='vim'
 if [[ -n $SSH_CONNECTION ]]; then
 	export VISUAL='vim'
 else
