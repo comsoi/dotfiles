@@ -1,0 +1,63 @@
+import = ['~/.config/alacritty/dracula.toml']
+live_config_reload = true
+working_directory = "C:/Users/Lenod/"
+
+[cursor.style]
+shape = "Beam"
+
+[cursor.vi_mode_style]
+shape = "Block"
+
+[font]
+size = 13
+
+[font.bold]
+family = "MesloLGS Nerd Font"
+style = "Bold"
+
+[font.bold_italic]
+family = "MesloLGS Nerd Font"
+style = "Bold Italic"
+
+[font.italic]
+family = "MesloLGS Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "MesloLGS Nerd Font"
+style = "Regular"
+
+[scrolling]
+# 自动滚动至最新行
+#auto_scroll = true
+# 每次滚动行数（分屏时）
+#faux_multiplier = 100	
+# 历史保留行数
+history = 10000
+# 每次滚动行数
+multiplier = 20
+
+[shell]
+args = [""]
+program = "nu"
+
+[window]
+decorations = "none"
+dynamic_padding = true
+opacity = 0.85
+# 窗口修饰
+# - full: 有边界 + 标题栏
+# - none: 无边界 + 标题栏
+startup_mode = "Maximized"
+
+[window.dimensions]
+columns = 140
+lines = 40
+
+[window.padding]
+x = 10
+y = 15
+
+[window.position]
+x = 150
+y = 200

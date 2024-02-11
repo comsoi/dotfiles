@@ -7,7 +7,7 @@
                 "action": "splitPane",
                 "split": "right"
             },
-            "keys": "alt+\\"
+            "keys": "alt+shift+\\"
         },
         {
             "command": {
@@ -70,14 +70,6 @@
         },
         {
             "command": "unbound",
-            "keys": "alt+shift+minus"
-        },
-        {
-            "command": "unbound",
-            "keys": "alt+shift+\\"
-        },
-        {
-            "command": "unbound",
             "keys": "ctrl+v"
         },
         {
@@ -93,11 +85,19 @@
             "keys": "alt+f4"
         },
         {
+            "command": "unbound",
+            "keys": "alt+minus"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+\\"
+        },
+        {
             "command": {
                 "action": "splitPane",
                 "split": "down"
             },
-            "keys": "alt+minus"
+            "keys": "alt+shift+minus"
         },
         {
             "command": {
@@ -172,7 +172,8 @@
         "defaults": {
             "colorScheme": "Fedora",
             "font": {
-                "face": "FiraCode Nerd Font"
+                "face": "FiraCode Nerd Font",
+                "size": 13.0
             },
             "historySize": 10000,
             "opacity": 90,
@@ -266,6 +267,14 @@
                 "source": "Windows.Terminal.Wsl"
             },
             {
+                "commandline": "C:\\Windows\\system32\\wsl.exe -d Mint21 -e zsh",
+                "guid": "{e301814f-8e41-55c3-92c1-ea2bbf081b3b}",
+                "hidden": false,
+                "icon": "D:\\data\\wsl\\Linux_Mint_logo_without_wordmark.png",
+                "name": "Mint21",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
                 "commandline": "C:\\Windows\\system32\\wsl.exe -d Debian -e bash",
                 "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
                 "hidden": false,
@@ -297,13 +306,6 @@
                 "hidden": false,
                 "icon": "D:\\data\\wsl\\Rocky_Linux_logo.png",
                 "name": "Rocky-9",
-                "source": "Windows.Terminal.Wsl"
-            },
-            {
-                "guid": "{e301814f-8e41-55c3-92c1-ea2bbf081b3b}",
-                "hidden": false,
-                "icon": "D:\\data\\wsl\\Linux_Mint_logo_without_wordmark.png",
-                "name": "Mint21",
                 "source": "Windows.Terminal.Wsl"
             }
         ]
@@ -377,6 +379,29 @@
             "selectionBackground": "#44475A",
             "white": "#BBBBBB",
             "yellow": "#F1FA8C"
+        },
+        {
+            "background": "#1E1C31",
+            "black": "#1E1C31",
+            "blue": "#91DDFF",
+            "brightBlack": "#585273",
+            "brightBlue": "#65B2FF",
+            "brightCyan": "#63F2F1",
+            "brightGreen": "#62D196",
+            "brightPurple": "#A37ACC",
+            "brightRed": "#F02E6E",
+            "brightWhite": "#8A889D",
+            "brightYellow": "#F2B482",
+            "cursorColor": "#A1EFD3",
+            "cyan": "#87DFEB",
+            "foreground": "#CBE3E7",
+            "green": "#A1EFD3",
+            "name": "Embark",
+            "purple": "#D4BFFF",
+            "red": "#F48FB1",
+            "selectionBackground": "#3E3859",
+            "white": "#CBE3E7",
+            "yellow": "#FFE6B3"
         },
         {
             "background": "#262626",
@@ -584,29 +609,6 @@
             "selectionBackground": "#FFFFFF",
             "white": "#D3D7CF",
             "yellow": "#C4A000"
-        },
-        {
-            "background": "#300A24",
-            "black": "#171421",
-            "blue": "#0037DA",
-            "brightBlack": "#767676",
-            "brightBlue": "#08458F",
-            "brightCyan": "#2C9FB3",
-            "brightGreen": "#26A269",
-            "brightPurple": "#A347BA",
-            "brightRed": "#C01C28",
-            "brightWhite": "#F2F2F2",
-            "brightYellow": "#A2734C",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#3A96DD",
-            "foreground": "#FFFFFF",
-            "green": "#26A269",
-            "name": "Ubuntu-20.04-ColorScheme",
-            "purple": "#881798",
-            "red": "#C21A23",
-            "selectionBackground": "#FFFFFF",
-            "white": "#CCCCCC",
-            "yellow": "#A2734C"
         },
         {
             "background": "#000000",
