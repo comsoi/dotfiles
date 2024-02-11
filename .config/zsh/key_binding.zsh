@@ -88,3 +88,13 @@ bindkey '^[.'     insert-last-word                     # alt+.      insert last 
 # key bindings
 bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
 bindkey '^X'      forward-word                         # ctrl+x     go forward one word
+# vim hjkl key bindings with alt
+bindkey '^[h'     backward-char                        # alt+h      move cursor one char backward
+bindkey '^[j'     down-line-or-beginning-search        # alt+j      next command in history
+bindkey '^[k'     up-line-or-beginning-search          # alt+k      prev command in history
+bindkey '^[l'     forward-char                         # alt+l      move cursor one char forward
+# ctrl+alt+key
+bindkey '^[^H'     backward-word                       # ctrl+alt+h go backward one word
+bindkey '^[^L'     forward-word                        # ctrl+alt+l go forward one word
+bindkey '^[u'     undo                                 # alt+u      undo
+bindkey '^[r'     redo                                 # alt+r      redo
