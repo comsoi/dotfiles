@@ -1,11 +1,16 @@
+#! /bin/bash
+
 #
 # ~/.bashrc
 #
 
 [[ -f ~/.zshenv ]] && . ~/.zshenv
 
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# [[ $- != *i* ]] && return  # If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -66,7 +71,7 @@ esac
 #
 # Some people use a different file for functions
 if [ -f "${HOME}/.bash_functions" ]; then
-	source "${HOME}/.bash_functions"
+	. "${HOME}/.bash_functions"
 fi
 
 # Alias definitions.
@@ -74,7 +79,7 @@ fi
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [ -f ~/.bash_aliases ]; then
-	. ~/.bash_aliases
+	. "${HOME}/.bash_aliases"
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -87,3 +92,8 @@ if ! shopt -oq posix; then
 		. /etc/bash_completion
 	fi
 fi
+
+# User configuration
+
+eval "$(zoxide init bash)"
+eval $(thefuck --alias)
