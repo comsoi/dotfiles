@@ -1,8 +1,8 @@
-#!usr/bin/zsh
+#! /bin/sh
+
 #
 # Alias
 #
-[[ $- != *i* ]] && return
 
 alias ..="cd .."
 alias ...="cd ../.."
@@ -15,6 +15,7 @@ alias wi='win32yank.exe -i'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias tree="tree -aC"
 alias p="pwd"
 alias v="lvim"
 alias r="ya"
@@ -36,9 +37,16 @@ fi
 if [ "$(command -v eza)" ]; then
 	alias l="eza -a --icons --group-directories-first"
 	alias ll="eza -al --icons --group-directories-first"
+	alias tree="eza --tree --icons --group-directories-first"
 fi
 
-alias tree="tree -aC"
+if [ "$(command -v trash-put)" ]; then
+	alias rm='echo "This is not the command you are looking for."; false'
+	alias trm="trash-put"
+	alias tls="trash-list"
+	alias trs="trash-restore"
+fi
+
 
 alias gs="git status"
 alias ga="git add -A"

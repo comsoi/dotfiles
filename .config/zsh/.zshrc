@@ -10,9 +10,7 @@ unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
 
-if [[ -r "${ZDOTDIR}/key_binding.zsh" ]]; then
-	source ${ZDOTDIR}/key_binding.zsh
-fi
+
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -31,27 +29,14 @@ if [[ "$(uname -sm)" = "Darwin arm64" ]] then export PATH=/opt/homebrew/bin:$PAT
 # Path to your oh-my-zsh installation.
 if [[ -r $HOME/.oh-my-zsh ]]; then
 	export ZSH="$HOME/.oh-my-zsh"
-	# Set name of the theme to load --- if set to "random", it will
-	# load a random theme each time oh-my-zsh is loaded, in which case,
-	# to know which specific one was loaded, run: echo $RANDOM_THEME
 	ZSH_THEME="powerlevel10k/powerlevel10k"
 	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(history)
 	POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-	# Set list of themes to pick from when loading at random
-	# Setting this variable when ZSH_THEME=random will cause zsh to load
-	# a theme from this variable instead of looking in $ZSH/themes/
-	# If set to an empty array, this variable will have no effect.
-	# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
-	# Uncomment the following line to use hyphen-insensitive completion.
-	# Case-sensitive completion must be off. _ and - will be interchangeable.
-	# HYPHEN_INSENSITIVE="true"
+	HYPHEN_INSENSITIVE="true"           # _ and - will be interchangeable.
 	zstyle ':omz:update' mode auto      # update automatically without asking
 	zstyle ':omz:update' frequency 26   # check for updates every 26 days
-	# Uncomment the following line to disable colors in ls.
-	# DISABLE_LS_COLORS="true"
-	# Uncomment the following line to enable command auto-correction.
-	# ENABLE_CORRECTION="true"
+	ENABLE_CORRECTION="true"
 	# Uncomment the following line to display red dots whilst waiting for completion.
 	# You can also set it to another string to have that shown instead of the default red dots.
 	# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
@@ -90,10 +75,6 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 	eval $(thefuck --alias)
 
 	source $ZSH/oh-my-zsh.sh
-
-	# key bindings
-	bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
-	bindkey '^X'      forward-word                         # ctrl+x     go forward one word
 else
 	eval "$(zoxide init zsh)"
 	eval $(thefuck --alias)
@@ -101,7 +82,7 @@ else
 	zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 	autoload -Uz compinit && compinit
 	# Plugins
-    if [[ -r /usr/share/zsh/plugins ]]; then
+	if [[ -r /usr/share/zsh/plugins ]]; then
 		source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 		source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 	else
@@ -123,8 +104,14 @@ fi
 
 # User configuration
 
+# key bindings
+if [[ -r "${ZDOTDIR}/key_binding.zsh" ]]; then
+	source ${ZDOTDIR}/key_binding.zsh
+fi
+
 # Initialize tools
 source $ZDOTDIR/function.zsh
 source $ZDOTDIR/.aliases
 
+# Set default environment variables
 setproxy > /dev/null
