@@ -12,6 +12,11 @@ alias -- -="cd -"
 alias wo='win32yank.exe -o'
 alias wi='win32yank.exe -i'
 
+# enable aliases in sudo
+alias sudo='sudo '
+# let sudo inherit the PATH
+alias sudop='command sudo env PATH="$PATH"'
+
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
