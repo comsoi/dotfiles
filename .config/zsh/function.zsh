@@ -6,11 +6,12 @@ if [ -f "${HOME}/.bash_functions" ]; then
 	source "${HOME}/.bash_functions"
 fi
 
-function set_terminal_title() {
+function set_terminal_title {
 	echo -en "\e]2;$@\a"
 }
 
-sudo-command-line() {
+# binding ctrl-s to sudo
+function sudo-command-line {
 	[[ -z $BUFFER ]] && zle up-history
 	local cmd="sudo "
 	if [[ ${BUFFER} == ${cmd}* ]]; then
@@ -23,10 +24,21 @@ sudo-command-line() {
 	zle reset-prompt
 }
 zle     -N   sudo-command-line
-# Ctrl-S
 bindkey '^S' sudo-command-line
 
-function gpr() {
+# Change cursor shape for different vi modes.
+function zle-keymap-select {
+	if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
+		echo -ne '\e[1 q'
+	elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] || [[ $KEYMAP = '' ]] || [[ $1 = 'beam' ]]; then
+		echo -ne '\e[5 q'
+	fi
+}
+zle -N zle-keymap-select
+# Start with beam shape cursor on zsh startup and after every command.
+zle-line-init() { zle-keymap-select 'beam'}
+
+function gpr {
 	local username=$(git config user.name)
 	if [ -z "$username" ]; then
 		echo "Please set your git username"
@@ -57,11 +69,11 @@ function gpr() {
 # https://gist.github.com/danydev/4ca4f5c523b19b17e9053dfa9feb246d
 # https://scarff.id.au/blog/2019/zsh-history-conditional-on-command-success/
 
-function __fd18et_prevent_write() {
+function __fd18et_prevent_write {
 	__fd18et_LASTHIST=$1
 	return 2
 }
-function __fd18et_save_last_successed() {
+function __fd18et_save_last_successed {
 	if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]] ; then
 		print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
 	fi
