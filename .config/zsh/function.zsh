@@ -27,6 +27,7 @@ zle     -N   sudo-command-line
 bindkey '^S' sudo-command-line
 
 # Change cursor shape for different vi modes.
+# Also fixes the cursor shape after exiting nvim.
 function zle-keymap-select {
 	if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
 		echo -ne '\e[1 q'

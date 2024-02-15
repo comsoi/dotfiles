@@ -2,14 +2,12 @@
 [[ $- != *i* ]] && return
 setopt AUTO_CD
 setopt INTERACTIVE_COMMENTS
-setopt MENU_COMPLETE
 setopt HIST_FCNTL_LOCK
 setopt HIST_IGNORE_ALL_DUPS
 setopt SHARE_HISTORY
 unsetopt AUTO_REMOVE_SLASH
 unsetopt HIST_EXPIRE_DUPS_FIRST
 unsetopt EXTENDED_HISTORY
-
 
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
@@ -19,8 +17,18 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# PATH
-if [[ "$(uname -sm)" = "Darwin arm64" ]] then export PATH=/opt/homebrew/bin:$PATH; fi
+# load OS specific config
+case `uname` in
+	Darwin)
+		# source $ZDOTDIR/zshrc-mac.zsh
+	;;
+	Linux)
+		# source $ZDOTDIR/zshrc-linux.zsh
+	;;
+	FreeBSD)
+		# commands for FreeBSD go here
+	;;
+esac
 
 # To customize prompt, run `p10k configure` or edit .p10k.zsh.
 [[ ! -f ${ZDOTDIR}/.p10k.zsh ]] || source ${ZDOTDIR}/.p10k.zsh

@@ -78,6 +78,7 @@ bindkey '^[^H'    backward-kill-word                   # alt+bs     delete previ
 # bindkey '^U'      backward-kill-line                   # ctrl+u     delete from cursor to beginning of line  (bash default ^U)
 bindkey '^[^W'    backward-kill-line                   # alt+w      delete from cursor to beginning of line (zsh ^[^U)
 bindkey '^[.'     insert-last-word                     # alt+.      insert last word of previous command
+# bash behave
 # Alt +. or !$ - Previous commands last arguement !* - All arguments of previous command
 # Alt + l/u - Lowercase/Uppercase word
 # Alt + c - Capitalize Word
@@ -90,11 +91,11 @@ bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one w
 bindkey '^X'      forward-word                         # ctrl+x     go forward one word
 # vim hjkl key bindings with alt
 bindkey '^[h'     backward-char                        # alt+h      move cursor one char backward
+bindkey '^[H'     backward-word                        # alt+H      move cursor one word backward
 bindkey '^[j'     down-line-or-beginning-search        # alt+j      next command in history
 bindkey '^[k'     up-line-or-beginning-search          # alt+k      prev command in history
 bindkey '^[l'     forward-char                         # alt+l      move cursor one char forward
-# ctrl+alt+key
-bindkey '^[^H'     backward-word                       # ctrl+alt+h go backward one word
-bindkey '^[^L'     forward-word                        # ctrl+alt+l go forward one word
+bindkey '^[L'     forward-word                         # alt+L      move cursor one word forward
+
 bindkey '^[u'     undo                                 # alt+u      undo
 bindkey '^[r'     redo                                 # alt+r      redo
