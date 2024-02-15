@@ -10,6 +10,12 @@ function set_terminal_title {
 	echo -en "\e]2;$@\a"
 }
 
+# TMUX auto attach
+# if not inside a tmux session, and if no session is started, start a new session
+function tmux {
+	command tmux attach || command tmux new-session
+}
+
 # binding ctrl-s to sudo
 function sudo-command-line {
 	[[ -z $BUFFER ]] && zle up-history

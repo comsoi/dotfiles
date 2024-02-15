@@ -25,6 +25,7 @@ alias p="pwd"
 alias v="lvim"
 alias r="ya"
 alias ipy='ipython'
+alias code.='code .'
 
 if [ -x /usr/bin/dircolors ]; then
 	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"

@@ -86,9 +86,6 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 else
 	eval "$(zoxide init zsh)"
 	eval $(thefuck --alias)
-	# case-insensitive auto-complete matches
-	zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-	autoload -Uz compinit && compinit
 	# Plugins
 	if [[ -r /usr/share/zsh/plugins ]]; then
 		source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -110,11 +107,15 @@ else
 	fi
 fi
 
+
 # User configuration
 
-# key bindings
 if [[ -r "${ZDOTDIR}/key_binding.zsh" ]]; then
 	source ${ZDOTDIR}/key_binding.zsh
+fi
+
+if [[ -r "${ZDOTDIR}/completion.zsh" ]]; then
+    source ${ZDOTDIR}/completion.zsh
 fi
 
 # Initialize tools
