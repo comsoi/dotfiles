@@ -20,10 +20,9 @@ alias sudop='command sudo env PATH="$PATH"'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-alias tree="tree -aC"
-alias p="pwd"
-alias v="lvim"
-alias r="ya"
+alias tree='tree -aC'
+alias v='lvim'
+alias r='ya'
 alias ipy='ipython'
 alias code.='code .'
 
@@ -38,6 +37,7 @@ if [ -x /usr/bin/dircolors ]; then
 	alias grep='grep --color=auto'
 	alias fgrep='fgrep --color=auto'
 	alias egrep='egrep --color=auto'
+	alias diff='diff --color=auto'
 fi
 
 if [ "$(command -v eza)" ]; then

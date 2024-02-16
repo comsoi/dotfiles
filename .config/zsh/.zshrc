@@ -98,7 +98,7 @@ else
 	if [[ -r "${ZDOTDIR}/.powerlevel10k" ]]; then
 		POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 		source ${ZDOTDIR}/.powerlevel10k/powerlevel10k.zsh-theme
-		elif [[ -r /usr/share/zsh-theme-powerl220evel10k ]]; then
+		elif [[ -r /usr/share/zsh-theme-powerlevel10k ]]; then
 		POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 		source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 		elif [[ -r "${HOME}/.powerlevel10k" ]]; then
