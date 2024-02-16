@@ -47,7 +47,7 @@ bindkey '^R'      history-incremental-search-backward  # ctrl+r     search histo
 bindkey '^S'      history-incremental-search-forward   # ctrl+s     search history forward
 bindkey '^Q'      push-line-or-edit                    # ctrl+q     push line
 # delete
-bindkey '^U'      kill-whole-line                      # ctrl+u     delete the whole line                     (zsh ^U)
+bindkey '^U'      kill-whole-line                      # ctrl+u     delete the whole line             (zsh ^U)
 bindkey '^K'      kill-line                            # ctrl+k     delete from cursor to end of line
 bindkey '^W'      backward-kill-word                   # ctrl+w     delete previous word
 # [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}"  delete-char  # another way to bind delete
@@ -62,12 +62,12 @@ bindkey '^[[F'    end-of-line                          # end        go to the en
 # Ctrl + _ - Undo
 
 # default key bindings
-# bindkey '^?'      backward-delete-char                 # bs         delete one char backward                (default ^?)
-# bindkey '^L'      clear-screen                         # ctrl+l     clear screen                            (default ^L)
-# bindkey '^[[D'    backward-char                 # left       move cursor one char backward
-# bindkey '^[[C'    forward-char                  # right      move cursor one char forward
-# bindkey '^[[A'    up-line-or-beginning-search   # up         prev command in history
-# bindkey '^[[B'    down-line-or-beginning-search # down       next command in history
+# bindkey '^?'      backward-delete-char                 # bs         delete one char backward        (default ^?)
+# bindkey '^L'      clear-screen                         # ctrl+l     clear screen                    (default ^L)
+# bindkey '^[[D'    backward-char                        # left       move cursor one char backward
+# bindkey '^[[C'    forward-char                         # right      move cursor one char forward
+# bindkey '^[[A'    up-line-or-beginning-search          # up         prev command in history
+# bindkey '^[[B'    down-line-or-beginning-search        # down       next command in history
 
 # alt+key
 bindkey '^[f'     forward-word                         # alt+f      go forward one word
