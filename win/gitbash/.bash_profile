@@ -1,9 +1,7 @@
+#!/usr/bin/env bash
 #
 # ~/.bash_profile
 #
-
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
 
 if [ -f "$HOME/.bashrc" ]; then
 . "$HOME/.bashrc"
@@ -86,85 +84,11 @@ case "$TERM" in
 		;;
 esac
 
-if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	alias dir='dir --color=auto'
-	alias vdir='vdir --color=auto'
-	alias grep='grep --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
-fi
-
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
 
 #==============================================================================
-
-function tmux() {
-  # execute tmux with script
-  TMUX="command tmux ${@}"
-  SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
-}
-
-function ya() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
-
-function noproxy {
-	unset ALL_PROXY
-	unset HTTP_PROXY
-	unset HTTPS_PROXY
-	unset NO_PROXY
-	echo "Proxy settings removed."
-}
-
-function setproxy() {
-	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	local IP="127.0.0.1"
-	local PORT="2080"
-	local PROT="socks5"
-
-	for arg in "$@"; do
-		case "$arg" in
-			"-socks" | "-socks5")     # set socks proxy (local DNS)
-				PROT="socks5"
-				;;
-			"-socks5h")               # set socks proxy (remote DNS)
-				PROT="socks5h"
-				;;
-			"-http" | "-https")                  # set HTTP proxy
-				PROT="http"
-				;;
-			*)
-				if [[ "$arg" != -* ]]; then
-					PORT="$arg"
-				fi
-				;;
-		esac
-	done
-
-	local PROXY="$PROT://$IP:$PORT"
-
-	export HTTP_PROXY="$PROXY"
-	export HTTPS_PROXY="$PROXY"
-	export ALL_PROXY="$PROXY"
-	export NO_PROXY="localhost,127.0.0.1"
-	echo "Proxy set to: $PROXY"
-}
-
-
 
 # 显示 用户 @ 主机
 # export PS1="\u@\h \W\[\033[32m\]\$(parse_git_branch)\[\033[00m\] $ "
@@ -175,31 +99,25 @@ function setproxy() {
 # 显示全路径
 #export PS1="\[\e[32;1m\]\w $\[\e[0m\]\[\033[32m\]\$(parse_git_branch)\[\033[00m\] "
 
-
-alias python3='python'
-alias ipy='ipython'
-if [ "$(command -v eza)" ]; then
-	alias l="eza -a --icons --group-directories-first -I='NTUSER.*|ntuser.*'"
-	alias ll="eza -al --icons --group-directories-first"
-fi
-
 export LANG=zh_CN.UTF-8
 export LANGUAGE=zh_CN.UTF-8
 #export LC_ALL=zh_CN.UTF-8
 
-
 # export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 # chcp.com 65001
-export PROMPT_COMMAND='history -a'
-
+export PROMPT_COMMAND='history -a;echo -en "\x1b[\x35 q"'
 
 # if [ -t 1 ]; then
 #   exec zsh
 # fi
+
+if [ -f ~/.aliases_func ]; then
+    . ~/.aliases_func
+fi
+
 eval "$(zoxide init bash)"
 
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path bash)"
-
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

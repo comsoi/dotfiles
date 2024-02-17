@@ -42,6 +42,8 @@ function zle-keymap-select {
 	fi
 }
 zle -N zle-keymap-select
+# initial cursor shape
+echo -ne '\e[5 q' > /dev/tty
 # Start with beam shape cursor on zsh startup and after every command.
 zle-line-init() { zle-keymap-select 'beam'}
 

@@ -9,8 +9,10 @@ alias ...="cd ../.."
 alias ~="cd ~"
 alias -- -="cd -"
 
-alias wo='win32yank.exe -o'
-alias wi='win32yank.exe -i'
+if [ "$(command -v win32yank.exe)" ]; then
+	alias wcp='win32yank.exe -i'
+	alias wps='win32yank.exe -o'
+fi
 
 # enable aliases in sudo
 alias sudo='sudo '

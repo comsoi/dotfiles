@@ -10,18 +10,29 @@
 #starship
 use ~/.cache/starship/init.nu
 
+# conda
+use ~/.config/nushell/scripts/conda.nu
+$env.CONDA_NO_PROMPT = true
+
 # Aliases
-    alias e. = explorer .
-    alias v = wsl lvim
-    alias ub = wsl -d ubuntu-18.04
-    alias fe = wsl -d fedoraremix -e bash
-    alias arch = wsl -d ArchWSL -e zsh
-    alias nixos = wsl -d nixos
-    $env.HTTP_PROXY = '127.0.0.1:2080'
+alias e. = explorer .
+alias e = explorer
+alias zellij = wsl -d Ubuntu-20 zellij
+alias ub = wsl -d Ubuntu-20 -e zsh
+alias fe = wsl -d fedoraremix
+alias arch = wsl -d ArchWSL -e zsh
+alias nixos = wsl -d nixos
+alias mint = wsl -d Mint21 -e zsh
+alias l = exa -a --icons --group-directories-first -I='NTUSER.*|ntuser.*'
+alias ll = exa -al --icons --group-directories-first -I='NTUSER.*|ntuser.*'
+
+if ($nu.os-info.name == "windows") {
+    # print "Windows detected"
     $env.EDITOR = 'code'
+    $env.HTTP_PROXY = '127.0.0.1:2080'
+}
 
-
-
+#warpper for yazi
 def --env ya [...args] {
 	let tmp = (mktemp -t "yazi-cwd.XXXXX")
 	yazi ...$args --cwd-file $tmp
@@ -170,7 +181,9 @@ let light_theme = {
 # The default config record. This is where much of your global configuration is setup.
 $env.config = {
     show_banner: false # true or false to enable or disable the welcome banner at startup
+    shell_integration: ("WEZTERM_PANE" not-in $env) # disabled when nushell is loaded by WezTerm, see: https://github.com/nushell/nushell/issues/5585
 
+    # default settings
     ls: {
         use_ls_colors: true # use the LS_COLORS environment variable to colorize output
         clickable_links: true # enable or disable clickable links. Your terminal has to support links.
@@ -259,7 +272,7 @@ $env.config = {
     use_ansi_coloring: true
     bracketed_paste: true # enable bracketed paste, currently useless on windows
     edit_mode: emacs # emacs, vi
-    shell_integration: false # enables terminal shell integration. Off by default, as some terminals have issues with this.
+    # shell_integration: true # enables terminal shell integration. Off by default, as some terminals have issues with this.
     render_right_prompt_on_last_line: false # true or false to enable or disable right prompt to be rendered on last line of the prompt.
     use_kitty_protocol: false # enables keyboard enhancement protocol implemented by kitty console, only if your terminal support this.
     highlight_resolved_externals: false # true enables highlighting of external commands in the repl resolved by which.
@@ -786,8 +799,3 @@ $env.config = {
         }
     ]
 }
-
-
-# conda
-use ~/.config/nushell/scripts/conda.nu
-$env.CONDA_NO_PROMPT = true
