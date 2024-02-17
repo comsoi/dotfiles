@@ -23,16 +23,6 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-	alias ls='ls --color=auto'
-	alias dir='dir --color=auto'
-	alias vdir='vdir --color=auto'
-	alias grep='grep --color=auto'
-	alias fgrep='fgrep --color=auto'
-	alias egrep='egrep --color=auto'
-fi
-
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -121,98 +111,20 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
 export LANG=zh_CN.UTF-8
 #export LC_ALL=zh_CN.UTF-8
 #export LANGUAGE=zh_CN.UTF-8
 export PYTHONIOENCODING=UTF-8
 export JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF8"
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-alias la='ls -A'
-alias l='ls -aCF'
-alias ll='ls -alF'
-alias ipy='ipython'
-if [ "$(command -v eza)" ]; then
-	alias l="eza -a --icons --group-directories-first -I='NTUSER.*|ntuser.*'"
-	alias ll="eza -al --icons --group-directories-first"
+if [ -f ~/.aliases_func ]; then
+    . ~/.aliases_func
 fi
-
-function tmux() {
-	# execute tmux with script
-	local TMUX="command tmux ${@}"
-	local SHELL=/usr/bin/bash script -qO /dev/null -c "eval $TMUX"
-}
-
-function ya() {
-	tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
-}
-
-function noproxy {
-	unset ALL_PROXY
-	unset HTTP_PROXY
-	unset HTTPS_PROXY
-	unset NO_PROXY
-	echo "Proxy settings removed."
-}
-
-function setproxy() {
-	# IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
-	local IP="127.0.0.1"
-	local PORT="2080"
-	local PROT="socks5"
-
-	for arg in "$@"; do
-		case "$arg" in
-			"-socks" | "-socks5")     # set socks proxy (local DNS)
-				PROT="socks5"
-				;;
-			"-socks5h")               # set socks proxy (remote DNS)
-				PROT="socks5h"
-				;;
-			"-http" | "-https")                  # set HTTP proxy
-				PROT="http"
-				;;
-			*)
-				if [[ "$arg" != -* ]]; then
-					PORT="$arg"
-				fi
-				;;
-		esac
-	done
-
-	local PROXY="$PROT://$IP:$PORT"
-
-	export HTTP_PROXY="$PROXY"
-	export HTTPS_PROXY="$PROXY"
-	export ALL_PROXY="$PROXY"
-	export NO_PROXY="localhost,127.0.0.1"
-	echo "Proxy set to: $PROXY"
-}
+# initial cursor shape
+echo -ne '\e[5 q'
 
 setproxy > /dev/null
 
