@@ -1,17 +1,23 @@
 local wezterm = require("wezterm")
 local launch_menu = {}
 local default_prog = {}
-local set_environment_variables = {CHERE_INVOKING= "1"}
+-- global env vars
+local set_environment_variables = {
+    -- CHERE_INVOKING = "1"
+}
 local term = "xterm-256color"
 local wsl_domains = wezterm.default_wsl_domains()
 
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     term = "xterm-256color"
+    set_environment_variables = {
+        -- CHERE_INVOKING = "1"
+    }
     -- term = "wezterm"
     default_prog = {"nu.exe"}
     table.insert(launch_menu, {
         label = "Zsh",
-        args = {"D:/Scoop/apps/git/current/usr/bin/zsh.exe","-l"}
+        args = {"D:/Scoop/apps/git/current/usr/bin/zsh.exe", "-l"}
     })
     table.insert(launch_menu, {
         label = "PowerShell",
@@ -23,7 +29,7 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     })
     table.insert(launch_menu, {
         label = "nushell",
-        args = {"nu.exe"}
+        args = {"D:/Scoop/apps/nu/current/nu.exe"}
     })
     table.insert(launch_menu, {
         label = "wsl:ubuntu-20.04",
@@ -83,6 +89,22 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
     }}
 end)
 
+-- Scrollbar hidden
+-- https://github.com/wez/wezterm/issues/4331
+wezterm.on("update-status", function(window, pane)
+    local overrides = window:get_config_overrides() or {}
+    if not overrides.colors then
+        overrides.colors = {}
+    end
+    -- if pane:is_alt_screen_active() then
+    --     overrides.colors.scrollbar_thumb = "transparent"
+    -- else
+    --     overrides.colors.scrollbar_thumb = nil
+    -- end
+    overrides.colors.scrollbar_thumb = "transparent"
+    window:set_config_overrides(overrides)
+end)
+
 local function is_vim(pane)
     -- this is set by the plugin, and unset on ExitPre in Neovim
     return pane:get_user_vars().IS_NVIM == 'true' or pane:get_user_vars().IS_VIM == 'true'
@@ -123,13 +145,41 @@ local function split_nav(resize_or_move, key)
 end
 
 local config = {
-    initial_cols = 100,
-    initial_rows = 28,
+    check_for_updates = false,
+
+    initial_cols = 110,
+    initial_rows = 35,
 
     audible_bell = "Disabled",
-    check_for_updates = false,
-    -- 主题
+
+    -- 样式
+    default_cursor_style = "BlinkingBar",
     color_scheme = 'Dracula (Official)',
+    -- windows
+    window_decorations = "RESIZE",
+    window_background_opacity = 0.9,
+    window_padding = {
+        left = 20,
+        right = 20,
+        top = 20,
+        bottom = 5
+    },
+    -- Tab bar
+    enable_tab_bar = true,
+    use_fancy_tab_bar = false,
+    hide_tab_bar_if_only_one_tab = true,
+    show_tab_index_in_tab_bar = true,
+    tab_max_width = 25,
+    tab_bar_at_bottom = false,
+    -- Fonts
+    font_size = 13.0,
+    -- line_height = 1.2,
+    font = wezterm.font_with_fallback {'Fira Code', {
+        family = 'Microsoft YaHei',
+        scale = 1
+    }},
+    -- text_background_opacity = 0.9,
+
     enable_scroll_bar = true,
     inactive_pane_hsb = {
         hue = 1.0,
@@ -139,18 +189,13 @@ local config = {
     launch_menu = launch_menu,
     term = term,
     default_prog = default_prog,
-    font_size = 11.0,
+
     leader = {
         key = "a",
         mods = "CTRL"
     },
     disable_default_key_bindings = false,
-    -- Tab bar
-    enable_tab_bar = true,
-    hide_tab_bar_if_only_one_tab = false,
-    show_tab_index_in_tab_bar = true,
-    tab_bar_at_bottom = true,
-    tab_max_width = 25,
+
     keys = { -- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
     {
         key = 'F9',
