@@ -38,9 +38,6 @@ esac
 if [[ -r $HOME/.oh-my-zsh ]]; then
 	export ZSH="$HOME/.oh-my-zsh"
 	ZSH_THEME="powerlevel10k/powerlevel10k"
-	POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(history)
-	POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-
 	HYPHEN_INSENSITIVE="true"           # _ and - will be interchangeable.
 	zstyle ':omz:update' mode auto      # update automatically without asking
 	zstyle ':omz:update' frequency 26   # check for updates every 26 days
