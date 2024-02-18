@@ -18,6 +18,8 @@ endif
 " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if (has("termguicolors"))
     set termguicolors
+else
+    echoerr "Your version of Vim doesn't support termguicolors"
 endif
 
 " set cursor style
@@ -114,6 +116,10 @@ xnoremap <Leader>y "+y
 xnoremap <Leader>p "+p
 xnoremap <Leader>P "+P
 
+" map <F3> :set paste<CR>
+set pastetoggle=<F3>
+
+
 " basic settings
 " Turn syntax highlighting on.
 syntax on
@@ -124,7 +130,11 @@ filetype plugin on
 " Load an indent file for the detected file type.
 filetype indent on
 " enable mouse
-set mouse=a
+if has('mouse')
+    set mouse=a
+else
+    echoerr "Your version of Vim doesn't support mouse"
+endif
 
 " Disable compatibility with vi which can cause unexpected issues.
 set nocompatible
@@ -148,7 +158,7 @@ set modeline
 " Specifies the number of lines at the beginning and end of the file to check for modelines.
 set modelines=2
 " Specifies the minimum number of lines to keep above and below the cursor when scrolling.
-set scrolloff=0
+set scrolloff=5
 
 " Automatically indents new lines based on the previous line's indentation.
 set smartindent
