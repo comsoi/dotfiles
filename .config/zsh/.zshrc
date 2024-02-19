@@ -65,7 +65,7 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 		node
 		npm
 		nvm
-		yarn
+		# yarn
 		volta
 		vscode
 		sudo
@@ -107,17 +107,22 @@ fi
 
 # User configuration
 
+# Initialize tools
+[[ -f ~/.config/.fzf/.fzf.zsh ]] && source ~/.config/.fzf/.fzf.zsh
+
+# Enhanced
 if [[ -r "${ZDOTDIR}/key_binding.zsh" ]]; then
 	source ${ZDOTDIR}/key_binding.zsh
 fi
-
 if [[ -r "${ZDOTDIR}/completion.zsh" ]]; then
-    source ${ZDOTDIR}/completion.zsh
+	source ${ZDOTDIR}/completion.zsh
 fi
-
-# Initialize tools
-source $ZDOTDIR/function.zsh
-source $ZDOTDIR/.aliases
+if [[ -r "${ZDOTDIR}/function.zsh" ]]; then
+	source ${ZDOTDIR}/function.zsh
+fi
+if [[ -r "${ZDOTDIR}/.aliases" ]]; then
+	source ${ZDOTDIR}/.aliases
+fi
 
 # Set default environment variables
 setproxy -http > /dev/null
