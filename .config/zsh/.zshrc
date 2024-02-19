@@ -120,4 +120,4 @@ source $ZDOTDIR/function.zsh
 source $ZDOTDIR/.aliases
 
 # Set default environment variables
-setproxy > /dev/null
+setproxy -http > /dev/null
