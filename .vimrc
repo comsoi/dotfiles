@@ -93,7 +93,11 @@ if (empty($TMUX))
 endif
 
 " colorscheme
-colorscheme sacredforest
+if filereadable(expand("$HOME/.vim/colors/sacredforest.vim"))
+    colorscheme sacredforest
+else
+    colorscheme desert
+endif
 
 
 " ---------- 快捷键 ---------- ---
