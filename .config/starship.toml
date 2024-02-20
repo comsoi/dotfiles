@@ -49,7 +49,8 @@ format = "[$symbol]($style)"
 [os.symbols]
 Windows = " " # \ue62a
 Linux = " " # \uebc6
-Ubuntu = " " # \uebc9
+# Ubuntu = " " # \uebc9
+Ubuntu = "  " # \uf31b
 Debian = " " # \uebc5
 CentOS = " " # \uf304
 Fedora =" " # \uf30a

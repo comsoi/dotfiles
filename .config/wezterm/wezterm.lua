@@ -193,13 +193,26 @@ local config = {
     color_scheme = 'Dracula (Official)',
     -- windows
     window_decorations = "RESIZE", -- |MACOS_FORCE_DISABLE_SHADOW
-    window_background_opacity = 0.9,
+    window_background_opacity = 0.88,
     window_padding = {
         left = 20,
         right = 20,
         top = 20,
         bottom = 5
     },
+    win32_system_backdrop = 'Acrylic',
+    -- window_background_opacity = 0,
+    -- win32_system_backdrop = 'Mica',
+    -- win32_system_backdrop = 'Tabbed',
+    -- background = {
+    --     {
+    --         source = {
+    --             File = "D:\\bg\\abg\\(pid-56669634)博麗霊夢_p0.png",
+    --         },
+    --         opacity = 0.33,
+    --     }
+    -- },
+
     -- Tab bar
     enable_tab_bar = true,
     use_fancy_tab_bar = false,
@@ -210,10 +223,18 @@ local config = {
     -- Fonts
     font_size = 13.0,
     -- line_height = 1.2,
-    font = wezterm.font_with_fallback {'Fira Code', {
-        family = 'Microsoft YaHei',
-        scale = 1
-    }},
+    font = wezterm.font_with_fallback{
+        'Fira Code',
+        {
+            family = 'Microsoft YaHei',
+            scale = 1
+        },
+        'PingFang SC',
+        'Symbols Nerd Font',
+        'Segoe UI Emoji',
+        'Noto Emoji',
+        'Noto Color Emoji',
+    },
     -- text_background_opacity = 0.9,
 
     enable_scroll_bar = true,
@@ -375,9 +396,10 @@ action = act.ActivateKeyTable {
 {key = "v", mods = "SHIFT|CTRL", action = wezterm.action{PasteFrom = "Clipboard"}},
 {key = "c", mods = "SHIFT|CTRL", action = wezterm.action{CopyTo = "Clipboard"}},
 }
--- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
--- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
+
 config.mouse_bindings = {{
+    -- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
+    -- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
     event = {
         Down = {
             streak = 1,
