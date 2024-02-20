@@ -11,11 +11,9 @@ local wsl_domains = wezterm.default_wsl_domains()
 
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     term = "xterm-256color"
-    set_environment_variables = {
-        -- CHERE_INVOKING = "1"
-    }
     -- term = "wezterm"
-    default_prog = {"nu.exe"}
+    set_environment_variables = {}
+    default_prog = {"D:/Scoop/apps/nu/current/nu.exe"}
     table.insert(launch_menu, {
         label = "Zsh",
         args = {"D:/Scoop/apps/git/current/usr/bin/zsh.exe", "-l"}
@@ -25,35 +23,62 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
         args = {"pwsh.exe", "-NoLogo"}
     })
     table.insert(launch_menu, {
+        label = "Ubuntu-20",
+        args = {"wsl.exe", "-d", "Ubuntu-20"}
+    })
+    table.insert(launch_menu, {
+        label = "ArchWSL",
+        args = {"wsl.exe", "-d", "ArchWSL", "-e", "zsh"}
+    })
+    table.insert(launch_menu, {
+        label = "MSYS2",
+        args = {"D:/Scoop/apps/msys2/current/msys2_shell.cmd", "-defterm", "-no-start", "-use-full-path", "-here", "-msys", "-shell", "fish"}
+    })
+    table.insert(launch_menu, {
+        label = "MSYS2/UCRT64",
+        args = {"D:/Scoop/apps/msys2/current/msys2_shell.cmd", "-defterm", "-no-start", "-here", "-ucrt64", "-shell", "zsh"}
+    })
+    table.insert(launch_menu, {
         label = "cmder",
         args = {"cmd.exe", "/k", "title Cmder/Cmd & ", "%CMDER_ROOT%\\vendor\\init.bat"}
+    })
+    table.insert(launch_menu, {
+        label = "Fedora",
+        args = {"wsl.exe", "-d", "fedoraremix", "-e", "zsh"}
+    })
+    table.insert(launch_menu, {
+        label = "Mint21",
+        args = {"wsl.exe", "-d", "Mint21", "-e", "zsh"}
     })
     table.insert(launch_menu, {
         label = "nushell",
         args = {"D:/Scoop/apps/nu/current/nu.exe"}
     })
-    table.insert(launch_menu, {
-        label = "wsl:ubuntu-20.04",
-        args = {"wezterm.exe", "ssh", "ubuntu@127.0.0.1:2222"}
-    })
 
     -- Find installed visual studio version(s) and add their compilation
     -- environment command prompts to the menu
-    for _, vsvers in ipairs(wezterm.glob('Microsoft Visual Studio/20*', 'C:/Program Files (x86)')) do
+    for _, vsvers in
+        ipairs(
+        wezterm.glob('Microsoft Visual Studio/20*', 'C:/Program Files')
+        )
+    do
         local year = vsvers:gsub('Microsoft Visual Studio/', '')
         table.insert(launch_menu, {
-            label = 'x64 Native Tools VS ' .. year,
-            args = {'cmd.exe', '/k',
-                    'C:/Program Files (x86)/' .. vsvers .. '/BuildTools/VC/Auxiliary/Build/vcvars64.bat'}
+            label = 'Developer Command Prompt for VS ' .. year,
+            args = {'cmd.exe', '/k', 'C:/Program Files/' .. vsvers .. '/Community/Common7/Tools/VsDevCmd.bat',
+                    '-arch=x64',
+                    '-host_arch=x64',
+                    '&',
+                    '%CMDER_ROOT%\\vendor\\init.bat'}
         })
+        table.insert(launch_menu, {
+            label = 'Developer Pwsh for VS ' .. year,
+            args = {'pwsh.exe', '-noe', '-c',
+                    '&{Import-Module "C:/Program Files/' .. vsvers .. '/Community/Common7/Tools/Microsoft.VisualStudio.DevShell.dll"; Enter-VsDevShell f14d0f99}'}
+})
+
     end
 
-elseif wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
-    table.insert(launch_menu, {
-        label = 'Bash',
-        args = {'bash', '-l'}
-    })
-    default_prog = {'bash', '-l'}
 else
     table.insert(launch_menu, {
         label = "bash",
@@ -67,7 +92,7 @@ else
         label = "fish",
         args = {"fish", "-l"}
     })
-    default_prog = {'zsh', '-l'}
+    default_prog = {'zsh'}
 end
 
 -- Tab title
@@ -167,7 +192,7 @@ local config = {
     default_cursor_style = "BlinkingBar",
     color_scheme = 'Dracula (Official)',
     -- windows
-    window_decorations = "RESIZE",
+    window_decorations = "RESIZE", -- |MACOS_FORCE_DISABLE_SHADOW
     window_background_opacity = 0.9,
     window_padding = {
         left = 20,
@@ -311,9 +336,11 @@ action = act.ActivateKeyTable {
 {key = "\\", mods = "LEADER", action = act{SplitHorizontal = {domain = "CurrentPaneDomain"}}},
 {key = "m", mods = "LEADER", action = "TogglePaneZoomState"},
 {key = "c", mods = "LEADER", action = act{SpawnTab = "CurrentPaneDomain"}},
-
 -- Tab navigation
+{key = 'S', mods = 'SHIFT|ALT', action =act.ShowLauncherArgs{flags = 'FUZZY|TABS|LAUNCH_MENU_ITEMS'},},
 {key = 'F9', mods = 'ALT', action = wezterm.action.ShowTabNavigator},
+{key = 'F10', mods = 'ALT', action = wezterm.action.ShowLauncher},
+{key = 'z' , mods = 'LEADER', action = wezterm.action.ShowLauncher},
 {key="n", mods="LEADER", action = act.ActivateTabRelative(1)},
 {key="p", mods="LEADER", action = act.ActivateTabRelative(-1)},
 {key = "1", mods = "LEADER", action = wezterm.action{ActivateTab = 0}},
