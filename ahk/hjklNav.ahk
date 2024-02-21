@@ -3,4 +3,5 @@
 !l::Send, {Right}
 !j::Send, {Down}
 !k::Send, {Up}
-#IfWinActive
+#IfWinActive  ahk_exe wezterm-gui.exe
+#c::Send, {#c}

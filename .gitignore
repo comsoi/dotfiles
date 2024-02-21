@@ -3,3 +3,4 @@
 .zsh_history
 .bash_history
 .zcompdump*
+starship.toml

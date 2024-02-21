@@ -4,17 +4,17 @@
     "actions": [
         {
             "command": {
+                "action": "moveFocus",
+                "direction": "down"
+            },
+            "keys": "alt+shift+j"
+        },
+        {
+            "command": {
                 "action": "splitPane",
                 "split": "right"
             },
             "keys": "alt+shift+\\"
-        },
-        {
-            "command": {
-                "action": "moveFocus",
-                "direction": "down"
-            },
-            "keys": "alt+j"
         },
         {
             "command": {
@@ -23,11 +23,7 @@
             }
         },
         {
-            "command": {
-                "action": "moveFocus",
-                "direction": "up"
-            },
-            "keys": "alt+k"
+            "command": "paste"
         },
         {
             "command": {
@@ -37,18 +33,11 @@
             "keys": "alt+up"
         },
         {
-            "command": "paste"
-        },
-        {
             "command": {
-                "action": "resizePane",
-                "direction": "left"
+                "action": "moveFocus",
+                "direction": "up"
             },
-            "keys": "alt+shift+h"
-        },
-        {
-            "command": "find",
-            "keys": "ctrl+shift+f"
+            "keys": "alt+shift+k"
         },
         {
             "command": {
@@ -60,9 +49,27 @@
         },
         {
             "command": {
+                "action": "resizePane",
+                "direction": "left"
+            },
+            "keys": "ctrl+alt+shift+h"
+        },
+        {
+            "command": "find",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "command": {
                 "action": "globalSummon"
             },
             "keys": "alt+t"
+        },
+        {
+            "command": {
+                "action": "splitPane",
+                "split": "down"
+            },
+            "keys": "alt+shift+minus"
         },
         {
             "command": "unbound",
@@ -93,18 +100,31 @@
             "keys": "alt+\\"
         },
         {
-            "command": {
-                "action": "splitPane",
-                "split": "down"
-            },
-            "keys": "alt+shift+minus"
+            "command": "unbound",
+            "keys": "alt+k"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+j"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+l"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+g"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+x"
         },
         {
             "command": {
                 "action": "moveFocus",
                 "direction": "right"
             },
-            "keys": "alt+l"
+            "keys": "alt+shift+l"
         },
         {
             "command": {
@@ -117,51 +137,64 @@
                 "action": "moveFocus",
                 "direction": "left"
             },
-            "keys": "alt+g"
+            "keys": "alt+shift+h"
         },
         {
             "command": {
                 "action": "resizePane",
                 "direction": "right"
             },
-            "keys": "alt+shift+l"
+            "keys": "ctrl+alt+shift+l"
         },
         {
             "command": "closePane",
-            "keys": "alt+x"
+            "keys": "ctrl+shift+x"
         },
         {
             "command": {
                 "action": "resizePane",
                 "direction": "down"
             },
-            "keys": "alt+shift+j"
+            "keys": "ctrl+alt+shift+j"
         },
         {
             "command": {
-                "action": "resizePane",
-                "direction": "up"
+                "action": "sendInput",
+                "input": "\u001b[13;5u"
             },
-            "keys": "alt+shift+k"
+            "keys": "ctrl+enter"
         },
         {
             "command": "openSystemMenu",
             "keys": "ctrl+space"
         },
         {
-            "command": "closeWindow"
+            "command": {
+                "action": "resizePane",
+                "direction": "up"
+            },
+            "keys": "ctrl+alt+shift+k"
+        },
+        {
+            "command": {
+                "action": "sendInput",
+                "input": "\u001b[13;2u"
+            },
+            "keys": "shift+enter"
         }
     ],
     "alwaysOnTop": false,
     "alwaysShowNotificationIcon": true,
     "alwaysShowTabs": true,
     "autoHideWindow": false,
+    "centerOnLaunch": true,
     "copyFormatting": "none",
     "copyOnSelect": false,
     "defaultProfile": "{5fca3c4d-0eae-4dd0-9e0f-0e23bc893c5f}",
     "firstWindowPreference": "defaultProfile",
     "focusFollowMouse": true,
-    "initialCols": 100,
+    "initialCols": 110,
+    "initialRows": 35,
     "minimizeToNotificationArea": true,
     "newTabMenu": [
         {
@@ -177,12 +210,11 @@
             },
             "historySize": 10000,
             "opacity": 90,
-            "useAcrylic": true,
-            "useAtlasEngine": true
+            "useAcrylic": true
         },
         "list": [
             {
-                "colorScheme": "Dracula",
+                "colorScheme": "Catppuccin Frappe",
                 "commandline": "D:\\Scoop\\apps\\git\\current\\usr\\bin\\zsh.exe  --login -i",
                 "guid": "{c891c3d2-b798-4857-83c0-89bf2ea34021}",
                 "icon": "D:\\Scoop\\apps\\git\\current\\mingw64\\share\\git\\git-for-windows.ico",
@@ -282,7 +314,7 @@
                 "source": "Windows.Terminal.Wsl"
             },
             {
-                "colorScheme": "Dracula",
+                "colorScheme": "Catppuccin Frappe",
                 "commandline": "D:\\Scoop\\apps\\nu\\current\\nu.exe",
                 "cursorShape": "filledBox",
                 "guid": "{5fca3c4d-0eae-4dd0-9e0f-0e23bc893c5f}",
@@ -356,6 +388,29 @@
             "selectionBackground": "#FFFFFF",
             "white": "#CCCCCC",
             "yellow": "#C19C00"
+        },
+        {
+            "background": "#303446",
+            "black": "#51576D",
+            "blue": "#8CAAEE",
+            "brightBlack": "#626880",
+            "brightBlue": "#8CAAEE",
+            "brightCyan": "#81C8BE",
+            "brightGreen": "#A6D189",
+            "brightPurple": "#F4B8E4",
+            "brightRed": "#E78284",
+            "brightWhite": "#A5ADCE",
+            "brightYellow": "#E5C890",
+            "cursorColor": "#F2D5CF",
+            "cyan": "#81C8BE",
+            "foreground": "#C6D0F5",
+            "green": "#A6D189",
+            "name": "Catppuccin Frappe",
+            "purple": "#F4B8E4",
+            "red": "#E78284",
+            "selectionBackground": "#626880",
+            "white": "#B5BFE2",
+            "yellow": "#E5C890"
         },
         {
             "background": "#282A36",
