@@ -180,6 +180,15 @@ local function split_nav(resize_or_move, key)
     }
 end
 
+function scheme_for_appearance(appearance)
+    if appearance:find "Dark" then
+        return "Catppuccin Mocha"
+    else
+        return "Catppuccin Latte"
+    end
+end
+
+
 local config = {
     check_for_updates = false,
 
@@ -190,10 +199,13 @@ local config = {
 
     -- 样式
     default_cursor_style = "BlinkingBar",
-    color_scheme = 'Dracula (Official)',
+    -- color_scheme = 'Dracula (Official)',
+    color_scheme = 'Catppuccin Frappe',
+    -- color_scheme = 'Catppuccin Mocha',
+    -- color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
     -- windows
     window_decorations = "RESIZE", -- |MACOS_FORCE_DISABLE_SHADOW
-    window_background_opacity = 0.88,
+    window_background_opacity = 0.6,
     window_padding = {
         left = 20,
         right = 20,
@@ -269,7 +281,7 @@ config.leader = {
     key = 'Space',
     mods = 'SUPER|ALT'
 }
-config.disable_default_key_bindings = false
+
 
 config.key_tables = {
 -- Defines the keys that are active in our resize-pane mode.
@@ -322,6 +334,8 @@ config.key_tables = {
         { key = 'Q', action = 'PopKeyTable' }
     },
 }
+
+
 config.keys = {
 -- {key = "s",mods = "LEADER|CTRL",action = wezterm.action {SendString = "\x01"}},
 
@@ -397,29 +411,40 @@ action = act.ActivateKeyTable {
 {key = "c", mods = "SHIFT|CTRL", action = wezterm.action{CopyTo = "Clipboard"}},
 }
 
-config.mouse_bindings = {{
-    -- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
-    -- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
-    event = {
-        Down = {
-            streak = 1,
-            button = "Right"
-        }
-    },
-    mods = "NONE",
-    action = wezterm.action_callback(function(window, pane)
-        local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-        if has_selection then
-            window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-            window:perform_action(act.ClearSelection, pane)
-        else
-            window:perform_action(act({
-                PasteFrom = "Clipboard"
-            }), pane)
-        end
-    end)
-}}
 
+config.mouse_bindings = {
+    {
+        -- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
+        -- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
+        event = { Down = { streak = 1, button = 'Right' } },
+        mods = "NONE",
+        action = wezterm.action_callback(function(window, pane)
+            local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+            if has_selection then
+                window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+                window:perform_action(act.ClearSelection, pane)
+            else
+                window:perform_action(act({
+                    PasteFrom = "Clipboard"
+                }), pane)
+            end
+        end)
+    },
+    -- Change the default click behavior so that it only selects
+    -- text and doesn't open hyperlinks
+    {
+        event = { Up = { streak = 1, button = 'Left' } },
+        mods = 'NONE',
+        -- action = act.CompleteSelection('ClipboardAndPrimarySelection'),
+        action = act.Nop
+    },
+    -- and make CTRL-Click open hyperlinks
+    {
+        event = { Up = { streak = 1, button = 'Left' } },
+        mods = 'CTRL',
+        action = act.OpenLinkAtMouseCursor,
+    },
+}
 
 
 return config
