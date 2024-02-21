@@ -25,9 +25,18 @@ format ='[$symbol](white)'
 disabled = false
 
 [os.symbols]
-Windows = " "
-Arch = "󰣇 "
-Ubuntu = " "
+Windows = " " # \ue62a
+Linux = " " # \uebc6
+Arch = " " # \uf303
+CentOS = " " # \uf304
+Debian = " " # \uebc5
+Fedora =" " # \uf30a
+Mint = " " # \uf30e
+# Ubuntu = " " # \uebc9
+Ubuntu = "  " # \uf31b
+Manjaro = " " # \uf312
+NixOS =" " # \uf313
+Macos = " "# \ue711
 
 # palette tables should be last in the config ⚓️
 [palettes.catppuccin_macchiato]
