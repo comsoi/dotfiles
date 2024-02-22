@@ -51,7 +51,7 @@ if [ "$(command -v eza)" ]; then
 fi
 
 if [ "$(command -v lsd)" ]; then
-	alias ls="lsd --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+	alias ls="lsd --date +%Y%m%d' '%H:%M --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
 fi
 
 if [ "$(command -v trash-put)" ]; then
