@@ -1,4 +1,5 @@
-import = ['~/.config/alacritty/dracula.toml']
+# import = ['~/.config/alacritty/dracula.toml']
+import = ['~/.config/alacritty/catppuccin/catppuccin-macchiato.toml']
 live_config_reload = true
 working_directory = "C:/Users/Lenod/"
 
@@ -31,7 +32,7 @@ style = "Regular"
 # 自动滚动至最新行
 #auto_scroll = true
 # 每次滚动行数（分屏时）
-#faux_multiplier = 100	
+#faux_multiplier = 100
 # 历史保留行数
 history = 10000
 # 每次滚动行数
