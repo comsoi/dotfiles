@@ -25,6 +25,9 @@ else
 	export VISUAL='lvim'
 fi
 
+# Enable less mouse scrolling
+export LESS="-R"
+
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
 
