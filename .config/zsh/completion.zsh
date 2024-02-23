@@ -12,9 +12,11 @@
 
 # Load more completions
 if [[ -n $ZSH ]]; then
-    fpath=($ZSH/custom/plugins/zsh-completions/src $fpath)
-# else
-#     fpath=($ZDOTDIR/zsh-completions/src $fpath)
+    fpath=($ZSH/custom/plugins/zsh-completions/src \
+           ${XDG_CONFIG_HOME:=$HOME/.config}/completions/zsh \
+           $fpath)
+else
+    fpath=(${XDG_CONFIG_HOME:=$HOME/.config}/completions/zsh $fpath)
 fi
 
 # Should be called before compinit
