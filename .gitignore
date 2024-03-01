@@ -4,3 +4,4 @@
 .bash_history
 .zcompdump*
 .config/starship.toml
+.vscode/
