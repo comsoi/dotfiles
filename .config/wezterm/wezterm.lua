@@ -76,8 +76,7 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
             args = {'pwsh.exe', '-noe', '-c',
                     '&{Import-Module "C:/Program Files/' .. vsvers .. '/Community/Common7/Tools/Microsoft.VisualStudio.DevShell.dll"; Enter-VsDevShell f14d0f99}'}
 })
-
-    end
+end
 
 else
     table.insert(launch_menu, {
@@ -96,23 +95,61 @@ else
 end
 
 -- Tab title
-function basename(s)
-    return string.gsub(s, '(.*[/\\])(.*)', '%2')
+
+function tab_title(tab_info)
+    local title = tab_info.tab_title
+    -- if the tab title is explicitly set, take that
+    if title and #title > 0 then
+        return title
+    end
+    -- Otherwise, use the title from the active pane
+    -- in that tab
+    return tab_info.active_pane.title
 end
+-- function basename(s)
+--     return string.gsub(s, '(.*[/\\])(.*)', '%2')
+-- end
 
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
-    local pane = tab.active_pane
+    local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+    local edge_background = '#0b0022'
+    local background = '#1b1032'
+    local foreground = '#808080'
 
-    local index = ""
-    if #tabs > 1 then
-        index = string.format("%d: ", tab.tab_index + 1)
+    if tab.is_active then
+        background = '#2b2042'
+        foreground = '#c0c0c0'
+    elseif hover then
+        background = '#3b3052'
+        foreground = '#909090'
     end
 
-    local process = basename(pane.foreground_process_name)
+    local edge_foreground = background
 
-    return {{
-        Text = ' ' .. index .. process .. ' '
-    }}
+    local title = tab_title(tab)
+
+    -- ensure that the titles fit in the available space,
+    -- and that we have room for the edges.
+    title = wezterm.truncate_right(title, max_width - 2)
+
+    local pane = tab.active_pane
+    local index = ""
+    if #tabs > 1 then
+        index = string.format("%d. ", tab.tab_index + 1)
+    end
+    -- local process = basename(pane.foreground_process_name)
+
+    return {
+
+        { Background = { Color = background } },
+        { Foreground = { Color = foreground } },
+        -- { Text = ' ' .. index .. process .. ' ' },
+        { Text = ' ' .. index .. title .. ' ' },
+
+        { Background = { Color = edge_background } },
+        { Foreground = { Color = edge_foreground } },
+        { Text = SOLID_RIGHT_ARROW },
+    }
 end)
 
 -- Scrollbar hidden
