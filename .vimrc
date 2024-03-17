@@ -93,10 +93,23 @@ if (empty($TMUX))
 endif
 
 " colorscheme
-if filereadable(expand("$HOME/.vim/colors/sacredforest.vim"))
-    colorscheme sacredforest
-else
-    colorscheme desert
+let g:my_colorscheme = 'one'
+" 检查 termguicolors 是否可用
+if has("termguicolors")
+    if g:my_colorscheme == 'sacredforest' && filereadable(expand("$HOME/.vim/colors/sacredforest.vim"))
+        colorscheme sacredforest
+    elseif g:my_colorscheme == 'one' && filereadable(expand("$HOME/.vim/colors/one.vim"))
+        let g:airline_theme='one'
+        if !($TERM_PROGRAM == 'alacritty')
+            let g:one_allow_italics = 1
+            set background=light
+        else
+            set background=dark
+        endif
+        colorscheme one
+    else
+        colorscheme desert
+    endif
 endif
 
 
