@@ -6,9 +6,9 @@ if [ -f "${HOME}/.bash_functions" ]; then
 	source "${HOME}/.bash_functions"
 fi
 
-function set_terminal_title {
-	echo -en "\e]2;$@\a"
-}
+# function set_terminal_title {
+# 	echo -en "\e]2;$@\a"
+# }
 
 # TMUX auto attach
 # if not inside a tmux session, and if no session is started, start a new session
@@ -93,3 +93,7 @@ autoload -U add-zsh-hook
 add-zsh-hook zshaddhistory __fd18et_prevent_write
 add-zsh-hook precmd __fd18et_save_last_successed
 add-zsh-hook zshexit __fd18et_save_last_successed
+
+if [ -f "${ZDOTDIR}/zsh-tab-title.plugin.zsh" ]; then
+    source "${ZDOTDIR}/zsh-tab-title.plugin.zsh"
+fi
