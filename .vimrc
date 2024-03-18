@@ -108,7 +108,7 @@ if has("termguicolors")
         endif
         colorscheme one
     else
-        colorscheme desert
+        set notermguicolors
     endif
 endif
 
