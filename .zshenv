@@ -51,11 +51,3 @@ esac
 #     #Check if its an M1. This check should work even if the current processes is running under x86 emulation.
 #     OS="MacM1"
 # fi
-
-# Autorun
-if [[ ${OS} == "WSL1" ]]; then
-	is_sshd_running=`ps aux | grep sshd | grep -v grep`
-	if [ -z "$is_sshd_running" ]; then
-		sudo service ssh start > /dev/null
-	fi
-fi
