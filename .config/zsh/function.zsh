@@ -42,10 +42,13 @@ function zle-keymap-select {
 	fi
 }
 zle -N zle-keymap-select
-# initial cursor shape
-echo -ne '\e[5 q' > /dev/tty
 # Start with beam shape cursor on zsh startup and after every command.
 zle-line-init() { zle-keymap-select 'beam'}
+
+_fix_cursor() {
+   echo -ne '\e[5 q'
+}
+precmd_functions+=(_fix_cursor)
 
 function gpr {
 	local username=$(git config user.name)
