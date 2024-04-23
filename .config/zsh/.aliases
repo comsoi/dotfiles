@@ -29,7 +29,7 @@ alias l='ls -CF'
 alias rmi='rm -I'
 alias tree='tree -aC'
 alias v='lvim'
-alias r='ya'
+alias r='yy'
 alias ipy='ipython'
 alias code.='code .'
 

@@ -76,6 +76,7 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 	)
 	source $ZSH/oh-my-zsh.sh
 else
+	HISTFILE=$ZDOTDIR/.history
 	# Plugins
 	if [[ -r /usr/share/zsh/plugins ]]; then
 		source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
