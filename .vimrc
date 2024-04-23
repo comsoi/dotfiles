@@ -18,40 +18,40 @@ endif
 " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if (has("termguicolors"))
     set termguicolors
+    " set cursor style
+    " Use a line cursor within insert mode and a block cursor everywhere else.
+    " https://vimhelp.org/term.txt.html
+    " windows notice: should be set after `set termguicolors` or `set t_Co=256`.
+    " https://yianwillis.github.io/vimcdoc/doc/term.html
+    " windows 注意: 应在 `set termguicolors` 或 `set t_Co=256` 之后设置。
+    "
+    " Reference chart of values:
+    "   Ps = 0  -> blinking block.             缺省值
+    "   Ps = 1  -> blinking block (default).   闪烁块
+    "   Ps = 2  -> steady block.               稳定块
+    "   Ps = 3  -> blinking underline.         闪烁下划线
+    "   Ps = 4  -> steady underline.           稳定下划线
+    "   Ps = 5  -> blinking bar (xterm).       闪烁条
+    "   Ps = 6  -> steady bar (xterm).         稳定条
+    "
+    " imitate nvim cursor style
+    " Use a line cursor within insert mode and a block cursor everywhere else.
+
+    " insert mode
+    let &t_SI = "\e[6 q"      " or \<Esc>[6 q
+    " replace
+    let &t_SR = "\e[4 q"
+    " oherwise
+    let &t_EI = "\e[2 q"
+    " see term.txt raw-terminal-mode
+    " when entering vim
+    let &t_ti ..= "\e[2 q"
+    " when leaving vim
+    let &t_te ..= "\e[5 q"
 else
     echoerr "Your version of Vim doesn't support termguicolors"
 endif
 
-" set cursor style
-" Use a line cursor within insert mode and a block cursor everywhere else.
-" https://vimhelp.org/term.txt.html
-" windows notice: should be set after `set termguicolors` or `set t_Co=256`.
-" https://yianwillis.github.io/vimcdoc/doc/term.html
-" windows 注意: 应在 `set termguicolors` 或 `set t_Co=256` 之后设置。
-"
-" Reference chart of values:
-"   Ps = 0  -> blinking block.             缺省值
-"   Ps = 1  -> blinking block (default).   闪烁块
-"   Ps = 2  -> steady block.               稳定块
-"   Ps = 3  -> blinking underline.         闪烁下划线
-"   Ps = 4  -> steady underline.           稳定下划线
-"   Ps = 5  -> blinking bar (xterm).       闪烁条
-"   Ps = 6  -> steady bar (xterm).         稳定条
-"
-" imitate nvim cursor style
-" Use a line cursor within insert mode and a block cursor everywhere else.
-
-" insert mode
-let &t_SI = "\e[6 q"      " or \<Esc>[6 q
-" replace
-let &t_SR = "\e[4 q"
-" oherwise
-let &t_EI = "\e[2 q"
-" see term.txt raw-terminal-mode
-" when entering vim
-let &t_ti ..= "\e[2 q"
-" when leaving vim
-let &t_te ..= "\e[5 q"
 
 if has('win32') || has('win64')
     " set runtimepath
@@ -108,7 +108,12 @@ if has("termguicolors")
         endif
         colorscheme one
     else
-        set notermguicolors
+        if has('win32') || has('win64')
+            colorscheme retrobox
+        else
+            set notermguicolors
+        endif
+
     endif
 endif
 
@@ -162,7 +167,7 @@ set backspace=indent,eol,start
 set expandtab
 set tabstop=4
 set shiftwidth=4
-set textwidth=80
+set textwidth=120
 
 " Show line numbers
 set number

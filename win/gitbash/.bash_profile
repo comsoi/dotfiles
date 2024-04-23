@@ -115,6 +115,8 @@ if [ -f ~/.aliases_func ]; then
     . ~/.aliases_func
 fi
 
+setproxy -http > /dev/null
+
 eval "$(zoxide init bash)"
 
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path bash)"
