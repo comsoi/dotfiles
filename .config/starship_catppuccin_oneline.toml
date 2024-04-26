@@ -4,13 +4,16 @@
 palette = "catppuccin_mocha"
 
 # Change the default prompt format
-format = """\
-[╭╴](238)$os\
-$all[╰─](238)$character"""
+format = """$directory$conda$character"""
+
+add_newline = true
+
+[line_break]
+disabled = true
 
 [character]
 # Note the use of Catppuccin color 'maroon'
-success_symbol = "[[♥](green) ❯](maroon)"
+success_symbol = "[❯](green)"
 error_symbol = "[❯](red)"
 vimcmd_symbol = "[❮](green)"
 
@@ -20,11 +23,11 @@ truncation_length = 4
 style = "bold lavender"
 
 [username]
-show_always = true
+disabled = true
 
 [os]
 format ='[$symbol](white)'
-disabled = false
+disabled = true
 
 [os.symbols]
 Windows = " " # \ue62a
@@ -39,6 +42,12 @@ Ubuntu = "  " # \uf31b
 Manjaro = " " # \uf312
 NixOS =" " # \uf313
 Macos = " "# \ue711
+
+[conda]
+# symbol = "🐍 "
+symbol = "🅒"
+format = "[[$symbol](teal)$environment ]($style)"
+ignore_base = false
 
 # palette tables should be last in the config ⚓️
 [palettes.catppuccin_macchiato]
