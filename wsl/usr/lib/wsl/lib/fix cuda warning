@@ -1,0 +1,4 @@
+sudo rm libcuda.so libcuda.so.1 ;
+sudo ln -s libcuda.so.1.1 libcuda.so.1 ;
+sudo ln -s libcuda.so.1 libcuda.so ;
+sudo ldconfig ;
