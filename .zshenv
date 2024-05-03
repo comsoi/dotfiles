@@ -51,3 +51,11 @@ esac
 #     #Check if its an M1. This check should work even if the current processes is running under x86 emulation.
 #     OS="MacM1"
 # fi
+
+if [[ ${OS} == "WSL2" ]] ; then
+	if [[ -z "$LD_LIBRARY_PATH" ]]; then
+		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
+	elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
+		export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
+	fi
+fi
