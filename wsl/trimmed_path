@@ -1,3 +1,0 @@
-PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files\/nodejs://')
-PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Users\/Lenod\/AppData\/Roaming\/npm://')
-PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
