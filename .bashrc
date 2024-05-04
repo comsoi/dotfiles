@@ -4,12 +4,12 @@
 # ~/.bashrc
 #
 
-[[ -f ~/.zshenv ]] && . ~/.zshenv
+[[ -f ${HOME}/.init_profile ]] && . ${HOME}/.init_profile
 
 # [[ $- != *i* ]] && return  # If not running interactively, don't do anything
 case $- in
-    *i*) ;;
-      *) return;;
+	*i*) ;;
+	  *) return;;
 esac
 
 # append to the history file, don't overwrite it
@@ -39,12 +39,12 @@ esac
 
 if [ -n "$force_color_prompt" ]; then
 	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
+		# We have color support; assume it's compliant with Ecma-48
+		# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+		# a case would tend to support setf rather than setaf.)
+		color_prompt=yes
 	else
-	color_prompt=
+		color_prompt=
 	fi
 fi
 
@@ -59,9 +59,9 @@ unset color_prompt force_color_prompt
 case "$TERM" in
 	xterm*|rxvt*)
 		PS1="\[\e]0;\u@\h: \w\a\]$PS1"
-		;;
+	;;
 	*)
-		;;
+	;;
 esac
 
 # colored GCC warnings and errors
@@ -95,5 +95,15 @@ fi
 
 # User configuration
 
-eval "$(zoxide init bash)"
-eval $(thefuck --alias)
+if [ "$(command -v zoxide)" ]; then
+	# echo "command \"zoxide\" exists on system"
+	eval "$(zoxide init bash)"
+else
+	echo "command \"zoxide\" does not exist on system"
+fi
+
+if [ "$(command -v thefuck)" ]; then
+	eval "$(thefuck --alias)"
+else
+	echo "command \"thefuck\" does not exist on system"
+fi
