@@ -3,8 +3,9 @@ Description=Symlink Wayland socket to XDG_RUNTIME_DIR
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/ln -s /mnt/wslg/runtime-dir/wayland-0      $XDG_RUNTIME_DIR
-ExecStart=/usr/bin/ln -s /mnt/wslg/runtime-dir/wayland-0.lock $XDG_RUNTIME_DIR
+; ExecStart=/usr/bin/ln -s /mnt/wslg/runtime-dir/*      $XDG_RUNTIME_DIR
+; ExecStart=/usr/bin/ln -s /mnt/wslg/runtime-dir/wayland-0.lock $XDG_RUNTIME_DIR
+ExecStart=sh -c "ln -fs /mnt/wslg/runtime-dir/* /run/user/1000/"
 
 [Install]
 WantedBy=default.target
