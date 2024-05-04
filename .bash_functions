@@ -93,6 +93,9 @@ function noproxy() {
 function setproxy() {
 	# local IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	local IP="127.0.0.1"
+	if [[ ${OS} == "WSL2" ]] ; then
+		IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	fi
 	local PORT="2080"
 	local PROT="socks5"
 
