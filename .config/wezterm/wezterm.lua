@@ -8,6 +8,8 @@ local set_environment_variables = {
 }
 local term = "xterm-256color"
 local wsl_domains = wezterm.default_wsl_domains()
+local ssh_domains = wezterm.default_ssh_domains()
+
 
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     term = "xterm-256color"
