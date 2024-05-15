@@ -1,7 +1,7 @@
 " gui settings
 if has('gui_running')
     " enter vim
-    if has("gui_gtk2")
+    if has("gui_gtk3")
         :set guifont=Fira\ Code\ 14
     elseif has("x11")
         " Also for GTK 1
@@ -10,6 +10,8 @@ if has('gui_running')
         :set guifont=Fira\ Code:h14:cANSI
     elseif has("gui_macvim")
         :set guifont=Menlo\ Regular:h14
+    else
+        :set guifont=Monospace\ 14
     endif
 endif
 

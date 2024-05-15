@@ -80,6 +80,63 @@ function yy() {
 	rm -f -- "$tmp"
 }
 
+get_model() {
+	case $OS in
+		Linux)
+			if [[ -d /system/app/ && -d /system/priv-app ]]; then
+				model="$(getprop ro.product.brand) $(getprop ro.product.model)"
+
+			elif [[ -f /sys/devices/virtual/dmi/id/product_name ||
+					-f /sys/devices/virtual/dmi/id/product_version ]]; then
+				model=$(< /sys/devices/virtual/dmi/id/product_name)
+				model+=" $(< /sys/devices/virtual/dmi/id/product_version)"
+
+			elif [[ -f /sys/firmware/devicetree/base/model ]]; then
+				model=$(< /sys/firmware/devicetree/base/model)
+
+			elif [[ -f /tmp/sysinfo/model ]]; then
+				model=$(< /tmp/sysinfo/model)
+			fi
+		;;
+
+		"Mac OS X"|"macOS"|"Mac")
+			if [[ $(kextstat | grep -F -e "FakeSMC" -e "VirtualSMC") != "" ]]; then
+				model="Hackintosh (SMBIOS: $(sysctl -n hw.model))"
+			else
+				model=$(sysctl -n hw.model)
+			fi
+		;;
+
+		Windows)
+			model=$(wmic computersystem get manufacturer,model)
+			model=${model/Manufacturer}
+			model=${model/Model}
+		;;
+
+	esac
+
+	# Remove dummy OEM info.
+	model=${model//To be filled by O.E.M.}
+	model=${model//To Be Filled*}
+	model=${model//OEM*}
+	model=${model//Not Applicable}
+	model=${model//System Product Name}
+	model=${model//System Version}
+	model=${model//Undefined}
+	model=${model//Default string}
+	model=${model//Not Specified}
+	model=${model//Type1ProductConfigId}
+	model=${model//INVALID}
+	model=${model//All Series}
+	model=${model//�}
+
+	case $model in
+		"Standard PC"*) model="KVM/QEMU (${model})" ;;
+		OpenBSD*)       model="vmm ($model)" ;;
+	esac
+}
+
+
 
 function noproxy() {
 	unset ALL_PROXY
@@ -95,8 +152,14 @@ function setproxy() {
 	local IP="127.0.0.1"
 	if [[ ${OS} == "WSL2" ]] ; then
 		IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+	else
+		get_model
+		if [[ ${model} == *"VMware20"* ]]; then
+			local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
+			IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
+		fi
 	fi
-	local PORT="2080"
+	local PORT="7897"
 	local PROT="socks5"
 
 	for arg in "$@"; do
