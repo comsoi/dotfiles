@@ -23,8 +23,8 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
         args = {"pwsh.exe", "-NoLogo"}
     })
     table.insert(launch_menu, {
-        label = "Ubuntu-20",
-        args = {"wsl.exe", "-d", "Ubuntu-20"}
+        label = "Devuan",
+        args = {"wsl.exe", "-d", "Devuan"}
     })
     table.insert(launch_menu, {
         label = "ArchWSL",
