@@ -1,3 +1,0 @@
-ln -s /mnt/wslg/runtime-dir/wayland-0* /run/user/1000/
-create systemd service
-systemctl --user enable symlink-wayland-socket.service
