@@ -150,17 +150,18 @@ function noproxy() {
 function setproxy() {
 	# local IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	local IP="127.0.0.1"
+	local PORT="7897"
 	if [[ ${OS} == "WSL2" ]] ; then
 		IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	else
 		get_model
-		if [[ ${model} == *"VMware20"* ]]; then
+		if [[ ${model} == *"VMware"* ]]; then
 			local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
 			IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
+            PORT="7891"
 		fi
 	fi
-	local PORT="7897"
-	local PROT="socks5"
+	local PROT="http"
 
 	for arg in "$@"; do
 		case "$arg" in

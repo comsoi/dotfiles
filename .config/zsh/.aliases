@@ -42,6 +42,7 @@ if [ -x /usr/bin/dircolors ]; then
 	alias diff='diff --color=auto'
 	alias dir='dir --color=auto'
 	alias vdir='vdir --color=auto'
+    alias ip='ip --color=auto'
 fi
 
 if [ "$(command -v lsd)" ]; then
