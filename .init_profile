@@ -1,3 +1,4 @@
+#! /bin/bash
 # Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
 	export LANG="zh_CN.UTF-8"

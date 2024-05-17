@@ -119,6 +119,18 @@ if has("termguicolors")
     endif
 endif
 
+" set clipboard+=unnamedplus
+" ---------- 剪贴板处理 ---------- ---
+" WSL clipboard with win32yank
+" 检查 win32yank 是否可执行
+if executable('win32yank.exe')
+  augroup WSLYank
+    autocmd!
+    " 当执行复制操作后，使用 win32yank 将文本复制到 Windows 剪贴板
+    autocmd TextYankPost * if v:event.operator ==# 'y' | call system('win32yank.exe -i --crlf', @0) | endif
+  augroup END
+endif
+
 
 " ---------- 快捷键 ---------- ---
 let mapleader = " "
