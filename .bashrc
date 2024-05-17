@@ -94,6 +94,9 @@ if ! shopt -oq posix; then
 fi
 
 # User configuration
+if [[ -r "${HOME}/.custom" ]]; then
+    source ${HOME}/.custom
+fi
 
 if [ "$(command -v zoxide)" ]; then
 	# echo "command \"zoxide\" exists on system"
