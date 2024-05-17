@@ -71,7 +71,7 @@ cd_func ()
 }
 
 function eza_gs() {
-eza -al --group-directories-first --git --git-ignore --no-user --no-filesize --no-time --no-permissions --tree --color=always | awk '$1 !~ /--/ { print }'
+	eza -al --group-directories-first --git --git-ignore --no-user --no-filesize --no-time --no-permissions --tree --color=always | awk '$1 !~ /--/ { print }'
 }
 
 function yy() {
@@ -161,7 +161,7 @@ function setproxy() {
 		if [[ ${model} == *"VMware"* ]]; then
 			local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
 			IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
-            PORT="7891"
+			PORT="7891"
 		fi
 	fi
 	local PROT="http"

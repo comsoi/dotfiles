@@ -55,7 +55,7 @@ if [ -x /usr/bin/dircolors ]; then
 	alias diff='diff --color=auto'
 	alias dir='dir --color=auto'
 	alias vdir='vdir --color=auto'
-    alias ip='ip --color=auto'
+	alias ip='ip --color=auto'
 fi
 
 if [ "$(command -v lsd)" ]; then
@@ -78,8 +78,7 @@ if [ "$(command -v eza)" ]; then
 	alias tree="eza --tree --icons --group-directories-first"
 	alias ld="eza -lD"                                         # lists only directories
 	alias lf="eza -lF --color=always | grep -v /"              # lists only files (no directories)
-    alias gs=eza_gs
-
+	alias gs=eza_gs
 fi
 
 if [ "$(command -v trash-put)" ]; then
