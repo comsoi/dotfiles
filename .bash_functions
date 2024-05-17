@@ -70,6 +70,9 @@ cd_func ()
 	return 0
 }
 
+function eza_gs() {
+eza -al --group-directories-first --git --git-ignore --no-user --no-filesize --no-time --no-permissions --tree --color=always | awk '$1 !~ /--/ { print }'
+}
 
 function yy() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXX")"

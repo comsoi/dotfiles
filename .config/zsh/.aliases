@@ -78,12 +78,8 @@ if [ "$(command -v eza)" ]; then
 	alias tree="eza --tree --icons --group-directories-first"
 	alias ld="eza -lD"                                         # lists only directories
 	alias lf="eza -lF --color=always | grep -v /"              # lists only files (no directories)
-    unalias gs
-    function gs {
-    eza -al --group-directories-first --git --git-ignore \
-        --no-user --no-filesize --no-time --no-permissions \
-        --tree --color=always | awk '$1 !~ /--/ { print }'
-    }
+    alias gs=eza_gs
+
 fi
 
 if [ "$(command -v trash-put)" ]; then
