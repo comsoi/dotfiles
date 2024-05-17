@@ -50,9 +50,15 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 	# much, much faster.
 	# DISABLE_UNTRACKED_FILES_DIRTY="true"
 	# Standard plugins can be found in $ZSH/plugins/ | Custom plugins may in $ZSH_CUSTOM/plugins/
+
+    # custom plugins:
+    # git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k ;
+    # git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions ;
+    # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ;
+    # git clone https://github.com/Pilaton/OhMyZsh-full-autoupdate.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ohmyzsh-full-autoupdate ;
 	plugins=(
 		adb
-		conda-zsh-completion
+		# conda-zsh-completion
 		command-not-found
 		extract
 		deno
