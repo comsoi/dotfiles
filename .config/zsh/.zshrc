@@ -116,6 +116,10 @@ if [[ -r "${ZDOTDIR}/.aliases" ]]; then
 fi
 
 # Initialize tools
+if [[ -r "${HOME}/.custom" ]]; then
+    source ${HOME}/.custom
+fi
+
 [[ -f ~/.config/.fzf/.fzf.zsh ]] && source ~/.config/.fzf/.fzf.zsh
 if [[ $(command -v zoxide) ]]; then
 	eval "$(zoxide init zsh)"
