@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Alias
@@ -8,6 +8,29 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ~="cd ~"
 alias -- -="cd -"
+
+alias gs="git status"
+alias ga="git add -A"
+alias gc="git commit -v"
+alias gc!="git commit -v --amend --no-edit"
+alias gl="git pull"
+alias gp="git push"
+alias gp!="git push --force"
+alias gcl="git clone --depth 1 --single-branch"
+alias gf="git fetch --all"
+alias gb="git branch"
+alias gr="git rebase"
+alias gt='cd "$(git rev-parse --show-toplevel)"'
+
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias rmi='rm -I'
+alias tree='tree -aC'
+alias v='lvim'
+alias r='yy'
+alias ipy='ipython'
+alias code.='code .'
 
 if [ "$(command -v win32yank.exe)" ]; then
 	alias wcp='win32yank.exe -i'
@@ -22,16 +45,6 @@ alias sudop='command sudo env PATH="$PATH"'
 if [ "$(command -v nala)" ]; then
 	alias apt="nala"
 fi
-
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias rmi='rm -I'
-alias tree='tree -aC'
-alias v='lvim'
-alias r='yy'
-alias ipy='ipython'
-alias code.='code .'
 
 # 先检测并设置 dircolors，为所有支持的命令设置颜色输出
 if [ -x /usr/bin/dircolors ]; then
@@ -65,6 +78,12 @@ if [ "$(command -v eza)" ]; then
 	alias tree="eza --tree --icons --group-directories-first"
 	alias ld="eza -lD"                                         # lists only directories
 	alias lf="eza -lF --color=always | grep -v /"              # lists only files (no directories)
+    unalias gs
+    function gs {
+    eza -al --group-directories-first --git --git-ignore \
+        --no-user --no-filesize --no-time --no-permissions \
+        --tree --color=always | awk '$1 !~ /--/ { print }'
+    }
 fi
 
 if [ "$(command -v trash-put)" ]; then
@@ -78,16 +97,3 @@ if [ "$(command -v bat)" ]; then
 	# apt need to set up a bat -> batcat symlink: ln -s /usr/bin/batcat ~/.local/bin/bat
 	alias cat="bat"
 fi
-
-alias gs="git status"
-alias ga="git add -A"
-alias gc="git commit -v"
-alias gc!="git commit -v --amend --no-edit"
-alias gl="git pull"
-alias gp="git push"
-alias gp!="git push --force"
-alias gcl="git clone --depth 1 --single-branch"
-alias gf="git fetch --all"
-alias gb="git branch"
-alias gr="git rebase"
-alias gt='cd "$(git rev-parse --show-toplevel)"'
