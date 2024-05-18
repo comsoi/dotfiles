@@ -20,4 +20,12 @@ if [[ ${OS} == "WSL1" ]] ; then
     trim_path
 fi
 
+if [[ ${OS} == "WSL1" ]]; then
+	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
+	if [ -z "$is_sshd_running" ]; then
+		sudo service ssh start > /dev/null
+	fi
+fi
+
+
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi

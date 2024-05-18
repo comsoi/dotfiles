@@ -6,3 +6,5 @@
 .config/starship.toml
 .config/scoop/config.json
 .vscode/
+.config/zsh/.p10k.zsh
+.config/zsh/.powerlevel10k/

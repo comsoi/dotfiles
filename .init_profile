@@ -2,20 +2,19 @@
 
 # Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
-	export LANG="zh_CN.UTF-8"
+	export LANG=zh_CN.UTF-8
+	export LANGUAGE=zh_CN:en_US:en
 else
-	export LANG="en_US.UTF-8"
+	export LC_ALL=en_US.UTF-8
 fi
-#export LC_ALL=zh_CN.UTF-8
-#export LANGUAGE=zh_CN.UTF-8
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
-if [[ -n $SSH_CONNECTION ]]; then
-	export VISUAL='vim'
-else
-	export VISUAL='lvim'
-fi
+# if [[ -n $SSH_CONNECTION ]]; then
+# 	export VISUAL='vim'
+# else
+# 	export VISUAL='lvim'
+# fi
 
 # Enable less mouse scrolling
 export LESS="-R"
@@ -25,30 +24,29 @@ export ARCHFLAGS="-arch x86_64"
 
 # PATH
 export PATH=$HOME/.local/bin:$PATH
-export PATH=$HOME/.cargo/bin:$PATH
 
 # OS
 {
-    unameOut=$(uname -a)
-    case "${unameOut}" in
-        *Microsoft*)     OS="WSL1";; #wls must be first since it will have Linux in the name too
-        *microsoft*)     OS="WSL2";;
-        Linux*)     OS="Linux";;
-        Darwin*)    OS="Mac";;
-        CYGWIN*)    OS="Cygwin";;
-        MINGW*)     OS="Windows";;
-        *Msys)     OS="Windows";;
-        *)          OS="UNKNOWN:${unameOut}"
-    esac
+	unameOut=$(uname -a)
+	case "${unameOut}" in
+		*Microsoft*)     OS="WSL1";; #wls must be first since it will have Linux in the name too
+		*microsoft*)     OS="WSL2";;
+		Linux*)     OS="Linux";;
+		Darwin*)    OS="Mac";;
+		CYGWIN*)    OS="Cygwin";;
+		MINGW*)     OS="Windows";;
+		*Msys)     OS="Windows";;
+		*)          OS="UNKNOWN:${unameOut}"
+	esac
 
-    if [[ ${OS} == "Mac" ]] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
-        # This check should work even if the current processes is running under x86 emulation.
-        OS="MacArm"
-    fi
-    unset unameOut
-    export OS
+	if [[ ${OS} == "Mac" ]] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
+		# This check should work even if the current processes is running under x86 emulation.
+		OS="MacArm"
+	fi
+	unset unameOut
+	export OS
 }
 
 if [[ -r "${HOME}/.custom_top" ]]; then
-    source ${HOME}/.custom_top
+	source ${HOME}/.custom_top
 fi
