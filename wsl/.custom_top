@@ -1,10 +1,10 @@
 #! /bin/bash
 
 trim_path() {
-    # PATH
-    PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files\/nodejs://')
-    PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Users\/Lenod\/AppData\/Roaming\/npm://')
-    PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
+	# PATH
+	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files\/nodejs://')
+	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Users\/Lenod\/AppData\/Roaming\/npm://')
+	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
 }
 
 if [[ ${OS} == "WSL2" ]] ; then
@@ -13,14 +13,15 @@ if [[ ${OS} == "WSL2" ]] ; then
 	elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
 		export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
 	fi
-    trim_path
+	trim_path
 fi
 
 if [[ ${OS} == "WSL1" ]] ; then
-    trim_path
-fi
+	export LANG=zh_CN.UTF-8
+	export LANGUAGE=zh_CN:en_US:en
 
-if [[ ${OS} == "WSL1" ]]; then
+	trim_path
+
 	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
 	if [ -z "$is_sshd_running" ]; then
 		sudo service ssh start > /dev/null
