@@ -121,17 +121,16 @@ if [[ -r "${ZDOTDIR}/.aliases" ]]; then
 	source ${ZDOTDIR}/.aliases
 fi
 
-# Initialize tools
 if [[ -r "${HOME}/.custom" ]]; then
     source ${HOME}/.custom
 fi
 
+# Initialize tools
 [[ -f ~/.config/.fzf/.fzf.zsh ]] && source ~/.config/.fzf/.fzf.zsh
 if [[ $(command -v zoxide) ]]; then
 	eval "$(zoxide init zsh)"
-else
-	echo "zoxide not found"
 fi
+
 if [[ $(command -v thefuck) ]]; then
 	fuck () { # eval $(thefuck --alias)
 		TF_PYTHONIOENCODING=$PYTHONIOENCODING;
@@ -149,9 +148,4 @@ if [[ $(command -v thefuck) ]]; then
 		export PYTHONIOENCODING=$TF_PYTHONIOENCODING;
 		test -n "$TF_CMD" && print -s $TF_CMD
 	}
-else
-	echo "thefuck not found"
 fi
-
-# Set proxy
-setproxy -http > /dev/null
