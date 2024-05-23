@@ -19,6 +19,7 @@ fi
 if [[ ${OS} == "WSL1" ]] ; then
 	export LANG=zh_CN.UTF-8
 	export LANGUAGE=zh_CN:en_US:en
+	export DISPLAY=:0
 
 	trim_path
 
