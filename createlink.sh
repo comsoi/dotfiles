@@ -10,6 +10,7 @@ file_names=(
     ".bashrc"
     ".clang-format"
     ".config/zsh/"
+    ".config/completions/"
     ".inputrc"
     ".init_profile"
     ".vimrc"
