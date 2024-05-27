@@ -59,10 +59,10 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 if [ "$(command -v lsd)" ]; then
-	alias ls="lsd --date +%Y%m%d' '%H:%M --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
-	alias l="lsd -AF --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
-	alias ll="lsd -alF --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
-	alias la="lsd -A --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+	alias ls="lsd --date +%Y%m%d' '%H:%M"
+	alias l="lsd -AF"
+	alias ll="lsd -alF"
+	alias la="lsd -A"
 	alias tree="lsd --tree"
 elif [ -x /usr/bin/dircolors ]; then
 	# 如果 lsd 不可用，但 /usr/bin/dircolors 存在，设置 ls 的别名

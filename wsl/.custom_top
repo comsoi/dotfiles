@@ -7,6 +7,22 @@ trim_path() {
 	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
 }
 
+if [ "$(command -v lsd)" ]; then
+    alias ls="lsd --date +%Y%m%d' '%H:%M --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+    alias l="lsd -AF --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+    alias ll="lsd -alF --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+    alias la="lsd -A --ignore-glob={'NTUSER.DAT*','ntuser.dat*'}"
+    alias tree="lsd --tree"
+fi
+
+if [ "$(command -v eza)" ]; then
+    alias l="eza -a --icons --group-directories-first -I='NTUSER.*|ntuser.*'"
+    alias ll="eza -al --icons --group-directories-first -I='NTUSER.*|ntuser.*'"
+    alias tree="eza --tree --icons --group-directories-first"
+    alias ld="eza -lD -I='NTUSER.*|ntuser.*'"                                         # lists only directories
+    alias lf="eza -lF --color=always -I='NTUSER.*|ntuser.*' | grep -v /"              # lists only files (no directories)
+    alias gs=eza_gs
+fi
 if [[ ${OS} == "WSL2" ]] ; then
 	if [[ -z "$LD_LIBRARY_PATH" ]]; then
 		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
