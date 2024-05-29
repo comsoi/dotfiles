@@ -121,8 +121,8 @@ if [[ -r "${ZDOTDIR}/.aliases" ]]; then
 	source ${ZDOTDIR}/.aliases
 fi
 
-if [[ -r "${HOME}/.custom" ]]; then
-    source ${HOME}/.custom
+if [[ -r "${ZDOTDIR}/.custom" ]]; then
+    source ${ZDOTDIR}/.custom
 fi
 
 # Initialize tools
