@@ -94,8 +94,8 @@ if ! shopt -oq posix; then
 fi
 
 # User configuration
-if [[ -r "${HOME}/.custom" ]]; then
-    source ${HOME}/.custom
+if [[ -r "${HOME}/.bash_custom" ]]; then
+    source ${HOME}/.bash_custom
 fi
 
 if [ "$(command -v zoxide)" ]; then
