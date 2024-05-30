@@ -4,7 +4,8 @@
 .bash_history
 .zcompdump*
 .config/starship.toml
-.config/scoop/config.json
-.vscode/
+.config/fish/fish_variables
 .config/zsh/.p10k.zsh
 .config/zsh/.powerlevel10k/
+.config/zsh/.custom
+.vscode/
