@@ -7,6 +7,13 @@ trim_path() {
 	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
 }
 
+alias cmd='cmd.exe'
+alias powershell='powershell.exe'
+alias pwsh='pwsh.exe'
+alias nu='nu.exe'
+alias wsl='wsl.exe'
+
+
 if [[ ${OS} == "WSL2" ]] ; then
 	if [[ -z "$LD_LIBRARY_PATH" ]]; then
 		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
