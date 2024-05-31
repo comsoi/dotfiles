@@ -23,10 +23,11 @@ if [[ ${OS} == "WSL1" ]] ; then
 
 	trim_path
 
-	# is_sshd_running=$(ps aux | grep sshd | grep -v grep)
-	# if [ -z "$is_sshd_running" ]; then
-	# 	(sudo service ssh start > /dev/null)
-	# fi
+	# ssh cannot be started until wsl has started
+	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
+	if [ -z "$is_sshd_running" ]; then
+		(sudo service ssh start > /dev/null)
+	fi
 fi
 
 alias e.="explorer.exe ."

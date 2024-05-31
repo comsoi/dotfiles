@@ -2,3 +2,5 @@
 # mount --bind /mnt/c/Users/Lenod/ /home/devuan/winhome
 # echo "${PATH//:/$'\n'}" > /dev/tty1
 # su wsl -c 'fastfetch' > /dev/tty1 ; exit
+
+# ssh start here will cause the .exe fail to start
