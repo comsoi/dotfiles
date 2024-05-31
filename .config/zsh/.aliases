@@ -33,8 +33,8 @@ alias ipy='ipython'
 alias code.='code .'
 
 if [ "$(command -v win32yank.exe)" ]; then
-	alias pbcopy='win32yank.exe -i'
-	alias pbpaste='win32yank.exe -o'
+	alias pbcopy='win32yank.exe -i -crlf'
+	alias pbpaste='win32yank.exe -o -lf'
 fi
 
 # enable aliases in sudo
@@ -43,6 +43,7 @@ alias sudo='sudo '
 alias sudop='command sudo env PATH="$PATH"'
 
 alias proxychains='proxychains '
+alias proxychains4='proxychains4 '
 
 if [ "$(command -v nala)" ]; then
 	alias apt="nala"
