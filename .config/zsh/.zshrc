@@ -128,7 +128,7 @@ fi
 # Initialize tools
 [[ -f ~/.config/.fzf/.fzf.zsh ]] && source ~/.config/.fzf/.fzf.zsh
 if [[ $(command -v zoxide) ]]; then
-	eval "$(zoxide init zsh)"
+	eval "$(zoxide init zsh --cmd j)"
 fi
 
 if [[ $(command -v thefuck) ]]; then
