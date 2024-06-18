@@ -23,6 +23,8 @@ if [[ ${OS} == "WSL2" ]] ; then
 
 	trim_path
 
+    export HOST_COMPILER=/usr/bin/g++-13  # it works
+    export CUDAHOSTCXX=/usr/bin/g++-13
     export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
     PATH=/opt/cuda/bin:$PATH
     export PATH
