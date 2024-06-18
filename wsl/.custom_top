@@ -25,9 +25,12 @@ if [[ ${OS} == "WSL2" ]] ; then
 
     export CUDA_PATH=/opt/cuda
     export HOST_COMPILER=/usr/bin/g++-13  # it works
+    export NVCC_CCBIN='/usr/bin/g++-13'
     # export CUDAHOSTCXX=/usr/bin/g++-13
     # export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
     PATH=/opt/cuda/bin:$PATH
+    PATH=/opt/cuda/nsight_compute:$PATH
+    PATH=/opt/cuda/nsight_systems/bin:$PATH
     export PATH
 fi
 
