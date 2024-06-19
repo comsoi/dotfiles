@@ -155,7 +155,7 @@ function setproxy() {
 	local IP="127.0.0.1"
 	local PORT="7897"
 	if [[ ${OS} == "WSL2" ]] ; then
-		IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
+		IP=172.22.48.1
 	else
 		get_model
 		if [[ ${model} == *"VMware"* ]]; then
