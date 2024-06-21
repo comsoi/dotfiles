@@ -15,11 +15,12 @@ alias wsl='wsl.exe'
 
 
 if [[ ${OS} == "WSL2" ]] ; then
-	if [[ -z "$LD_LIBRARY_PATH" ]]; then
-		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
-	elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
-		export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
-	fi
+    # set when /etc/wsl.conf ldconfig = false
+	# if [[ -z "$LD_LIBRARY_PATH" ]]; then
+	# 	export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
+	# elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
+	# 	export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
+	# fi
 
 	trim_path
 
