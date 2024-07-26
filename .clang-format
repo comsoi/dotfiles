@@ -5,6 +5,6 @@ UseTab: Never
 TabWidth: 4
 AllowShortIfStatementsOnASingleLine: false
 IndentCaseLabels: false
-#ColumnLimit: 0
+ColumnLimit: 120
 #AccessModifierOffset: -4
 NamespaceIndentation: All 

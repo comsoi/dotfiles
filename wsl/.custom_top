@@ -7,6 +7,21 @@ trim_path() {
 	PATH=$(echo "$PATH" | sed -e 's/\/mnt\/c\/Program Files (x86)\/Yarn\/bin://')
 }
 
+cdw() {
+    local windows_path="$1"
+    if [ -z "$windows_path" ]; then
+        echo "Usage: cdw <Windows path>"
+        return 1
+    fi
+    local wsl_path
+    wsl_path=$(wslpath "$windows_path")
+    if [ $? -ne 0 ]; then
+        echo "Failed to convert Windows path to WSL path"
+        return 1
+    fi
+    cd "$wsl_path" || { echo "Failed to change directory to $wsl_path"; return 1; }
+}
+
 alias cmd='cmd.exe'
 alias powershell='powershell.exe'
 alias pwsh='pwsh.exe'
@@ -25,13 +40,15 @@ if [[ ${OS} == "WSL2" ]] ; then
 	trim_path
 
     export CUDA_PATH=/opt/cuda
-    export HOST_COMPILER=/usr/bin/g++-13  # it works
-    export NVCC_CCBIN='/usr/bin/g++-13'
+    export CUDA_HOME="$CUDA_PATH"
+    export CUDACXX=/opt/cuda/bin/nvcc
+    export HOST_COMPILER=/usr/bin/g++-13
+    export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
+    # export NVCC_CCBIN=/usr/bin/g++-13
     # export CUDAHOSTCXX=/usr/bin/g++-13
-    # export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
-    PATH=/opt/cuda/bin:$PATH
-    PATH=/opt/cuda/nsight_compute:$PATH
-    PATH=/opt/cuda/nsight_systems/bin:$PATH
+    PATH="$CUDA_PATH/bin:$PATH"
+    PATH="$CUDA_PATH/nsight_compute:$PATH"
+    PATH="$CUDA_PATH/nsight_compute/bin:$PATH"
     export PATH
 fi
 
@@ -53,4 +70,4 @@ fi
 alias e.="explorer.exe ."
 alias e="explorer.exe"
 
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+#if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
