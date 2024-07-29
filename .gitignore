@@ -8,4 +8,5 @@
 .config/zsh/.p10k.zsh
 .config/zsh/.powerlevel10k/
 .config/zsh/.custom
+.config/scoop/
 .vscode/
