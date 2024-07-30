@@ -1,5 +1,8 @@
 #! /bin/bash
 
+if [[ -r "${HOME}/.XDG_Support" ]]; then
+	source ${HOME}/.XDG_Support
+fi
 # Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
 	export LANG=zh_CN.UTF-8
