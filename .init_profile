@@ -1,8 +1,8 @@
 #! /bin/bash
 
-if [[ -r "${HOME}/.XDG_Support" ]]; then
-	source ${HOME}/.XDG_Support
-fi
+# if [[ -r "${HOME}/.XDG_Support" ]]; then
+# 	source ${HOME}/.XDG_Support
+# fi
 # Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
 	export LANG=zh_CN.UTF-8
@@ -13,6 +13,7 @@ fi
 
 # Preferred editor for local and remote sessions
 export EDITOR='vim'
+export VISUAL='code'
 # if [[ -n $SSH_CONNECTION ]]; then
 # 	export VISUAL='vim'
 # else
