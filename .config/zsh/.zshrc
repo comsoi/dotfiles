@@ -39,7 +39,7 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 	export ZSH="$HOME/.oh-my-zsh"
 	ZSH_THEME="powerlevel10k/powerlevel10k"
 	HYPHEN_INSENSITIVE="true"           # _ and - will be interchangeable.
-	zstyle ':omz:update' mode auto      # update automatically without asking
+	zstyle ':omz:update' mode reminder      # update automatically without asking
 	zstyle ':omz:update' frequency 26   # check for updates every 26 days
 	# Uncomment the following line to display red dots whilst waiting for completion.
 	# You can also set it to another string to have that shown instead of the default red dots.
