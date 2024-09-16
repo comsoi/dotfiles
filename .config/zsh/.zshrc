@@ -57,11 +57,8 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
     # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ;
     # git clone https://github.com/Pilaton/OhMyZsh-full-autoupdate.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ohmyzsh-full-autoupdate ;
 	plugins=(
-		adb
-		# conda-zsh-completion
 		command-not-found
 		extract
-		deno
 		docker
 		git
 		github
@@ -71,11 +68,9 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 		npm
 		nvm
 		# yarn
-		volta
 		vscode
 		sudo
 		web-search
-		# z
 		zsh-autosuggestions
 		zsh-syntax-highlighting
 		ohmyzsh-full-autoupdate
