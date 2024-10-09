@@ -39,7 +39,7 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 	export ZSH="$HOME/.oh-my-zsh"
 	ZSH_THEME="powerlevel10k/powerlevel10k"
 	HYPHEN_INSENSITIVE="true"           # _ and - will be interchangeable.
-	zstyle ':omz:update' mode auto      # update automatically without asking
+	zstyle ':omz:update' mode reminder      # update automatically without asking
 	zstyle ':omz:update' frequency 26   # check for updates every 26 days
 	# Uncomment the following line to display red dots whilst waiting for completion.
 	# You can also set it to another string to have that shown instead of the default red dots.
@@ -57,11 +57,8 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
     # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ;
     # git clone https://github.com/Pilaton/OhMyZsh-full-autoupdate.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ohmyzsh-full-autoupdate ;
 	plugins=(
-		adb
-		# conda-zsh-completion
 		command-not-found
 		extract
-		deno
 		docker
 		git
 		github
@@ -71,11 +68,9 @@ if [[ -r $HOME/.oh-my-zsh ]]; then
 		npm
 		nvm
 		# yarn
-		volta
 		vscode
 		sudo
 		web-search
-		# z
 		zsh-autosuggestions
 		zsh-syntax-highlighting
 		ohmyzsh-full-autoupdate
