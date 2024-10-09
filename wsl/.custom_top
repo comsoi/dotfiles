@@ -30,12 +30,18 @@ alias wsl='wsl.exe'
 
 
 if [[ ${OS} == "WSL2" ]] ; then
+    alias kg='env -u WAYLAND_DISPLAY DISPLAY=:1 LC_ALL=zh_CN.UTF-8 PWD=/home/wsl LIBGL_ALWAYS_SOFTWARE=1 /usr/sbin/dbus-launch startplasma-x11'
+    alias kde='env -u LIBGL_ALWAYS_SOFTWARE -u WAYLAND_DISPLAY DISPLAY=172.22.48.1:1 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib:/usr/local/lib LIBVA_DRIVER_NAME=d3d12 $(dbus-launch) startplasma-x11'
+    # vainfo mesa-va-drivers
     # set when /etc/wsl.conf ldconfig = false
-	# if [[ -z "$LD_LIBRARY_PATH" ]]; then
-	# 	export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
-	# elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
-	# 	export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
-	# fi
+	if [[ -z "$LD_LIBRARY_PATH" ]]; then
+		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
+	elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
+		export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
+	fi
+    # export LIBGL_ALWAYS_SOFTWARE=1
+    # export LIBVA_DRIVER_NAME=d3d12
+    # INTER: sudo ln -sf /usr/lib/libedit.so /usr/lib/libedit.so.2
 
 	trim_path
 
@@ -56,7 +62,6 @@ if [[ ${OS} == "WSL1" ]] ; then
 	export LANG=zh_CN.UTF-8
 	export LANGUAGE=zh_CN:en_US:en
 	export DISPLAY=:0
-
 	trim_path
     export PATH
 
@@ -70,4 +75,16 @@ fi
 alias e.="explorer.exe ."
 alias e="explorer.exe"
 
-#if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then . $HOME/.nix-profile/etc/profile.d/nix.sh; fi
+im=fcitx
+export XMODIFIERS=@im=$im
+export INPUT_METHOD=$im
+export SDL_IM_MODULE=$im
+if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+    export GTK_IM_MODULE=$im
+    export QT_IM_MODULE=$im
+fi
+
+export $(dbus-launch)
+export LIBGL_ALWAYS_SOFTWARE=1
+fcitx5 --disable=wayland -d  --verbose '*'=0
+
