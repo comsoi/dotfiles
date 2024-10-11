@@ -1,3 +1,5 @@
+#! /bash
+
 unsetopt flowcontrol
 
 # Refence:
