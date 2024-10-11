@@ -8,4 +8,4 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 
 alias cd=cd_func
 
-[[ -f ~/.config/zsh/.aliases ]] && source ~/.config/zsh/.aliases
+[[ -f ~/.config/zsh/40-aliases ]] && source ~/.config/zsh/40-aliases

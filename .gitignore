@@ -6,6 +6,9 @@
 .config/starship.toml
 .config/fish/fish_variables
 .config/zsh/.p10k.zsh
+.config/zsh/00-init
+.config/zsh/00-init-omz
+.config/zsh/50-custom
 .config/zsh/.powerlevel10k/
 .config/zsh/.custom
 .config/scoop/

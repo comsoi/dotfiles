@@ -1,3 +1,0 @@
-#! /bin/bash
-
-[[ -f ~/.config/zsh/.custom ]] && source ~/.config/zsh/.custom
