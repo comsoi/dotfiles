@@ -1,10 +1,8 @@
 " gui settings
 if has('gui_running')
-    " enter vim
     if has("gui_gtk3")
         :set guifont=Fira\ Code\ 14
     elseif has("x11")
-        " Also for GTK 1
         :set guifont=*-lucidatypewriter-medium-r-normal-*-*-180-*-*-m-*-*
     elseif has("gui_win32")
         :set guifont=Fira\ Code:h14:cANSI
@@ -25,7 +23,6 @@ if (has("termguicolors"))
     " https://vimhelp.org/term.txt.html
     " windows notice: should be set after `set termguicolors` or `set t_Co=256`.
     " https://yianwillis.github.io/vimcdoc/doc/term.html
-    " windows 注意: 应在 `set termguicolors` 或 `set t_Co=256` 之后设置。
     "
     " Reference chart of values:
     "   Ps = 0  -> blinking block.             缺省值
@@ -38,49 +35,26 @@ if (has("termguicolors"))
     "
     " imitate nvim cursor style
     " Use a line cursor within insert mode and a block cursor everywhere else.
-
-    " insert mode
-    let &t_SI = "\e[6 q"      " or \<Esc>[6 q
-    " replace
-    let &t_SR = "\e[4 q"
-    " oherwise
-    let &t_EI = "\e[2 q"
+    let &t_SI = "\e[6 q"      " insert     or \<Esc>[6 
+    let &t_SR = "\e[4 q"      " replace
+    let &t_EI = "\e[2 q"      " otherwise
     " see term.txt raw-terminal-mode
-    " when entering vim
-    let &t_ti ..= "\e[2 q"
-    " when leaving vim
-    let &t_te ..= "\e[5 q"
+    let &t_ti ..= "\e[2 q"    " enter vim
+    let &t_te ..= "\e[5 q"    " leave vim
 else
     echoerr "Your version of Vim doesn't support termguicolors"
 endif
 
 
 if has('win32') || has('win64')
-    " set runtimepath
     set runtimepath-=~/vimfiles
     set runtimepath^=~/.vim
     set runtimepath-=~/vimfiles/after
     set runtimepath+=~/.vim/after
-
-    " if !has('gui_running')
-        " fix cursor style (now use &t_ti &t_te)
-        " need uutils-coreutils or something else
-        " autocmd VimEnter * silent !printf "\e[2 q"
-        " leave vim
-        " pwsh support echo(Write-Output) "`e[6 q" but not useful in gvim
-        " autocmd VimLeave * silent !printf "\e[6 q"
-    " endif
 endif
 
 if has('unix')
     let uname = substitute(system('uname'), '\n', '', '')
-    " if uname == 'Linux' || uname == 'Darwin'
-        " fix cursor style (now use &t_ti &t_te)
-        " enter vim
-        " autocmd VimEnter * silent ! echo -ne "\e[2 q"
-        " leave vim
-        " autocmd VimLeave * silent ! echo -ne "\e[5 q"
-    " endif
 endif
 
 
@@ -93,6 +67,7 @@ if (empty($TMUX))
     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
   endif
 endif
+
 
 " colorscheme
 let g:my_colorscheme = 'one'

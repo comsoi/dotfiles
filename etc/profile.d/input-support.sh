@@ -3,11 +3,14 @@
 im=fcitx
 export XMODIFIERS=@im=$im
 export INPUT_METHOD=$im
-export SDL_IM_MODULE=$im
 
-# Only set GTK_IM_MODULE and QT_IM_MODULE if not using Wayland
-if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    export SDL_IM_MODULE=$im
     export GTK_IM_MODULE=$im
     export QT_IM_MODULE=$im
 fi
 
+export QT_IM_MODULES="wayland;fcitx;ibus"
+if [ "$XDG_CURRENT_DESKTOP" != "KDE" ]; then
+    export QT_IM_MODULE=$im
+fi
