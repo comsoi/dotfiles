@@ -8,8 +8,6 @@ if has('gui_running')
         :set guifont=Fira\ Code:h14:cANSI
     elseif has("gui_macvim")
         :set guifont=Menlo\ Regular:h14
-    else
-        :set guifont=Monospace\ 14
     endif
 endif
 
@@ -90,7 +88,6 @@ if has("termguicolors")
         else
             set notermguicolors
         endif
-
     endif
 endif
 
