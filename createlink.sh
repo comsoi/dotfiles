@@ -13,6 +13,7 @@ file_names=(
     ".config/completions/"
     ".config/fish/"
     ".config/tmux/"
+    ".config/yazi/"
     ".config/zsh/"
     ".inputrc"
     ".init_profile"
