@@ -1,7 +1,6 @@
 # import = ['~/.config/alacritty/dracula.toml']
 import = ['~/.config/alacritty/catppuccin/catppuccin-macchiato.toml']
 live_config_reload = true
-working_directory = "C:/Users/Lenod/"
 
 [cursor.style]
 shape = "Beam"
@@ -45,8 +44,7 @@ history = 10000
 multiplier = 20
 
 [shell]
-args = ["-l","-e fastfetch"]
-program = "nu"
+program = "/usr/bin/zsh"
 
 [window]
 decorations = "none"
