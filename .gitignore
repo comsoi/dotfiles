@@ -5,6 +5,7 @@
 .zcompdump*
 .config/starship.toml
 .config/fish/fish_variables
+.config/hypr/cache/
 .config/zsh/.p10k.zsh
 .config/zsh/00-init
 .config/zsh/00-init-omz
