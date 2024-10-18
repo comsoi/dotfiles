@@ -11,7 +11,7 @@
 # ----------------------------------------------------- 
 
 use_cache=0
-if [ -f ~/.config/ml4w/settings/wallpaper_cache ] ;then
+if [ -f ~/.config/hypr/settings/wallpaper_cache ] ;then
     use_cache=1
 fi
 
@@ -26,15 +26,14 @@ fi
 # ----------------------------------------------------- 
 
 force_generate=0
-generated_versions="$HOME/.config/ml4w/cache/wallpaper-generated"
-waypaper_running=$HOME/.config/ml4w/cache/waypaper-running
-cache_file="$HOME/.config/ml4w/cache/current_wallpaper"
-blurred_wallpaper="$HOME/.config/ml4w/cache/blurred_wallpaper.png"
-square_wallpaper="$HOME/.config/ml4w/cache/square_wallpaper.png"
-rasi_file="$HOME/.config/ml4w/cache/current_wallpaper.rasi"
-blur_file="$HOME/.config/ml4w/settings/blur.sh"
-default_wallpaper="$HOME/wallpaper/default.jpg"
-wallpaper_effect="$HOME/.config/ml4w/settings/wallpaper-effect.sh"
+generated_versions="$HOME/.config/hypr/cache/wallpaper-generated"
+waypaper_running=$HOME/.config/hypr/cache/waypaper-running
+cache_file="$HOME/.config/hypr/cache/current_wallpaper"
+blurred_wallpaper="$HOME/.config/hypr/cache/blurred_wallpaper.png"
+square_wallpaper="$HOME/.config/hypr/cache/square_wallpaper.png"
+rasi_file="$HOME/.config/hypr/cache/current_wallpaper.rasi"
+blur_file="$HOME/.config/hypr/settings/blur.sh"
+default_wallpaper="$HOME/.config/hypr/wallpaper.jpg"
 blur="50x30"
 blur=$(cat $blur_file)
 
@@ -84,35 +83,12 @@ wallpaper_filename=$(basename $wallpaper)
 echo ":: Wallpaper Filename: $wallpaper_filename"
 
 # ----------------------------------------------------- 
-# Wallpaper Effects
-# -----------------------------------------------------
-
-if [ -f $wallpaper_effect ] ;then
-    effect=$(cat $wallpaper_effect)
-    if [ ! "$effect" == "off" ] ;then
-        used_wallpaper=$generated_versions/$effect-$wallpaper_filename
-        if [ -f $generated_versions/$effect-$wallpaper_filename ] && [ "$force_generate" == "0" ] && [ "$use_cache" == "1" ] ;then
-            echo ":: Use cached wallpaper $effect-$wallpaper_filename"
-        else
-            echo ":: Generate new cached wallpaper $effect-$wallpaper_filename with effect $effect"
-            dunstify "Using wallpaper effect $effect..." "with image $wallpaper_filename" -h int:value:10 -h string:x-dunst-stack-tag:wallpaper
-            source $HOME/.config/hypr/effects/wallpaper/$effect
-        fi
-        echo ":: Loading wallpaper $generated_versions/$effect-$wallpaper_filename with effect $effect"
-        echo ":: Setting wallpaper with $used_wallpaper"
-        waypaper --wallpaper $used_wallpaper
-    else
-        echo ":: Wallpaper effect is set to off"
-    fi
-fi
-
-# ----------------------------------------------------- 
 # Execute pywal
 # ----------------------------------------------------- 
 
 echo ":: Execute pywal with $used_wallpaper"
 wal -q -i $used_wallpaper
-source "$HOME/.cache/wal/colors.sh"
+#source "$HOME/.cache/wal/colors.sh"
 
 # ----------------------------------------------------- 
 # Reload Waybar
