@@ -1,30 +1,30 @@
 #!/bin/bash
-#  ____                               _           _    
-# / ___|  ___ _ __ ___  ___ _ __  ___| |__   ___ | |_  
-# \___ \ / __| '__/ _ \/ _ \ '_ \/ __| '_ \ / _ \| __| 
-#  ___) | (__| | |  __/  __/ | | \__ \ | | | (_) | |_  
-# |____/ \___|_|  \___|\___|_| |_|___/_| |_|\___/ \__| 
-#                                                      
-# Based on https://github.com/hyprwm/contrib/blob/main/grimblast/screenshot.sh 
-# ----------------------------------------------------- 
+#  ____                               _           _
+# / ___|  ___ _ __ ___  ___ _ __  ___| |__   ___ | |_
+# \___ \ / __| '__/ _ \/ _ \ '_ \/ __| '_ \ / _ \| __|
+#  ___) | (__| | |  __/  __/ | | \__ \ | | | (_) | |_
+# |____/ \___|_|  \___|\___|_| |_|___/_| |_|\___/ \__|
+#
+# Based on https://github.com/hyprwm/contrib/blob/main/grimblast/screenshot.sh
+# -----------------------------------------------------
 
 # Screenshots will be stored in $HOME by default.
 # The screenshot will be moved into the screenshot directory
 
-# Add this to ~/.config/user-dirs.dirs to save screenshots in a custom folder: 
+# Add this to ~/.config/user-dirs.dirs to save screenshots in a custom folder:
 # XDG_SCREENSHOTS_DIR="$HOME/Screenshots"
 
 prompt='Screenshot'
 mesg="DIR: ~/Screenshots"
 
 # Screenshot Filename
-source ~/.config/ml4w/settings/screenshot-filename.sh
+source ~/.config/hypr/settings/screenshot-filename.sh
 
 # Screenshot Folder
-source ~/.config/ml4w/settings/screenshot-folder.sh
+source ~/.config/hypr/settings/screenshot-folder.sh
 
 # Screenshot Editor
-export GRIMBLAST_EDITOR="$(cat ~/.config/ml4w/settings/screenshot-editor.sh)"
+export GRIMBLAST_EDITOR="$(cat ~/.config/hypr/settings/screenshot-editor.sh)"
 
 # Example for keybindings
 # bind = SUPER, p, exec, grimblast save active
