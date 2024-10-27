@@ -35,6 +35,7 @@ alias ipa='ip -br a'
 alias rmi='rm -I'
 alias tree='tree -aC'
 alias r='yy'
+alias p='prime-run'
 alias ipy='ipython'
 alias code.='code .'
 

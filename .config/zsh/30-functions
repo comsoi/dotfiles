@@ -17,7 +17,7 @@ function tmux {
 }
 
 # binding ctrl-s to sudo
-function sudo-command-line {
+function sudo-command-line-s {
 	[[ -z $BUFFER ]] && zle up-history
 	local cmd="sudo "
 	if [[ ${BUFFER} == ${cmd}* ]]; then
@@ -29,8 +29,8 @@ function sudo-command-line {
 	fi
 	zle reset-prompt
 }
-zle     -N   sudo-command-line
-bindkey '^S' sudo-command-line
+zle     -N   sudo-command-line-s
+bindkey '^S' sudo-command-line-s
 
 # Change cursor shape for different vi modes.
 # Also fixes the cursor shape after exiting nvim.
@@ -99,4 +99,8 @@ add-zsh-hook zshexit __fd18et_save_last_successed
 
 if [ -f "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh" ]; then
     source "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh"
+fi
+
+if [ -f "${ZDOTDIR}/plugins/sudo.plugin.zsh" ]; then
+    source "${ZDOTDIR}/plugins/sudo.plugin.zsh"
 fi
