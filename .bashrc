@@ -67,31 +67,23 @@ esac
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# Functions
 if [ -f "${HOME}/.bash_functions" ]; then
 	. "${HOME}/.bash_functions"
 fi
 
-# Alias definitions.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 if [ -f ~/.bash_aliases ]; then
 	. "${HOME}/.bash_aliases"
 fi
 
-# User configuration
 if [[ -r "${HOME}/.bash_custom" ]]; then
     source ${HOME}/.bash_custom
 fi
 
 if [ "$(command -v zoxide)" ]; then
-	# echo "command \"zoxide\" exists on system"
 	eval "$(zoxide init bash)"
-else
-	echo "command \"zoxide\" does not exist on system"
 fi
 
 if [ "$(command -v thefuck)" ]; then
 	eval "$(thefuck --alias)"
-else
-	echo "command \"thefuck\" does not exist on system"
 fi
