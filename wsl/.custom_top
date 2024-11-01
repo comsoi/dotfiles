@@ -50,11 +50,11 @@ if [[ ${OS} == "WSL2" ]] ; then
     export CUDACXX=/opt/cuda/bin/nvcc
     export HOST_COMPILER=/usr/bin/g++-13
     export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
-    # export NVCC_CCBIN=/usr/bin/g++-13
+    export NVCC_CCBIN=/usr/bin/g++-13
     # export CUDAHOSTCXX=/usr/bin/g++-13
     PATH="$CUDA_PATH/bin:$PATH"
     PATH="$CUDA_PATH/nsight_compute:$PATH"
-    PATH="$CUDA_PATH/nsight_compute/bin:$PATH"
+    PATH="$CUDA_PATH/nsight_systems/bin:$PATH"
     export PATH
 fi
 
