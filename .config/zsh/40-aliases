@@ -103,3 +103,4 @@ if [ "$(command -v bat)" ]; then
 fi
 
 alias update-grub='grub-mkconfig -o /boot/grub/grub.cfg'
+alias startlp='sudo systemctl start tlp.service'
