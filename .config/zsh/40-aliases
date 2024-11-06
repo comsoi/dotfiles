@@ -34,7 +34,7 @@ alias l='ls -CF'
 alias ipa='ip -br a'
 alias rmi='rm -I'
 alias tree='tree -aC'
-alias r='yy'
+alias r='yy '
 alias p='prime-run'
 alias ipy='ipython'
 alias code.='code .'
@@ -54,6 +54,7 @@ alias proxychains4='proxychains4 '
 
 if [ "$(command -v nala)" ]; then
 	alias apt="nala"
+	alias nala="sudo nala"
 fi
 
 # 先检测并设置 dircolors，为所有支持的命令设置颜色输出

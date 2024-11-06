@@ -97,10 +97,7 @@ add-zsh-hook zshaddhistory __fd18et_prevent_write
 add-zsh-hook precmd __fd18et_save_last_successed
 add-zsh-hook zshexit __fd18et_save_last_successed
 
-if [ -f "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh" ]; then
-    source "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh"
-fi
-
-if [ -f "${ZDOTDIR}/plugins/sudo.plugin.zsh" ]; then
-    source "${ZDOTDIR}/plugins/sudo.plugin.zsh"
-fi
+# plugins
+source "${ZDOTDIR}/plugins/completion.plugin.zsh"
+source "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh"
+source "${ZDOTDIR}/plugins/sudo.plugin.zsh"

@@ -8,18 +8,18 @@ trim_path() {
 }
 
 cdw() {
-    local windows_path="$1"
-    if [ -z "$windows_path" ]; then
-        echo "Usage: cdw <Windows path>"
-        return 1
-    fi
-    local wsl_path
-    wsl_path=$(wslpath "$windows_path")
-    if [ $? -ne 0 ]; then
-        echo "Failed to convert Windows path to WSL path"
-        return 1
-    fi
-    cd "$wsl_path" || { echo "Failed to change directory to $wsl_path"; return 1; }
+	local windows_path="$1"
+	if [ -z "$windows_path" ]; then
+		echo "Usage: cdw <Windows path>"
+		return 1
+	fi
+	local wsl_path
+	wsl_path=$(wslpath "$windows_path")
+	if [ $? -ne 0 ]; then
+		echo "Failed to convert Windows path to WSL path"
+		return 1
+	fi
+	cd "$wsl_path" || { echo "Failed to change directory to $wsl_path"; return 1; }
 }
 
 alias cmd='cmd.exe'
@@ -30,32 +30,28 @@ alias wsl='wsl.exe'
 
 
 if [[ ${OS} == "WSL2" ]] ; then
-    alias kg='env -u WAYLAND_DISPLAY DISPLAY=:1 LC_ALL=zh_CN.UTF-8 PWD=/home/wsl LIBGL_ALWAYS_SOFTWARE=1 /usr/sbin/dbus-launch startplasma-x11'
-    alias kde='env -u LIBGL_ALWAYS_SOFTWARE -u WAYLAND_DISPLAY DISPLAY=172.22.48.1:1 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib:/usr/local/lib LIBVA_DRIVER_NAME=d3d12 $(dbus-launch) startplasma-x11'
-    # vainfo mesa-va-drivers
-    # set when /etc/wsl.conf ldconfig = false
-	if [[ -z "$LD_LIBRARY_PATH" ]]; then
-		export LD_LIBRARY_PATH="/usr/lib/wsl/lib"
-	elif [[ ":$LD_LIBRARY_PATH:" != *":/usr/lib/wsl/lib:"* ]]; then
-		export LD_LIBRARY_PATH="/usr/lib/wsl/lib:$LD_LIBRARY_PATH"
-	fi
-    # export LIBGL_ALWAYS_SOFTWARE=1
-    # export LIBVA_DRIVER_NAME=d3d12
-    # INTER: sudo ln -sf /usr/lib/libedit.so /usr/lib/libedit.so.2
+	alias kg='env -u WAYLAND_DISPLAY DISPLAY=:1 LC_ALL=zh_CN.UTF-8 PWD=/home/wsl LIBGL_ALWAYS_SOFTWARE=1 /usr/sbin/dbus-launch startplasma-x11'
+	alias kde='env -u LIBGL_ALWAYS_SOFTWARE -u WAYLAND_DISPLAY DISPLAY=172.22.48.1:1 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib:/usr/local/lib LIBVA_DRIVER_NAME=d3d12 $(dbus-launch) startplasma-x11'
+	# vainfo mesa-va-drivers
+	# set when /etc/wsl.conf ldconfig = false
+	append_env LD_LIBRARY_PATH "/usr/lib/wsl/lib" prefix
+	# export LIBGL_ALWAYS_SOFTWARE=1
+	# export LIBVA_DRIVER_NAME=d3d12
+	# INTER: sudo ln -sf /usr/lib/libedit.so /usr/lib/libedit.so.2
 
 	trim_path
 
-    export CUDA_PATH=/opt/cuda
-    export CUDA_HOME="$CUDA_PATH"
-    export CUDACXX=/opt/cuda/bin/nvcc
-    export HOST_COMPILER=/usr/bin/g++-13
-    export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
-    export NVCC_CCBIN=/usr/bin/g++-13
-    # export CUDAHOSTCXX=/usr/bin/g++-13
-    PATH="$CUDA_PATH/bin:$PATH"
-    PATH="$CUDA_PATH/nsight_compute:$PATH"
-    PATH="$CUDA_PATH/nsight_systems/bin:$PATH"
-    export PATH
+	export CUDA_PATH=/opt/cuda
+	export CUDA_HOME="$CUDA_PATH"
+	export CUDACXX=/opt/cuda/bin/nvcc
+	export HOST_COMPILER=/usr/bin/g++-13
+	export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
+	export NVCC_CCBIN=/usr/bin/g++-13
+	# export CUDAHOSTCXX=/usr/bin/g++-13
+	append_env PATH "$CUDA_PATH/bin" prefix
+	append_env PATH "$CUDA_PATH/nsight_compute" prefix
+	append_env PATH "$CUDA_PATH/nsight_systems/bin" prefix
+	export PATH
 fi
 
 if [[ ${OS} == "WSL1" ]] ; then
@@ -63,7 +59,7 @@ if [[ ${OS} == "WSL1" ]] ; then
 	export LANGUAGE=zh_CN:en_US:en
 	export DISPLAY=:0
 	trim_path
-    export PATH
+	export PATH
 
 	# ssh cannot be started until wsl has started
 	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
@@ -80,11 +76,10 @@ export XMODIFIERS=@im=$im
 export INPUT_METHOD=$im
 export SDL_IM_MODULE=$im
 if [ "$XDG_SESSION_TYPE" != "wayland" ]; then
-    export GTK_IM_MODULE=$im
-    export QT_IM_MODULE=$im
+	export GTK_IM_MODULE=$im
+	export QT_IM_MODULE=$im
 fi
 
 export $(dbus-launch)
 export LIBGL_ALWAYS_SOFTWARE=1
 fcitx5 --disable=wayland -d  --verbose '*'=0
-

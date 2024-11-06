@@ -6,14 +6,27 @@ if [[ $(tty) == /dev/pts/* ]]; then
 	export LANGUAGE=zh_CN:en_US:en
 fi
 
-# Preferred editor for local and remote sessions
 export EDITOR='vim'
-
-# Enable less mouse scrolling
 export LESS="-R"
 
-# PATH
-export PATH=$HOME/.local/bin:$PATH
+append_env () {
+	# $1: 环境变量名称（如 PATH）
+	# $2: 要添加的值
+	# $3: 可选，如果是 "prefix" 则添加到开头
+	eval "case \":\$$1:\" in
+		*:\"$2\":*)
+			;;
+		*)
+			if [ \"\$3\" = \"prefix\" ]; then
+				eval \"$1=$2\${$1:+:\$$1}\"
+			else
+				eval \"$1=\${$1:+\$$1:}$2\"
+			fi
+			;;
+	esac"
+}
+
+append_env PATH "$HOME/.local/bin" prefix
 
 # OS
 {

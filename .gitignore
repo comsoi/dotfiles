@@ -12,5 +12,6 @@
 .config/zsh/50-custom
 .config/zsh/.powerlevel10k/
 .config/zsh/.custom
+.config/zsh/plugins/custom/
 .config/scoop/
 .vscode/
