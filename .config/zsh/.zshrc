@@ -6,13 +6,10 @@ if [[ -r "${ZDOTDIR}/00-init" ]]; then
 	source ${ZDOTDIR}/00-init
 fi
 if [[ -r "${ZDOTDIR}/00-init-omz" ]]; then
-    source ${ZDOTDIR}/00-init-omz
+	source ${ZDOTDIR}/00-init-omz
 fi
 if [[ -r "${ZDOTDIR}/20-keybinding" ]]; then
 	source ${ZDOTDIR}/20-keybinding
-fi
-if [[ -r "${ZDOTDIR}/20-completion" ]]; then
-	source ${ZDOTDIR}/20-completion
 fi
 if [[ -r "${ZDOTDIR}/30-functions" ]]; then
 	source ${ZDOTDIR}/30-functions
@@ -21,13 +18,13 @@ if [[ -r "${ZDOTDIR}/40-aliases" ]]; then
 	source ${ZDOTDIR}/40-aliases
 fi
 if [[ -r "${ZDOTDIR}/50-custom" ]]; then
-    source ${ZDOTDIR}/50-custom
+	source ${ZDOTDIR}/50-custom
 fi
 
 # Initialize tools
 
-if [[ $(command -v fzf) ]]; then
-    source <(fzf --zsh)
+if command -v fzf >/dev/null && fzf --version | cut -d' ' -f1 | awk '{exit ($1 <= "0.48.0")}'; then
+	source <(fzf --zsh)
 fi
 
 if [[ $(command -v zoxide) ]]; then

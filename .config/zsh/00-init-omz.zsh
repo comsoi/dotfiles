@@ -15,7 +15,7 @@ fi
 
 
 # Oh My Zsh
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH="${ZDOTDIR}/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 HYPHEN_INSENSITIVE="true"           # _ and - will be interchangeable.
 zstyle ':omz:update' mode reminder      # update automatically without asking
@@ -36,21 +36,21 @@ zstyle ':omz:update' frequency 26   # check for updates every 26 days
 # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ;
 # git clone https://github.com/Pilaton/OhMyZsh-full-autoupdate.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/ohmyzsh-full-autoupdate ;
 plugins=(
-    command-not-found
-    extract
-    docker
-    git
-    github
-    gitignore
-    history-substring-search
-    node
-    npm
-    nvm
-    vscode
-    sudo
-    web-search
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    ohmyzsh-full-autoupdate
+	command-not-found
+	extract
+	docker
+	git
+	github
+	gitignore
+	history-substring-search
+	node
+	npm
+	nvm
+	vscode
+	sudo
+	web-search
+	zsh-autosuggestions
+	zsh-syntax-highlighting
+	ohmyzsh-full-autoupdate
 )
 source $ZSH/oh-my-zsh.sh
