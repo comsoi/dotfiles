@@ -9,21 +9,15 @@ fi
 export EDITOR='vim'
 export LESS="-R"
 
-append_env () {
-	# $1: 环境变量名称（如 PATH）
-	# $2: 要添加的值
-	# $3: 可选，如果是 "prefix" 则添加到开头
-	eval "case \":\$$1:\" in
-		*:\"$2\":*)
-			;;
-		*)
-			if [ \"\$3\" = \"prefix\" ]; then
-				eval \"$1=$2\${$1:+:\$$1}\"
-			else
-				eval \"$1=\${$1:+\$$1:}$2\"
-			fi
-			;;
-	esac"
+append_env() {
+	[[ -z "$1" || -z "$2" || ! -d "$2" ]] && return
+	local current_value="${!1}"
+	[[ ":$current_value:" == *":$2:"* ]] && return
+	if [[ "$3" == "prefix" ]]; then
+		eval $1=\"$2${current_value:+:$current_value}\"
+	else
+		eval $1=\"${current_value:+$current_value:}$2\"
+	fi
 }
 
 append_env PATH "$HOME/.local/bin" prefix
