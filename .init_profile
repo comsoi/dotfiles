@@ -9,14 +9,15 @@ fi
 export EDITOR='vim'
 export LESS="-R"
 
-append_env() {
-	[[ -z "$1" || -z "$2" || ! -d "$2" ]] && return
-	local current_value="${!1}"
-	[[ ":$current_value:" == *":$2:"* ]] && return
+append_env ()
+{
+	[[ -z "$1" || -z "$2" || ! -d "$2" ]] && return;
+	local v=$(eval echo \$$1);
+	[[ ":$v:" == *":$2:"* ]] && return;
 	if [[ "$3" == "prefix" ]]; then
-		eval $1=\"$2${current_value:+:$current_value}\"
+		eval $1=\"$2${v:+:$v}\";
 	else
-		eval $1=\"${current_value:+$current_value:}$2\"
+		eval $1=\"${v:+$v:}$2\";
 	fi
 }
 
