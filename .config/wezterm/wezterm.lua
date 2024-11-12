@@ -13,15 +13,15 @@ local ssh_domains = wezterm.default_ssh_domains()
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
     table.insert(launch_menu, {
         label = "bash",
-        args = {"bash", "-l"}
+        args = {"bash"}
     })
     table.insert(launch_menu, {
         label = "zsh",
-        args = {"zsh", "-l"}
+        args = {"zsh"}
     })
     table.insert(launch_menu, {
         label = "fish",
-        args = {"fish", "-l"}
+        args = {"fish"}
     })
     default_prog = {'zsh'}
 end
@@ -38,22 +38,20 @@ function tab_title(tab_info)
     -- in that tab
     return tab_info.active_pane.title
 end
--- function basename(s)
---     return string.gsub(s, '(.*[/\\])(.*)', '%2')
--- end
 
+-- Tab format
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
     local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
     local edge_background = '#0b0022'
-    local background = '#1b1032'
-    local foreground = '#808080'
+    local background = '#232634'
+    local foreground = '#a5adce'
 
     if tab.is_active then
-        background = '#2b2042'
-        foreground = '#c0c0c0'
+        background = '#7287fd'
+        foreground = '#ffffff'
     elseif hover then
-        background = '#3b3052'
-        foreground = '#909090'
+        background = '#8caaee'
+        foreground = '#414559'
     end
 
     local edge_foreground = background
@@ -151,7 +149,7 @@ end
 
 function scheme_for_appearance(appearance)
     if appearance:find "Dark" then
-        return "Catppuccin Mocha"
+        return "Catppuccin Frappe"
     else
         return "Catppuccin Latte"
     end
@@ -160,21 +158,23 @@ end
 
 local config = {
     check_for_updates = false,
-
+    enable_wayland = false,
     initial_cols = 110,
     initial_rows = 35,
 
     audible_bell = "Disabled",
 
-    -- 样式
+    -- cursor style
     default_cursor_style = "BlinkingBar",
-    -- color_scheme = 'Dracula (Official)',
-    color_scheme = 'Catppuccin Frappe',
-    -- color_scheme = 'Catppuccin Mocha',
-    -- color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
+    -- color_scheme
+    -- 'Catppuccin Frappe'
+    -- 'Catppuccin Latte'
+    -- 'Catppuccin Mocha',
+    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
     -- windows
-    window_decorations = "RESIZE", -- |MACOS_FORCE_DISABLE_SHADOW
-    window_background_opacity = 0.6,
+    -- RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS
+    window_decorations = "INTEGRATED_BUTTONS",
+    window_background_opacity = 0.75,
     window_padding = {
         left = 20,
         right = 20,
