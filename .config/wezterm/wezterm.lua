@@ -3,10 +3,10 @@ local act = wezterm.action
 local launch_menu = {}
 local default_prog = {}
 -- global env vars
-local set_environment_variables = {
-    -- CHERE_INVOKING = "1"
+local set_environment_variables_windows = {
 }
-local term = "xterm-256color"
+local set_environment_variables_linux = {
+}
 local ssh_domains = wezterm.default_ssh_domains()
 
 
@@ -42,7 +42,7 @@ end
 -- Tab format
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
     local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
-    local edge_background = '#0b0022'
+    local edge_background = '#232634'
     local background = '#232634'
     local foreground = '#a5adce'
 
@@ -171,27 +171,18 @@ local config = {
     -- 'Catppuccin Latte'
     -- 'Catppuccin Mocha',
     color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
-    -- windows
+    -- window
     -- RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS
     window_decorations = "INTEGRATED_BUTTONS",
     window_background_opacity = 0.75,
+    text_background_opacity = 0.9,
+    adjust_window_size_when_changing_font_size = false,
     window_padding = {
         left = 20,
         right = 20,
         top = 20,
         bottom = 5
     },
-    -- win32_system_backdrop = 'Acrylic',
-    -- win32_system_backdrop = 'Mica',
-    -- win32_system_backdrop = 'Tabbed',
-    -- background = {
-    --     {
-    --         source = {
-    --             File = "D:\\bg\\abg\\(pid-56669634)博麗霊夢_p0.png",
-    --         },
-    --         opacity = 0.33,
-    --     }
-    -- },
 
     -- Tab bar
     enable_tab_bar = true,
@@ -215,7 +206,6 @@ local config = {
         'Noto Emoji',
         'Noto Color Emoji',
     },
-    -- text_background_opacity = 0.9,
 
     enable_scroll_bar = true,
     inactive_pane_hsb = {
@@ -225,11 +215,27 @@ local config = {
     },
 
     launch_menu = launch_menu,
-    term = term,
     default_prog = default_prog,
-    set_environment_variables = set_environment_variables,
 }
 
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+    config.term = "wezterm"
+    config.set_environment_variables = set_environment_variables_linux
+else
+    config.term ="xterm-256color"
+    config.set_environment_variables = set_environment_variables_windows
+    -- config.win32_system_backdrop = 'Acrylic'
+    -- config.win32_system_backdrop = 'Mica'
+    -- config.win32_system_backdrop = 'Tabbed'
+    -- config.background = {
+    --     {
+    --         source = {
+    --             File = "D:\\bg\\abg\\(pid-56669634)博麗霊夢_p0.png",
+    --         },
+    --         opacity = 0.33,
+    --     }
+    -- }
+end
 
 -- key bindings
 config.leader = {
@@ -293,78 +299,78 @@ config.key_tables = {
 
 
 config.keys = {
--- {key = "s",mods = "LEADER|CTRL",action = wezterm.action {SendString = "\x01"}},
-
--- Pane navigation
---  followed by 'r' will put us in resize-pane mode
--- until we cancel that mode with 'q' or 'Escape', or
--- until the timeout_milliseconds has elapsed.
-{
-    key = 'r',
+    -- {key = "s",mods = "LEADER|CTRL",action = wezterm.action {SendString = "\x01"}},
+    
+    -- Pane navigation
+    --  followed by 'r' will put us in resize-pane mode
+    -- until we cancel that mode with 'q' or 'Escape', or
+    -- until the timeout_milliseconds has elapsed.
+    {
+        key = 'r',
+        mods = 'LEADER',
+        action = act.ActivateKeyTable {
+            name = 'resize_pane',
+            one_shot = false,
+            timeout_milliseconds = 5000
+        }
+    },
+    -- followed by 'a' will put us in activate-pane
+    {
+    key = 'a',
     mods = 'LEADER',
     action = act.ActivateKeyTable {
-        name = 'resize_pane',
-        one_shot = false,
-        timeout_milliseconds = 5000
-    }
-},
--- followed by 'a' will put us in activate-pane
-{
-key = 'a',
-mods = 'LEADER',
-action = act.ActivateKeyTable {
-        name = 'activate_pane',
-        one_shot = false,
-        timeout_milliseconds = 450,
+            name = 'activate_pane',
+            one_shot = false,
+            timeout_milliseconds = 450,
+        },
     },
-},
-{key = "h", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Left"}},
-{key = "j", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Down"}},
-{key = "k", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Up"}},
-{key = "l", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Right"}},
-{key = 's', mods = 'LEADER', action = wezterm.action.PaneSelect{mode = 'SwapWithActive'}},
-{key = "-", mods = "LEADER", action = act{SplitVertical = {domain = "CurrentPaneDomain"}}},
-{key = "\\", mods = "LEADER", action = act{SplitHorizontal = {domain = "CurrentPaneDomain"}}},
-{key = "m", mods = "LEADER", action = "TogglePaneZoomState"},
-{key = "c", mods = "LEADER", action = act{SpawnTab = "CurrentPaneDomain"}},
--- Tab navigation
-{key = 'S', mods = 'SHIFT|ALT', action =act.ShowLauncherArgs{flags = 'FUZZY|TABS|LAUNCH_MENU_ITEMS'},},
-{key = 'F9', mods = 'ALT', action = wezterm.action.ShowTabNavigator},
-{key = 'F10', mods = 'ALT', action = wezterm.action.ShowLauncher},
-{key = 'z' , mods = 'LEADER', action = wezterm.action.ShowLauncher},
-{key="n", mods="LEADER", action = act.ActivateTabRelative(1)},
-{key="p", mods="LEADER", action = act.ActivateTabRelative(-1)},
-{key = "1", mods = "LEADER", action = wezterm.action{ActivateTab = 0}},
-{key = "2", mods = "LEADER", action = wezterm.action{ActivateTab = 1}},
-{key = "3", mods = "LEADER", action = wezterm.action{ActivateTab = 2}},
-{key = "4", mods = "LEADER", action = wezterm.action{ActivateTab = 3}},
-{key = "5", mods = "LEADER", action = wezterm.action{ActivateTab = 4}},
-{key = "6", mods = "LEADER", action = wezterm.action{ActivateTab = 5}},
-{key = "7", mods = "LEADER", action = wezterm.action{ActivateTab = 6}},
-{key = "8", mods = "LEADER", action = wezterm.action{ActivateTab = 7}},
-{key = "9", mods = "LEADER", action = wezterm.action{ActivateTab = 8}},
-{key = "1", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 0}},
-{key = "2", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 1}},
-{key = "3", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 2}},
-{key = "4", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 3}},
-{key = "5", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 4}},
-{key = "6", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 5}},
-{key = "7", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 6}},
-{key = "8", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 7}},
-{key = "9", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 8}},
-{key = "0", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 9}},
-{key = "&", mods = "LEADER|SHIFT", action = wezterm.action{CloseCurrentTab = {confirm = true}}},
-{key = "x", mods = "LEADER", action = wezterm.action{CloseCurrentPane = {confirm = true}}},
--- rotate panes
--- show the pane selection mode, but have it swap the active and selected panes
-{mods = "LEADER", key = "Space", action = wezterm.action.RotatePanes "Clockwise"},
--- other
--- full screen
--- alt Enter | F11
-{key = "F11", mods = "", action = "ToggleFullScreen"},
--- copy and paste
-{key = "v", mods = "SHIFT|CTRL", action = wezterm.action{PasteFrom = "Clipboard"}},
-{key = "c", mods = "SHIFT|CTRL", action = wezterm.action{CopyTo = "Clipboard"}},
+    {key = "h", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Left"}},
+    {key = "j", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Down"}},
+    {key = "k", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Up"}},
+    {key = "l", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Right"}},
+    {key = 's', mods = 'LEADER', action = wezterm.action.PaneSelect{mode = 'SwapWithActive'}},
+    {key = "-", mods = "LEADER", action = act{SplitVertical = {domain = "CurrentPaneDomain"}}},
+    {key = "\\", mods = "LEADER", action = act{SplitHorizontal = {domain = "CurrentPaneDomain"}}},
+    {key = "m", mods = "LEADER", action = "TogglePaneZoomState"},
+    {key = "c", mods = "LEADER", action = act{SpawnTab = "CurrentPaneDomain"}},
+    -- Tab navigation
+    {key = 'S', mods = 'SHIFT|ALT', action =act.ShowLauncherArgs{flags = 'FUZZY|TABS|LAUNCH_MENU_ITEMS'},},
+    {key = 'F9', mods = 'ALT', action = wezterm.action.ShowTabNavigator},
+    {key = 'F10', mods = 'ALT', action = wezterm.action.ShowLauncher},
+    {key = 'z' , mods = 'LEADER', action = wezterm.action.ShowLauncher},
+    {key="n", mods="LEADER", action = act.ActivateTabRelative(1)},
+    {key="p", mods="LEADER", action = act.ActivateTabRelative(-1)},
+    {key = "1", mods = "LEADER", action = wezterm.action{ActivateTab = 0}},
+    {key = "2", mods = "LEADER", action = wezterm.action{ActivateTab = 1}},
+    {key = "3", mods = "LEADER", action = wezterm.action{ActivateTab = 2}},
+    {key = "4", mods = "LEADER", action = wezterm.action{ActivateTab = 3}},
+    {key = "5", mods = "LEADER", action = wezterm.action{ActivateTab = 4}},
+    {key = "6", mods = "LEADER", action = wezterm.action{ActivateTab = 5}},
+    {key = "7", mods = "LEADER", action = wezterm.action{ActivateTab = 6}},
+    {key = "8", mods = "LEADER", action = wezterm.action{ActivateTab = 7}},
+    {key = "9", mods = "LEADER", action = wezterm.action{ActivateTab = 8}},
+    {key = "1", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 0}},
+    {key = "2", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 1}},
+    {key = "3", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 2}},
+    {key = "4", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 3}},
+    {key = "5", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 4}},
+    {key = "6", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 5}},
+    {key = "7", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 6}},
+    {key = "8", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 7}},
+    {key = "9", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 8}},
+    {key = "0", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 9}},
+    {key = "&", mods = "LEADER|SHIFT", action = wezterm.action{CloseCurrentTab = {confirm = true}}},
+    {key = "x", mods = "LEADER", action = wezterm.action{CloseCurrentPane = {confirm = true}}},
+    -- rotate panes
+    -- show the pane selection mode, but have it swap the active and selected panes
+    {mods = "LEADER", key = "Space", action = wezterm.action.RotatePanes "Clockwise"},
+    -- other
+    -- full screen
+    -- alt Enter | F11
+    {key = "F11", mods = "", action = "ToggleFullScreen"},
+    -- copy and paste
+    {key = "v", mods = "SHIFT|CTRL", action = wezterm.action{PasteFrom = "Clipboard"}},
+    {key = "c", mods = "SHIFT|CTRL", action = wezterm.action{CopyTo = "Clipboard"}},
 }
 
 
