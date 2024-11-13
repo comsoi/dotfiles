@@ -38,6 +38,7 @@ alias r='yy '
 alias p='prime-run'
 alias ipy='ipython'
 alias code.='code .'
+alias dtb='distrobox-enter'
 
 if [ "$(command -v win32yank.exe)" ]; then
 	alias pbcopy='win32yank.exe -i --crlf'
