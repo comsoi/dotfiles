@@ -1,86 +1,199 @@
 local wezterm = require("wezterm")
-local act = wezterm.action
+local keymap_config = require("keymap")
+local cmd_abbr = require("cmd_abbr")
+
 local launch_menu = {}
 local default_prog = {}
+
 -- global env vars
-local set_environment_variables_windows = {
-}
-local set_environment_variables_linux = {
-}
-local ssh_domains = wezterm.default_ssh_domains()
+local set_environment_variables_windows = {}
+local set_environment_variables_linux = {}
 
-
-if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
-    table.insert(launch_menu, {
-        label = "bash",
-        args = {"bash"}
-    })
-    table.insert(launch_menu, {
-        label = "zsh",
-        args = {"zsh"}
-    })
-    table.insert(launch_menu, {
-        label = "fish",
-        args = {"fish"}
-    })
-    default_prog = {'zsh'}
-end
-
--- Tab title
-
-function tab_title(tab_info)
-    local title = tab_info.tab_title
-    -- if the tab title is explicitly set, take that
-    if title and #title > 0 then
-        return title
+function scheme_for_appearance(appearance)
+    if appearance:find "Dark" then
+        return "Catppuccin Frappe"
+    else
+        return "Catppuccin Latte"
     end
-    -- Otherwise, use the title from the active pane
-    -- in that tab
-    return tab_info.active_pane.title
 end
 
--- Tab format
+local config = {
+    check_for_updates = false,
+    enable_wayland = false,
+    -- initial_cols = 110,
+    -- initial_rows = 35,
+    -- audible_bell = "Disabled",
+    -- cursor style
+    default_cursor_style = "BlinkingBar",
+    -- color_scheme
+    -- 'Catppuccin Frappe'
+    -- 'Catppuccin Latte'
+    -- 'Catppuccin Mocha',
+    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
+    -- window
+    -- RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS | TITLE
+    window_decorations = "INTEGRATED_BUTTONS|RESIZE",
+    window_background_opacity = 0.75,
+    text_background_opacity = 1,
+    adjust_window_size_when_changing_font_size = false,
+    window_padding = {
+        left = 20,
+        right = 20,
+        top = 20,
+        bottom = 5
+    },
+    -- Tab bar
+    enable_tab_bar = true,
+    use_fancy_tab_bar = false,
+    hide_tab_bar_if_only_one_tab = true,
+    show_tab_index_in_tab_bar = true,
+    tab_max_width = 35, -- +7
+    tab_bar_at_bottom = false,
+    -- Fonts
+    font_size = 13.0,
+    font = wezterm.font_with_fallback{
+        'Fira Code',
+        {
+            family = 'Microsoft YaHei',
+            scale = 1
+        },
+        'PingFang SC',
+        'Symbols Nerd Font',
+        'Segoe UI Emoji',
+        'Noto Emoji',
+        'Noto Color Emoji',
+    },
+    -- misc
+    enable_scroll_bar = true,
+    inactive_pane_hsb = {
+        hue = 1.0,
+        saturation = 1.0,
+        brightness = 1.0
+    }
+}
+
+
+
+-- Tab bar
+local COLORS = {
+  leading_bg          = 'rgba(35, 38, 52, 1.0)',
+  leading_fg          = 'rgba(165, 173, 206, 1.0)',
+  background_inactive = 'rgba(35, 38, 52, 1.0)',
+  foreground_inactive = 'rgba(165, 173, 206, 1.0)',
+  background_active   = 'rgba(114, 135, 253, 1.0)',
+  foreground_active   = 'rgba(255, 255, 255, 1.0)',
+  background_hover    = 'rgba(140, 170, 238, 1.0)',
+  foreground_hover    = 'rgba(65, 69, 89, 1.0)',
+  new_tab_bg          = 'rgba(140, 170, 238, 1.0)',
+  new_tab_fg          = 'rgba(255, 255, 255, 1.0)',
+}
+
+local function adjust_alpha(color, new_alpha)
+    -- 提取原始的 r, g, b 值
+    local r, g, b = color:match('rgba%((%d+),%s*(%d+),%s*(%d+),%s*[%d%.]+%)')
+    -- 使用新的透明度重新格式化颜色
+    return string.format("rgba(%s, %s, %s, %.2f)", r, g, b, new_alpha)
+end
+
+local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+
+local function basename(s)
+  return string.gsub(s, '(.*[/\\])(.*)', '%2')
+end
+
+local function tab_title(tab_info)
+    local title = tab_info.tab_title
+    if title and #title > 0 then
+        return cmd_abbr.abbreviate_title(title)
+    else
+        return cmd_abbr.abbreviate_title(tab_info.active_pane.title)
+    end
+end
+
+-- Tab format with colors
 wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
-    local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
-    local edge_background = '#232634'
-    local background = '#232634'
-    local foreground = '#a5adce'
+    local leading_bg = COLORS.leading_bg
+    local leading_fg = COLORS.leading_fg
+    local background = COLORS.background_inactive
+    local foreground = COLORS.foreground_inactive
 
     if tab.is_active then
-        background = '#7287fd'
-        foreground = '#ffffff'
+        background = COLORS.background_active
+        foreground = COLORS.foreground_active
     elseif hover then
-        background = '#8caaee'
-        foreground = '#414559'
+        background = COLORS.background_hover
+        foreground = COLORS.foreground_hover
     end
-
-    local edge_foreground = background
-
+    local text_right_arrow_fg = adjust_alpha(background, 0.75)
+    local text_right_arrow_bg = adjust_alpha(leading_bg, 1)
+    local text_left_arrow_fg = adjust_alpha(leading_bg, 0.75)
+    local text_left_arrow_bg = adjust_alpha(background, 1)
     local title = tab_title(tab)
-
-    -- ensure that the titles fit in the available space,
-    -- and that we have room for the edges.
-    title = wezterm.truncate_right(title, max_width - 2)
-
-    local pane = tab.active_pane
+    -- 确保标题适合可用空间，并保留边缘显示的空间
     local index = ""
+
     if #tabs > 1 then
-        index = string.format("%d. ", tab.tab_index + 1)
+        index = string.format("%d ", tab.tab_index + 1)
     end
-    -- local process = basename(pane.foreground_process_name)
 
     return {
+        { Attribute = { Italic = false } },
+        { Attribute = { Intensity = hover and "Bold" or "Normal" } },
+        { Background = { Color = leading_bg } },
+        { Foreground = { Color = leading_fg } },
+
+        { Background = { Color = text_left_arrow_bg } },
+        { Foreground = { Color = text_left_arrow_fg } },
+        { Text = SOLID_RIGHT_ARROW },
 
         { Background = { Color = background } },
         { Foreground = { Color = foreground } },
-        -- { Text = ' ' .. index .. process .. ' ' },
-        { Text = ' ' .. index .. title .. ' ' },
+        { Text = " " .. index .. title .. " " },
 
-        { Background = { Color = edge_background } },
-        { Foreground = { Color = edge_foreground } },
+        { Background = { Color = text_right_arrow_bg } },
+        { Foreground = { Color = text_right_arrow_fg } },
         { Text = SOLID_RIGHT_ARROW },
     }
 end)
+
+config.colors = {
+    tab_bar = {
+        -- text_background_opacity = 1.0,
+        -- background = 'rgba(0, 0, 0, 0.0)',
+    },
+}
+
+config.window_frame = {
+    font_size = 8.0,
+}
+
+config.tab_bar_style = {
+    new_tab = wezterm.format{
+        { Background = { Color = COLORS.new_tab_bg } },
+        { Foreground = { Color = COLORS.leading_bg } },
+        { Text = SOLID_RIGHT_ARROW },
+        { Background = { Color = COLORS.new_tab_bg } },
+        { Foreground = { Color = COLORS.new_tab_fg } },
+        { Text = ' + ' },
+        { Background = { Color = COLORS.leading_bg } },
+        { Foreground = { Color = COLORS.new_tab_bg } },
+        { Text = SOLID_RIGHT_ARROW },
+    },
+    new_tab_hover = wezterm.format{
+        { Attribute = { Italic = false } },
+        { Attribute = { Intensity = 'Bold' } },
+        { Background = { Color = COLORS.leading_bg } },
+        { Foreground = { Color = COLORS.leading_bg } },
+        { Text = SOLID_RIGHT_ARROW },
+        { Background = { Color = COLORS.leading_bg } },
+        { Foreground = { Color = COLORS.foreground_inactive } },
+        { Text = ' + ' },
+        { Background = { Color = COLORS.leading_bg } },
+        { Foreground = { Color = COLORS.leading_bg } },
+        { Text = SOLID_RIGHT_ARROW },
+    },
+}
+
 
 -- Scrollbar hidden
 -- https://github.com/wez/wezterm/issues/4331
@@ -106,7 +219,6 @@ wezterm.on('update-right-status', function(window, pane)
     end
     window:set_right_status(name or '')
 end)
-
 
 local function is_vim(pane)
     -- this is set by the plugin, and unset on ExitPre in Neovim
@@ -146,84 +258,28 @@ local function split_nav(resize_or_move, key)
         end)
     }
 end
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 
-function scheme_for_appearance(appearance)
-    if appearance:find "Dark" then
-        return "Catppuccin Frappe"
-    else
-        return "Catppuccin Latte"
-    end
 end
-
-
-local config = {
-    check_for_updates = false,
-    enable_wayland = false,
-    initial_cols = 110,
-    initial_rows = 35,
-
-    audible_bell = "Disabled",
-
-    -- cursor style
-    default_cursor_style = "BlinkingBar",
-    -- color_scheme
-    -- 'Catppuccin Frappe'
-    -- 'Catppuccin Latte'
-    -- 'Catppuccin Mocha',
-    color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
-    -- window
-    -- RESIZE | MACOS_FORCE_DISABLE_SHADOW | INTEGRATED_BUTTONS
-    window_decorations = "INTEGRATED_BUTTONS",
-    window_background_opacity = 0.75,
-    text_background_opacity = 0.9,
-    adjust_window_size_when_changing_font_size = false,
-    window_padding = {
-        left = 20,
-        right = 20,
-        top = 20,
-        bottom = 5
-    },
-
-    -- Tab bar
-    enable_tab_bar = true,
-    use_fancy_tab_bar = false,
-    hide_tab_bar_if_only_one_tab = true,
-    show_tab_index_in_tab_bar = true,
-    tab_max_width = 25,
-    tab_bar_at_bottom = false,
-    -- Fonts
-    font_size = 13.0,
-    -- line_height = 1.2,
-    font = wezterm.font_with_fallback{
-        'Fira Code',
-        {
-            family = 'Microsoft YaHei',
-            scale = 1
-        },
-        'PingFang SC',
-        'Symbols Nerd Font',
-        'Segoe UI Emoji',
-        'Noto Emoji',
-        'Noto Color Emoji',
-    },
-
-    enable_scroll_bar = true,
-    inactive_pane_hsb = {
-        hue = 1.0,
-        saturation = 1.0,
-        brightness = 1.0
-    },
-
-    launch_menu = launch_menu,
-    default_prog = default_prog,
-}
-
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
     config.term = "wezterm"
+    table.insert(launch_menu, {
+        label = "bash",
+        args = { "bash" }
+    })
+    table.insert(launch_menu, {
+        label = "zsh",
+        args = { "zsh" }
+    })
+    table.insert(launch_menu, {
+        label = "fish",
+        args = { "fish" }
+    })
+    config.default_prog = { 'zsh' }
     config.set_environment_variables = set_environment_variables_linux
 else
     config.term ="xterm-256color"
-    config.set_environment_variables = set_environment_variables_windows
+    -- config.set_environment_variables = set_environment_variables_windows
     -- config.win32_system_backdrop = 'Acrylic'
     -- config.win32_system_backdrop = 'Mica'
     -- config.win32_system_backdrop = 'Tabbed'
@@ -237,176 +293,57 @@ else
     -- }
 end
 
--- key bindings
-config.leader = {
--- win + alt + space
-    key = 'Space',
-    mods = 'SUPER|ALT'
+-- Multiplexing
+config.exec_domains = {
+  wezterm.exec_domain('scoped', function(cmd)
+    -- The "cmd" parameter is a SpawnCommand object.
+    -- You can log it to see what's inside:
+    wezterm.log_info(cmd)
+
+    -- Synthesize a human understandable scope name that is
+    -- (reasonably) unique. WEZTERM_PANE is the pane id that
+    -- will be used for the newly spawned pane.
+    -- WEZTERM_UNIX_SOCKET is associated with the wezterm
+    -- process id.
+    local env = cmd.set_environment_variables
+    local ident = 'wezterm-pane-'
+      .. env.WEZTERM_PANE
+      .. '-on-'
+      .. basename(env.WEZTERM_UNIX_SOCKET)
+    -- Generate a new argument array that will launch a
+    -- program via systemd-run
+    local wrapped = {
+      '/usr/bin/systemd-run',
+      '--user',
+      '--scope',
+      '--description=Shell started by wezterm',
+      '--same-dir',
+      '--collect',
+      '--unit=' .. ident,
+    }
+
+    -- Append the requested command
+    -- Note that cmd.args may be nil; that indicates that the
+    -- default program should be used. Here we're using the
+    -- shell defined by the SHELL environment variable.
+    for _, arg in ipairs(cmd.args or { os.getenv 'SHELL' }) do
+      table.insert(wrapped, arg)
+    end
+
+    -- replace the requested argument array with our new one
+    cmd.args = wrapped
+
+    -- and return the SpawnCommand that we want to execute
+    return cmd
+  end),
 }
 
 
-config.key_tables = {
--- Defines the keys that are active in our resize-pane mode.
--- Since we're likely to want to make multiple adjustments,
--- we made the activation one_shot=false. We therefore need
--- to define a key assignment for getting out of this mode.
--- 'resize_pane' here corresponds to the name="resize_pane" in
--- the key assignments above.
-    resize_pane = {
-        { key = 'LeftArrow', action = act.AdjustPaneSize { 'Left', 1 } },
-        { key = 'h', action = act.AdjustPaneSize { 'Left', 1 } },
-        { key = 'H', action = act.AdjustPaneSize { 'Left', 5 } },
-
-        { key = 'RightArrow', action = act.AdjustPaneSize { 'Right', 1 } },
-        { key = 'l', action = act.AdjustPaneSize { 'Right', 1 } },
-        { key = 'L', action = act.AdjustPaneSize { 'Right', 5 } },
-
-        { key = 'UpArrow', action = act.AdjustPaneSize { 'Up', 1 } },
-        { key = 'k', action = act.AdjustPaneSize { 'Up', 1 } },
-        { key = 'K', action = act.AdjustPaneSize { 'Up', 5 } },
-
-        { key = 'DownArrow', action = act.AdjustPaneSize { 'Down', 1 } },
-        { key = 'j', action = act.AdjustPaneSize { 'Down', 1 } },
-        { key = 'J', action = act.AdjustPaneSize { 'Down', 5 } },
-
-        -- Cancel the mode by pressing escape
-        { key = 'Escape', action = 'PopKeyTable' },
-        { key = 'q', action = 'PopKeyTable' },
-        { key = 'Q', action = 'PopKeyTable' }
-    },
-    -- Defines the keys that are active in our activate-pane mode.
-    -- 'activate_pane' here corresponds to the name="activate_pane" in
-    -- the key assignments above.
-    activate_pane = {
-        { key = 'LeftArrow', action = act.ActivatePaneDirection 'Left' },
-        { key = 'h', action = act.ActivatePaneDirection 'Left' },
-
-        { key = 'RightArrow', action = act.ActivatePaneDirection 'Right' },
-        { key = 'l', action = act.ActivatePaneDirection 'Right' },
-
-        { key = 'UpArrow', action = act.ActivatePaneDirection 'Up' },
-        { key = 'k', action = act.ActivatePaneDirection 'Up' },
-
-        { key = 'DownArrow', action = act.ActivatePaneDirection 'Down' },
-        { key = 'j', action = act.ActivatePaneDirection 'Down' },
-
-        -- Cancel the mode by pressing escape
-        { key = 'Escape', action = 'PopKeyTable' },
-        { key = 'q', action = 'PopKeyTable' },
-        { key = 'Q', action = 'PopKeyTable' }
-    },
-}
-
-
-config.keys = {
-    -- {key = "s",mods = "LEADER|CTRL",action = wezterm.action {SendString = "\x01"}},
-    
-    -- Pane navigation
-    --  followed by 'r' will put us in resize-pane mode
-    -- until we cancel that mode with 'q' or 'Escape', or
-    -- until the timeout_milliseconds has elapsed.
-    {
-        key = 'r',
-        mods = 'LEADER',
-        action = act.ActivateKeyTable {
-            name = 'resize_pane',
-            one_shot = false,
-            timeout_milliseconds = 5000
-        }
-    },
-    -- followed by 'a' will put us in activate-pane
-    {
-    key = 'a',
-    mods = 'LEADER',
-    action = act.ActivateKeyTable {
-            name = 'activate_pane',
-            one_shot = false,
-            timeout_milliseconds = 450,
-        },
-    },
-    {key = "h", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Left"}},
-    {key = "j", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Down"}},
-    {key = "k", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Up"}},
-    {key = "l", mods = "LEADER", action = wezterm.action{ActivatePaneDirection = "Right"}},
-    {key = 's', mods = 'LEADER', action = wezterm.action.PaneSelect{mode = 'SwapWithActive'}},
-    {key = "-", mods = "LEADER", action = act{SplitVertical = {domain = "CurrentPaneDomain"}}},
-    {key = "\\", mods = "LEADER", action = act{SplitHorizontal = {domain = "CurrentPaneDomain"}}},
-    {key = "m", mods = "LEADER", action = "TogglePaneZoomState"},
-    {key = "c", mods = "LEADER", action = act{SpawnTab = "CurrentPaneDomain"}},
-    -- Tab navigation
-    {key = 'S', mods = 'SHIFT|ALT', action =act.ShowLauncherArgs{flags = 'FUZZY|TABS|LAUNCH_MENU_ITEMS'},},
-    {key = 'F9', mods = 'ALT', action = wezterm.action.ShowTabNavigator},
-    {key = 'F10', mods = 'ALT', action = wezterm.action.ShowLauncher},
-    {key = 'z' , mods = 'LEADER', action = wezterm.action.ShowLauncher},
-    {key="n", mods="LEADER", action = act.ActivateTabRelative(1)},
-    {key="p", mods="LEADER", action = act.ActivateTabRelative(-1)},
-    {key = "1", mods = "LEADER", action = wezterm.action{ActivateTab = 0}},
-    {key = "2", mods = "LEADER", action = wezterm.action{ActivateTab = 1}},
-    {key = "3", mods = "LEADER", action = wezterm.action{ActivateTab = 2}},
-    {key = "4", mods = "LEADER", action = wezterm.action{ActivateTab = 3}},
-    {key = "5", mods = "LEADER", action = wezterm.action{ActivateTab = 4}},
-    {key = "6", mods = "LEADER", action = wezterm.action{ActivateTab = 5}},
-    {key = "7", mods = "LEADER", action = wezterm.action{ActivateTab = 6}},
-    {key = "8", mods = "LEADER", action = wezterm.action{ActivateTab = 7}},
-    {key = "9", mods = "LEADER", action = wezterm.action{ActivateTab = 8}},
-    {key = "1", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 0}},
-    {key = "2", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 1}},
-    {key = "3", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 2}},
-    {key = "4", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 3}},
-    {key = "5", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 4}},
-    {key = "6", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 5}},
-    {key = "7", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 6}},
-    {key = "8", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 7}},
-    {key = "9", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 8}},
-    {key = "0", mods = "ALT|CTRL", action = wezterm.action{ActivateTab = 9}},
-    {key = "&", mods = "LEADER|SHIFT", action = wezterm.action{CloseCurrentTab = {confirm = true}}},
-    {key = "x", mods = "LEADER", action = wezterm.action{CloseCurrentPane = {confirm = true}}},
-    -- rotate panes
-    -- show the pane selection mode, but have it swap the active and selected panes
-    {mods = "LEADER", key = "Space", action = wezterm.action.RotatePanes "Clockwise"},
-    -- other
-    -- full screen
-    -- alt Enter | F11
-    {key = "F11", mods = "", action = "ToggleFullScreen"},
-    -- copy and paste
-    {key = "v", mods = "SHIFT|CTRL", action = wezterm.action{PasteFrom = "Clipboard"}},
-    {key = "c", mods = "SHIFT|CTRL", action = wezterm.action{CopyTo = "Clipboard"}},
-}
-
-
-config.mouse_bindings = {
-    {
-        -- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
-        -- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
-        event = { Down = { streak = 1, button = 'Right' } },
-        mods = "NONE",
-        action = wezterm.action_callback(function(window, pane)
-            local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-            if has_selection then
-                window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-                window:perform_action(act.ClearSelection, pane)
-            else
-                window:perform_action(act({
-                    PasteFrom = "Clipboard"
-                }), pane)
-            end
-        end)
-    },
-    -- Change the default click behavior so that it only selects
-    -- text and doesn't open hyperlinks
-    {
-        event = { Up = { streak = 1, button = 'Left' } },
-        mods = 'NONE',
-        -- action = act.CompleteSelection('ClipboardAndPrimarySelection'),
-        action = act.Nop
-    },
-    -- and make CTRL-Click open hyperlinks
-    {
-        event = { Up = { streak = 1, button = 'Left' } },
-        mods = 'CTRL',
-        action = act.OpenLinkAtMouseCursor,
-    },
-}
-
+config.ssh_domains = {}
+config.leader = keymap_config.leader
+config.key_tables = keymap_config.key_tables
+config.keys = keymap_config.keys
+config.mouse_bindings = keymap_config.mouse_bindings
+config.launch_menu = launch_menu
 
 return config
