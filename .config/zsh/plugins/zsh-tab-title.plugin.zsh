@@ -7,6 +7,9 @@
 # See: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html#ss3.1
 # Fully supports screen, hyper, iterm, and probably most modern xterm and rxvt
 # (In screen, only short_tab_title is used)
+
+ZSH_TAB_TITLE_DEFAULT_DISABLE_PREFIX=true
+
 function title {
   emulate -L zsh
   setopt prompt_subst
