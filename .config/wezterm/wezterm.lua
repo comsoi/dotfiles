@@ -20,9 +20,13 @@ end
 local config = {
     check_for_updates = false,
     enable_wayland = false,
+    front_end = "WebGpu",
+    max_fps = 165,
+    enable_kitty_keyboard = true,
+    disable_default_key_bindings = true,
     -- initial_cols = 110,
     -- initial_rows = 35,
-    -- audible_bell = "Disabled",
+    audible_bell = "Disabled",
     -- cursor style
     default_cursor_style = "BlinkingBar",
     -- color_scheme
@@ -39,8 +43,8 @@ local config = {
     window_padding = {
         left = 20,
         right = 20,
-        top = 20,
-        bottom = 5
+        top = 10,
+        bottom = 0
     },
     -- Tab bar
     enable_tab_bar = true,
@@ -129,6 +133,8 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
     local text_left_arrow_fg = adjust_alpha(leading_bg, 0.75)
     local text_left_arrow_bg = adjust_alpha(background, 1)
     local title = tab_title(tab)
+    local pane = tab.active_pane
+    -- title = pane.pane_index
     -- 确保标题适合可用空间，并保留边缘显示的空间
     local index = ""
 
@@ -220,47 +226,7 @@ wezterm.on('update-right-status', function(window, pane)
     window:set_right_status(name or '')
 end)
 
-local function is_vim(pane)
-    -- this is set by the plugin, and unset on ExitPre in Neovim
-    return pane:get_user_vars().IS_NVIM == 'true' or pane:get_user_vars().IS_VIM == 'true'
-end
 
-local direction_keys = {
-    Left = 'h',
-    Down = 'j',
-    Up = 'k',
-    Right = 'l',
-    -- reverse lookup
-    h = 'Left',
-    j = 'Down',
-    k = 'Up',
-    l = 'Right'
-}
-
-local function split_nav(resize_or_move, key)
-    return {
-        key = key,
-        mods = resize_or_move == 'resize' and 'META' or 'CTRL',
-        action = wezterm.action_callback(function(win, pane)
-            if is_vim(pane) then
-                -- pass the keys through to vim/nvim
-                win:perform_action(wezterm.action.SendKey {
-                    key = key,
-                    mods = resize_or_move == 'resize' and 'META' or 'CTRL'
-                }, pane)
-            else
-                if resize_or_move == 'resize' then
-                    win:perform_action(wezterm.action.AdjustPaneSize {direction_keys[key], 3}, pane)
-                else
-                    win:perform_action(wezterm.action.ActivatePaneDirection {direction_keys[key]}, pane)
-                end
-            end
-        end)
-    }
-end
-if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
-
-end
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
     config.term = "wezterm"
     table.insert(launch_menu, {
