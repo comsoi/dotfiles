@@ -1,15 +1,8 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH
-export PATH="/d/Scoop/apps/tdm-gcc/current/bin:$PATH"
-
-# Path to your oh-my-zsh installation.
+# oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -20,7 +13,6 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(history)
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Set list of themes to pick from when loading at random
@@ -75,16 +67,7 @@ POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 # see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(
-	adb
 	conda-zsh-completion
 	command-not-found
 	extract
@@ -111,6 +94,8 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+PATH=$HOME/.local/bin:/usr/local/bin:$PATH
+export PATH="/d/Scoop/apps/tdm-gcc/current/bin:$PATH"
 export LANG=zh_CN.UTF-8
 #export LC_ALL=zh_CN.UTF-8
 #export LANGUAGE=zh_CN.UTF-8
@@ -134,7 +119,7 @@ eval "$(zoxide init zsh)"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-if [ -f '/d/programs/conda/Scripts/conda.exe' ]; then
-	eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.zsh' 'hook' | sed -e 's/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@"/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@" | tr -d \x27\\r\x27/g')"
-fi
-# <<< conda initialize <<<
+# if [ -f '/d/programs/conda/Scripts/conda.exe' ]; then
+# 	eval "$('/d/programs/conda/Scripts/conda.exe' 'shell.zsh' 'hook' | sed -e 's/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@"/"$CONDA_EXE" $_CE_M $_CE_CONDA "$@" | tr -d \x27\\r\x27/g')"
+# fi
+# # <<< conda initialize <<<
