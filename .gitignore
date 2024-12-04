@@ -7,9 +7,9 @@
 .config/fish/fish_variables
 .config/hypr/cache/
 .config/zsh/.p10k.zsh
-.config/zsh/00-init
-.config/zsh/00-init-omz
-.config/zsh/50-custom
+.config/zsh/core/00-init.zsh
+.config/zsh/core/00-init-omz.zsh
+.config/zsh/core/50-custom
 .config/zsh/.powerlevel10k/
 .config/zsh/.custom
 .config/zsh/plugins/custom/

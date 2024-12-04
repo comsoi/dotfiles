@@ -26,6 +26,7 @@ alias gf="git fetch --all"
 alias gb="git branch"
 alias gr="git rebase"
 alias gt='cd "$(git rev-parse --show-toplevel)"'
+alias lg=lazygit
 
 alias ll='ls -alF'
 alias la='ls -A'
