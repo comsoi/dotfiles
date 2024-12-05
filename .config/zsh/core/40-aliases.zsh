@@ -31,11 +31,12 @@ alias lg=lazygit
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias wget='wget --hsts-file="${XDG_CACHE_HOME:-$HOME/.cache}/wget-hsts"'
 
 alias ipa='ip -br a'
 alias rmi='rm -I'
 alias tree='tree -aC'
-alias r='yy '
+alias r='y '
 alias p='prime-run'
 alias ipy='ipython'
 alias code.='code .'
