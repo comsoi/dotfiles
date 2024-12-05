@@ -11,6 +11,10 @@ if has('gui_running')
     endif
 endif
 
+" https://yianwillis.github.io/vimcdoc/doc/options.html#'keyprotocol'
+set keyprotocol=kitty:kitty,foot:kitty,wezterm:none,xterm:mok2
+
+
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
 "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
 " < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
@@ -37,8 +41,13 @@ if (has("termguicolors"))
     let &t_SR = "\e[4 q"      " replace
     let &t_EI = "\e[2 q"      " otherwise
     " see term.txt raw-terminal-mode
-    let &t_ti ..= "\e[2 q"    " enter vim
-    let &t_te ..= "\e[5 q"    " leave vim
+    if ($TERM == 'wezterm')
+        let &t_TI = "\e[1 q\e=1;1u\e?u\e>c"    " enter vim
+        let &t_TE = "\e[5 q\e=0;1u"            " leave vim
+    else
+        let &t_TI ..= "\e[2 qc"
+        let &t_TE ..= "\e[5 q"
+    endif
 else
     echoerr "Your version of Vim doesn't support termguicolors"
 endif

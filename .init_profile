@@ -6,7 +6,7 @@ if [[ $(tty) == /dev/pts/* ]]; then
 	export LANGUAGE=zh_CN:en_US:en
 fi
 
-export EDITOR='vim'
+export EDITOR='nvim'
 export LESS="-R"
 
 append_env ()
