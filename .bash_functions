@@ -31,8 +31,12 @@ tmux() {
 
   # If already inside a tmux session, open a new window
   if [[ -n $TMUX ]]; then
-    command tmux new-window "$@"
-    return
+    if [[ $# -eq 0 ]]; then
+      command tmux new-window
+      return
+    else
+      command tmux "$@"
+    fi
   fi
 
   # If not inside a tmux session, attach to an existing session or start a new one
