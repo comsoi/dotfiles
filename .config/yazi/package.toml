@@ -1,0 +1,8 @@
+[plugin]
+deps = [
+{ use = "Ape/open-with-cmd", rev = "8d7abc8" }, { use = "yazi-rs/plugins:hide-preview", rev = "40eafa3" }, { use = "yazi-rs/plugins:max-preview", rev = "40eafa3" }, 
+#{ use = "ahkohd/eza-preview", rev = "18e1637" },
+]
+
+[flavor]
+deps = []

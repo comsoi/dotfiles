@@ -6,6 +6,7 @@
 .config/starship.toml
 .config/fish/fish_variables
 .config/hypr/cache/
+.config/yazi/plugins/
 .config/zsh/.p10k.zsh
 .config/zsh/core/00-init.zsh
 .config/zsh/core/00-init-omz.zsh

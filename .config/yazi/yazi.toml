@@ -1,2 +1,13 @@
 [manager]
 show_hidden = true
+linemode = "size"
+
+[preview]
+wrap = "yes"
+tab_size = 2
+max_width = 6000
+max_height = 6000
+
+# [[plugin.prepend_previewers]]
+# name = "*/"
+# run = "eza-preview"

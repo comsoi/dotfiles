@@ -27,6 +27,7 @@ fi
 # Theme
 if [[ -r "/usr/share/zsh-theme-powerlevel10k" ]]; then
 	POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+  POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
 	source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 elif [[ -r "${ZDOTDIR}/themes/powerlevel10k" ]]; then
 	POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
