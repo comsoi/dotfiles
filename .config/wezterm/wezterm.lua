@@ -1,31 +1,29 @@
-local wezterm = require("wezterm")
-local keymap_config = require("keymap")
-local cmd_abbr = require("cmd_abbr")
+local wezterm                           = require("wezterm")
+local keymap_config                     = require("keymap")
+local cmd_abbr                          = require("cmd_abbr")
 
-local launch_menu = {}
-local default_prog = {}
-
--- global env vars
+local default_prog                      = { "bash" }
+local launch_menu                       = {}
+local set_environment_variables_linux   = {}
 local set_environment_variables_windows = {}
-local set_environment_variables_linux = {}
 
-function scheme_for_appearance(appearance)
+local function scheme_for_appearance(appearance)
 	-- color_scheme
 	-- 'Catppuccin Frappe'
 	-- 'Catppuccin Latte'
 	-- 'Catppuccin Mocha',
 	if appearance:find("Dark") then
 		return "Catppuccin Macchiato"
-		-- return "Catppuccin Frappe"
-	else
+	elseif appearance:find("Light") then
 		return "Catppuccin Latte"
+	else
+		return "Catppuccin Macchiato"
 	end
 end
 
 local config = {
 	check_for_updates = false,
-	enable_wayland = false,
-	front_end = "WebGpu",
+	--	enable_wayland = false,
 	max_fps = 165,
 	enable_kitty_keyboard = true,
 	disable_default_key_bindings = true,
@@ -52,28 +50,41 @@ local config = {
 	use_fancy_tab_bar = false,
 	hide_tab_bar_if_only_one_tab = true,
 	show_tab_index_in_tab_bar = true,
-	tab_max_width = 35, -- +7
-	tab_bar_at_bottom = false,
+	tab_max_width = 36, -- +8
+	tab_bar_at_bottom = true,
 	-- Fonts
-	font_size = 12.0,
+	font_size = 14.0,
+	freetype_load_flags = 'NO_HINTING',
 	font = wezterm.font_with_fallback({
-		"Fira Code",
-		{
-			family = "Microsoft YaHei",
-			scale = 1,
-		},
-		"PingFang SC",
+		"Maple Mono",
+		-- "MonaspiceNe Nerd Font",
+		{ family = "LXGW WenKai", scale = 1.05 },
+		-- { family = "PingFang SC", scale = 1.05 },
+		-- { family = "Microsoft YaHei", scale = 1.05 },
+		"Sarasa Term J",
 		"Symbols Nerd Font",
-		"Segoe UI Emoji",
-		"Noto Emoji",
 		"Noto Color Emoji",
+		-- "Noto Emoji",
+		"Segoe UI Emoji",
 	}),
 	-- misc
 	inactive_pane_hsb = {
 		hue = 1.0,
 		saturation = 1.0,
-		brightness = 1.0,
+		brightness = 0.8,
 	},
+}
+
+config.font_rules = {
+	--  for Fira Code no italic
+	-- {
+	-- 	italic = true,
+	-- 	font = wezterm.font_with_fallback({
+	-- 		{ family = 'Victor Mono', style = 'Italic', },
+	-- 		"LXGW WenKai",
+	-- 		"Symbols Nerd Font",
+	-- 	}),
+	-- },
 }
 
 -- Tab bar
@@ -112,19 +123,39 @@ local function tab_title(tab_info)
 	end
 end
 
+-- https://github.com/wez/wezterm/discussions/4044
+wezterm.on("toggle-opacity", function(window, pane)
+	wezterm.log_info("toggling the leader")
+	local overrides = window:get_config_overrides() or {}
+	if not overrides.window_background_opacity then
+		-- if no override is setup, override the default opacity value with 1.0
+		overrides.window_background_opacity = 1
+	else
+		if overrides.window_background_opacity == 0.75 then
+			overrides.window_background_opacity = 1
+		elseif overrides.window_background_opacity == 1 then
+			overrides.window_background_opacity = 0.75
+		end
+	end
+	window:set_config_overrides(overrides)
+end)
+
 -- Tab format with colors
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local leading_bg = COLORS.leading_bg
 	local leading_fg = COLORS.leading_fg
 	local background = COLORS.background_inactive
 	local foreground = COLORS.foreground_inactive
-
+	local zoomed = ""
 	if tab.is_active then
 		background = COLORS.background_active
 		foreground = COLORS.foreground_active
 	elseif hover then
 		background = COLORS.background_hover
 		foreground = COLORS.foreground_hover
+	end
+	if tab.active_pane.is_zoomed then
+		zoomed = '+'
 	end
 	local text_right_arrow_fg = adjust_alpha(background, 0.75)
 	local text_right_arrow_bg = adjust_alpha(leading_bg, 1)
@@ -152,7 +183,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 
 		{ Background = { Color = background } },
 		{ Foreground = { Color = foreground } },
-		{ Text = " " .. index .. title .. " " },
+		{ Text = " " .. index .. title .. " " .. zoomed .. " " },
 
 		{ Background = { Color = text_right_arrow_bg } },
 		{ Foreground = { Color = text_right_arrow_fg } },
@@ -161,6 +192,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 end)
 
 config.colors = {
+	compose_cursor = 'orange',
 	tab_bar = {
 		-- text_background_opacity = 1.0,
 		-- background = 'rgba(0, 0, 0, 0.0)',
@@ -213,6 +245,27 @@ wezterm.on("update-status", function(window, pane)
 		overrides.enable_scroll_bar = true
 	end
 	window:set_config_overrides(overrides)
+	-- right status
+	local date = wezterm.strftime '%a %b %-d %H:%M '
+
+	local bat = ''
+	local leader = ''
+	for _, b in ipairs(wezterm.battery_info()) do
+		bat = '🔋 ' .. string.format('%.0f%%', b.state_of_charge * 100)
+	end
+	if window:leader_is_active() then
+		leader = 'LEADER'
+		-- 	overrides.colors.tab_bar = {
+		-- 		background = 'orange',
+		-- 	}
+		-- else
+		-- 	overrides.colors.tab_bar = {
+		-- 		background = COLORS.background_hover,
+		-- 	}
+	end
+	window:set_right_status(wezterm.format {
+		{ Text = leader .. '   ' .. bat .. '   ' .. date },
+	})
 end)
 
 -- platform specific settings
@@ -221,22 +274,17 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	table.insert(launch_menu, { label = "bash", args = { "bash" } })
 	table.insert(launch_menu, { label = "fish", args = { "fish" } })
 	table.insert(launch_menu, { label = "zsh", args = { "zsh" } })
-	config.default_prog = { "zsh" }
+	-- for fixing https://github.com/wez/wezterm/issues/5387
+	config.default_prog = { "sh", "-c", "sleep 0.3; exec zsh" }
+	config.window_decorations = "NONE" -- DO NOT SET IN WAYLAND!
 	config.set_environment_variables = set_environment_variables_linux
+	config.unicode_version = 14
 else
 	config.term = "xterm-256color"
 	-- config.set_environment_variables = set_environment_variables_windows
 	-- config.win32_system_backdrop = 'Acrylic'
 	-- config.win32_system_backdrop = 'Mica'
 	-- config.win32_system_backdrop = 'Tabbed'
-	-- config.background = {
-	--     {
-	--         source = {
-	--             File = "D:\\bg\\abg\\(pid-56669634)博麗霊夢_p0.png",
-	--         },
-	--         opacity = 0.33,
-	--     }
-	-- }
 end
 
 -- Multiplexing
@@ -280,6 +328,14 @@ config.exec_domains = {
 		return cmd
 	end),
 }
+
+for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
+	if gpu.backend == 'Vulkan' and gpu.device_type == 'IntegratedGpu' then
+		config.webgpu_preferred_adapter = gpu
+		config.front_end = 'WebGpu'
+		break
+	end
+end
 
 config.ssh_domains = {}
 config.leader = keymap_config.leader
