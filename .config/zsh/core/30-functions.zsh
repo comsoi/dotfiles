@@ -6,9 +6,13 @@ if [ -f "${HOME}/.bash_functions" ]; then
 	source "${HOME}/.bash_functions"
 fi
 
-# function set_terminal_title {
-# 	echo -en "\e]2;$@\a"
-# }
+if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]; then
+	source "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash"
+fi
+
+function set_terminal_title {
+	echo -en "\e]2;$@\a"
+}
 
 function append_env {
 	[[ -z "$1" || -z "$2" || ! -d "$2" || ":${(P)1}:" == *":$2:"* ]] && return
