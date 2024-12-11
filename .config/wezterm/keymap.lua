@@ -1,96 +1,118 @@
+-- NOTICE CAPSLOCK WILL CHANGE KEYBINDS TO UPPERCASE|lowercase
+-- ESPECIALLY FOR THE KEYBINDS WITH ALPHABET
 local wezterm = require("wezterm")
 local act = wezterm.action
 
 -- key bindings
 local leader = {
 	-- win + alt + space
-	key = 'Space',
-	mods = 'SUPER|ALT',
-	timeout_milliseconds = math.maxinteger
+	key = "Space",
+	mods = "SUPER|ALT",
+	timeout_milliseconds = math.maxinteger,
 }
 
+if wezterm.target_triple:find("linux") then
+	leader = {
+		key = "a",
+		mods = "CTRL",
+		timeout_milliseconds = math.maxinteger,
+	}
+end
 
 local key_tables = {
 	resize_pane = {
-		{ key = 'LeftArrow',  action = act.AdjustPaneSize { 'Left', 1 } },
-		{ key = 'h',          action = act.AdjustPaneSize { 'Left', 1 } },
-		{ key = 'H',          action = act.AdjustPaneSize { 'Left', 10 } },
+		{ key = "LeftArrow", action = act.AdjustPaneSize({ "Left", 1 }) },
+		{ key = "h", action = act.AdjustPaneSize({ "Left", 1 }) },
+		{ key = "LeftArrow", action = act.AdjustPaneSize({ "Left", 10 }), mods = "SHIFT" },
+		{ key = "H", action = act.AdjustPaneSize({ "Left", 10 }), mods = "SHIFT" },
 
-		{ key = 'RightArrow', action = act.AdjustPaneSize { 'Right', 1 } },
-		{ key = 'l',          action = act.AdjustPaneSize { 'Right', 1 } },
-		{ key = 'L',          action = act.AdjustPaneSize { 'Right', 10 } },
+		{ key = "RightArrow", action = act.AdjustPaneSize({ "Right", 1 }) },
+		{ key = "l", action = act.AdjustPaneSize({ "Right", 1 }) },
+		{ key = "RightArrow", action = act.AdjustPaneSize({ "Right", 10 }), mods = "SHIFT" },
+		{ key = "L", action = act.AdjustPaneSize({ "Right", 10 }), mods = "SHIFT" },
 
-		{ key = 'UpArrow',    action = act.AdjustPaneSize { 'Up', 1 } },
-		{ key = 'k',          action = act.AdjustPaneSize { 'Up', 1 } },
-		{ key = 'K',          action = act.AdjustPaneSize { 'Up', 10 } },
+		{ key = "UpArrow", action = act.AdjustPaneSize({ "Up", 1 }) },
+		{ key = "k", action = act.AdjustPaneSize({ "Up", 1 }) },
+		{ key = "UpArrow", action = act.AdjustPaneSize({ "Up", 10 }), mods = "SHIFT" },
+		{ key = "K", action = act.AdjustPaneSize({ "Up", 10 }), mods = "SHIFT" },
 
-		{ key = 'DownArrow',  action = act.AdjustPaneSize { 'Down', 1 } },
-		{ key = 'j',          action = act.AdjustPaneSize { 'Down', 1 } },
-		{ key = 'J',          action = act.AdjustPaneSize { 'Down', 10 } },
+		{ key = "DownArrow", action = act.AdjustPaneSize({ "Down", 1 }) },
+		{ key = "j", action = act.AdjustPaneSize({ "Down", 1 }) },
+		{ key = "DownArrow", action = act.AdjustPaneSize({ "Down", 10 }), mods = "SHIFT" },
+		{ key = "J", action = act.AdjustPaneSize({ "Down", 10 }), mods = "SHIFT" },
 
-		{ key = 'Escape',     action = 'PopKeyTable' },
-		{ key = 'q',          action = 'PopKeyTable' },
-		{ key = 'Q',          action = 'PopKeyTable' }
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q", action = "PopKeyTable" },
+		{ key = "Q", action = "PopKeyTable" },
 	},
 	activate_pane = {
-		{ key = 'LeftArrow',  action = act.ActivatePaneDirection 'Left' },
-		{ key = 'h',          action = act.ActivatePaneDirection 'Left' },
+		{ key = "LeftArrow", action = act.ActivatePaneDirection("Left") },
+		{ key = "h", action = act.ActivatePaneDirection("Left") },
 
-		{ key = 'RightArrow', action = act.ActivatePaneDirection 'Right' },
-		{ key = 'l',          action = act.ActivatePaneDirection 'Right' },
+		{ key = "RightArrow", action = act.ActivatePaneDirection("Right") },
+		{ key = "l", action = act.ActivatePaneDirection("Right") },
 
-		{ key = 'UpArrow',    action = act.ActivatePaneDirection 'Up' },
-		{ key = 'k',          action = act.ActivatePaneDirection 'Up' },
+		{ key = "UpArrow", action = act.ActivatePaneDirection("Up") },
+		{ key = "k", action = act.ActivatePaneDirection("Up") },
 
-		{ key = 'DownArrow',  action = act.ActivatePaneDirection 'Down' },
-		{ key = 'j',          action = act.ActivatePaneDirection 'Down' },
+		{ key = "DownArrow", action = act.ActivatePaneDirection("Down") },
+		{ key = "j", action = act.ActivatePaneDirection("Down") },
 
-		{ key = 'Escape',     action = 'PopKeyTable' },
-		{ key = 'q',          action = 'PopKeyTable' },
-		{ key = 'Q',          action = 'PopKeyTable' }
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q", action = "PopKeyTable" },
+		{ key = "Q", action = "PopKeyTable" },
 	},
 	move_tab = {
-		{ key = 'N',          action = act.MoveTabRelative(1) },
-		{ key = 'P',          action = act.MoveTabRelative(-1) },
+		{ key = "P", action = act.MoveTabRelative(-1), mods = "SHIFT" },
+		{ key = "N", action = act.MoveTabRelative(1), mods = "SHIFT" },
 
-		{ key = 'n',          action = act.MoveTabRelative(1) },
-		{ key = 'p',          action = act.MoveTabRelative(-1) },
+		{ key = "{", action = act.MoveTabRelative(-1), mods = "SHIFT" },
+		{ key = "}", action = act.MoveTabRelative(1), mods = "SHIFT" },
 
-		{ key = 'h',          action = act.MoveTabRelative(-1) },
-		{ key = 'j',          action = act.MoveTabRelative(1) },
-		{ key = 'k',          action = act.MoveTabRelative(-1) },
-		{ key = 'l',          action = act.MoveTabRelative(1) },
+		{ key = "p", action = act.MoveTabRelative(-1) },
+		{ key = "n", action = act.MoveTabRelative(1) },
 
-		{ key = 'LeftArrow',  action = act.MoveTabRelative(-1) },
-		{ key = 'RightArrow', action = act.MoveTabRelative(1) },
-		{ key = 'UpArrow',    action = act.MoveTabRelative(-1) },
-		{ key = 'DownArrow',  action = act.MoveTabRelative(1) },
+		{ key = "[", action = act.MoveTabRelative(-1) },
+		{ key = "]", action = act.MoveTabRelative(1) },
 
-		{ key = 'Escape',     action = 'PopKeyTable' },
-		{ key = 'q',          action = 'PopKeyTable' },
-		{ key = 'Q',          action = 'PopKeyTable' }
+		{ key = "h", action = act.MoveTabRelative(-1) },
+		{ key = "j", action = act.MoveTabRelative(1) },
+		{ key = "k", action = act.MoveTabRelative(-1) },
+		{ key = "l", action = act.MoveTabRelative(1) },
+
+		{ key = "LeftArrow", action = act.MoveTabRelative(-1) },
+		{ key = "RightArrow", action = act.MoveTabRelative(1) },
+		{ key = "UpArrow", action = act.MoveTabRelative(-1) },
+		{ key = "DownArrow", action = act.MoveTabRelative(1) },
+
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q", action = "PopKeyTable" },
+		{ key = "Q", action = "PopKeyTable" },
 	},
 	activate_tab = {
-		{ key = 'N',          action = act.ActivateTab(-1) },
-		{ key = 'P',          action = act.ActivateTab(0) },
+		{ key = "N", action = act.ActivateTab(-1) },
+		{ key = "P", action = act.ActivateTab(0) },
 
-		{ key = 'n',          action = act.ActivateTabRelative(1) },
-		{ key = 'p',          action = act.ActivateTabRelative(-1) },
+		{ key = "n", action = act.ActivateTabRelative(1) },
+		{ key = "p", action = act.ActivateTabRelative(-1) },
 
-		{ key = 'h',          action = act.ActivateTabRelative(-1) },
-		{ key = 'j',          action = act.ActivateTabRelative(1) },
-		{ key = 'k',          action = act.ActivateTabRelative(-1) },
-		{ key = 'l',          action = act.ActivateTabRelative(1) },
+		{ key = "]", action = act.ActivateTabRelative(1) },
+		{ key = "[", action = act.ActivateTabRelative(-1) },
 
-		{ key = 'LeftArrow',  action = act.ActivateTabRelative(-1) },
-		{ key = 'RightArrow', action = act.ActivateTabRelative(1) },
-		{ key = 'UpArrow',    action = act.ActivateTabRelative(-1) },
-		{ key = 'DownArrow',  action = act.ActivateTabRelative(1) },
+		{ key = "h", action = act.ActivateTabRelative(-1) },
+		{ key = "j", action = act.ActivateTabRelative(1) },
+		{ key = "k", action = act.ActivateTabRelative(-1) },
+		{ key = "l", action = act.ActivateTabRelative(1) },
 
-		{ key = 'Escape',     action = 'PopKeyTable' },
-		{ key = 'q',          action = 'PopKeyTable' },
-		{ key = 'Q',          action = 'PopKeyTable' }
-	}
+		{ key = "LeftArrow", action = act.ActivateTabRelative(-1) },
+		{ key = "RightArrow", action = act.ActivateTabRelative(1) },
+		{ key = "UpArrow", action = act.ActivateTabRelative(-1) },
+		{ key = "DownArrow", action = act.ActivateTabRelative(1) },
+
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q", action = "PopKeyTable" },
+		{ key = "Q", action = "PopKeyTable" },
+	},
 }
 
 -- Helper functions
@@ -99,32 +121,40 @@ local key_tables = {
 local function activate_pane_with_dir(dir)
 	return function(win, pane)
 		win:perform_action(act.ActivatePaneDirection(dir), pane)
-		win:perform_action(act.ActivateKeyTable { name = 'activate_pane', one_shot = false, timeout_milliseconds = 600 },
-			pane)
+		win:perform_action(
+			act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 600 }),
+			pane
+		)
 	end
 end
 
 local function resize_pane_with_dir(dir)
 	return function(win, pane)
-		win:perform_action(act.AdjustPaneSize { dir, 10 }, pane)
-		win:perform_action(act.ActivateKeyTable { name = 'resize_pane', one_shot = false, timeout_milliseconds = 600 },
-			pane)
+		win:perform_action(act.AdjustPaneSize({ dir, 10 }), pane)
+		win:perform_action(
+			act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 600 }),
+			pane
+		)
 	end
 end
 
 local function activate_tab_with_dir(dir)
 	return function(win, pane)
 		win:perform_action(act.ActivateTabRelative(dir), pane)
-		win:perform_action(act.ActivateKeyTable { name = 'activate_tab', one_shot = false, timeout_milliseconds = 600 },
-			pane)
+		win:perform_action(
+			act.ActivateKeyTable({ name = "activate_tab", one_shot = false, timeout_milliseconds = 600 }),
+			pane
+		)
 	end
 end
 
 local function move_tab_with_dir(dir)
 	return function(win, pane)
 		win:perform_action(act.MoveTabRelative(dir), pane)
-		win:perform_action(act.ActivateKeyTable { name = 'move_tab', one_shot = false, timeout_milliseconds = 600 },
-			pane)
+		win:perform_action(
+			act.ActivateKeyTable({ name = "move_tab", one_shot = false, timeout_milliseconds = 600 }),
+			pane
+		)
 	end
 end
 
@@ -152,6 +182,9 @@ local function is_nvim_or_tmux_or_zellij(pane)
 	if foreground_process:find("kitten") then
 		return true
 	end
+	if foreground_process:find("bat") or foreground_process:find("cat") then
+		return true
+	end
 	return false
 end
 
@@ -159,13 +192,13 @@ local function activate_pane_and_tab(window, pane, dir)
 	local tab = window:mux_window():active_tab()
 	local directions = {
 		Left = { pane_check = "Left", tab_offset = -1 },
-		Right = { pane_check = "Right", tab_offset = 1 }
+		Right = { pane_check = "Right", tab_offset = 1 },
 	}
 
 	local dir_config = directions[dir]
 	local action = tab:get_pane_direction(dir_config.pane_check) ~= nil
 			and wezterm.action.ActivatePaneDirection(dir_config.pane_check)
-			or wezterm.action.ActivateTabRelative(dir_config.tab_offset)
+		or wezterm.action.ActivateTabRelative(dir_config.tab_offset)
 
 	window:perform_action(action, pane)
 end
@@ -184,8 +217,6 @@ end
 -- 			max_tabs = t.tab_index
 -- 		end
 -- 	end
-
-
 -- 	if max_tabs == 1 then
 -- 		window:perform_action(wezterm.action.ActivatePaneDirection("Prev"), pane)
 -- 	else
@@ -233,10 +264,10 @@ local ACTION_HANDLERS = {
 		return wezterm.action.SpawnTab(dir)
 	end,
 	CloseCurrentTab = function()
-		return wezterm.action.CloseCurrentTab { confirm = true }
+		return wezterm.action.CloseCurrentTab({ confirm = true })
 	end,
 	CloseCurrentPane = function()
-		return wezterm.action.CloseCurrentPane { confirm = true }
+		return wezterm.action.CloseCurrentPane({ confirm = true })
 	end,
 	smart_split = smart_split_callback,
 }
@@ -248,7 +279,7 @@ local function create_keybind(action_str, mods, key, dir)
 		action = wezterm.action_callback(function(win, pane)
 			if is_nvim_or_tmux_or_zellij(pane) then
 				win:perform_action({
-					SendKey = { key = key, mods = mods }
+					SendKey = { key = key, mods = mods },
 				}, pane)
 				return
 			end
@@ -260,40 +291,51 @@ local function create_keybind(action_str, mods, key, dir)
 				end
 			else
 				win:perform_action({
-					SendKey = { key = key, mods = mods }
+					SendKey = { key = key, mods = mods },
 				}, pane)
 			end
-		end)
+		end),
 	}
 end
 --------------------------------------------------------------------------------
 
 local keys = {
-	-- {key = "s",mods = "LEADER|CTRL",action = wezterm.action {SendString = "\x01"}},
-
+	{ key = "a", mods = "LEADER", action = act.SendKey({ key = "a", mods = "CTRL" }) },
 	-- Normal
 	create_keybind("SpawnTab", "ALT", "t", "CurrentPaneDomain"),
+	create_keybind("SpawnTab", "ALT", "T", "CurrentPaneDomain"),
 	create_keybind("smart_split", "ALT", "n"),
+	create_keybind("smart_split", "ALT", "N"),
 	create_keybind("CloseCurrentTab", "ALT", "q"),
+	create_keybind("CloseCurrentTab", "ALT", "Q"),
 	create_keybind("CloseCurrentPane", "ALT", "x"),
+	create_keybind("CloseCurrentPane", "ALT", "X"),
 
-	{ key = "T",      mods = "SHIFT|CTRL",   action = act { SpawnTab = "CurrentPaneDomain" } },
-	{ key = "W",      mods = "SHIFT|CTRL",   action = act { CloseCurrentTab = { confirm = true } } },
-	{ key = "V",      mods = "SHIFT|CTRL",   action = act { PasteFrom = "Clipboard" } },
-	{ key = "C",      mods = "SHIFT|CTRL",   action = act { CopyTo = "Clipboard" } },
-	{ key = "Tab",    mods = "CTRL",         action = act.ActivateTabRelative(1) },
-	{ key = "Tab",    mods = "SHIFT|CTRL",   action = act.ActivateTabRelative(-1) },
-	{ key = "Return", mods = "ALT",          action = "ToggleFullScreen" },
-	{ key = "F11",    mods = "",             action = "ToggleFullScreen" },
+	{ key = "T", mods = "SHIFT|CTRL", action = act({ SpawnTab = "CurrentPaneDomain" }) },
+	{ key = "W", mods = "SHIFT|CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
+	{ key = "V", mods = "SHIFT|CTRL", action = act({ PasteFrom = "Clipboard" }) },
+	{ key = "C", mods = "SHIFT|CTRL", action = act({ CopyTo = "Clipboard" }) },
+	{ key = "F", mods = "SHIFT|CTRL", action = act.Search({ CaseSensitiveString = "" }) },
+	{ key = "P", mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
+	{ key = "t", mods = "SHIFT|CTRL", action = act({ SpawnTab = "CurrentPaneDomain" }) },
+	{ key = "w", mods = "SHIFT|CTRL", action = act({ CloseCurrentTab = { confirm = true } }) },
+	{ key = "v", mods = "SHIFT|CTRL", action = act({ PasteFrom = "Clipboard" }) },
+	{ key = "c", mods = "SHIFT|CTRL", action = act({ CopyTo = "Clipboard" }) },
+	{ key = "f", mods = "SHIFT|CTRL", action = act.Search({ CaseSensitiveString = "" }) },
+	{ key = "p", mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
+	{ key = "+", mods = "SHIFT|CTRL", action = act.IncreaseFontSize },
+	{ key = "_", mods = "SHIFT|CTRL", action = act.DecreaseFontSize },
+	{ key = ")", mods = "SHIFT|CTRL", action = act.ResetFontSize },
+	{ key = "Tab", mods = "SHIFT|CTRL", action = act.ActivateTabRelative(-1) },
+	{ key = "Tab", mods = "CTRL", action = act.ActivateTabRelative(1) },
+	{ key = "Return", mods = "ALT", action = "ToggleFullScreen" },
+	{ key = "F11", mods = "", action = "ToggleFullScreen" },
 
-	{ key = "c",      mods = "LEADER",       action = act { SpawnTab = "CurrentPaneDomain" } },
-	{ key = "&",      mods = "LEADER",       action = act { CloseCurrentTab = { confirm = false } } },
-	{ key = "q",      mods = "LEADER",       action = act { CloseCurrentTab = { confirm = false } } },
-	{ key = "x",      mods = "LEADER",       action = act { CloseCurrentPane = { confirm = false } } },
-	{ key = 's',      mods = 'LEADER',       action = act.PaneSelect },
-	{ key = 'S',      mods = 'SHIFT|LEADER', action = act.PaneSelect { mode = 'SwapWithActive' } },
-	{ key = 'w',      mods = 'LEADER',       action = act.ShowTabNavigator },
-	{ key = "k",      mods = "LEADER",       action = act.RotatePanes "Clockwise" },
+	-----------PANE------------
+	{ key = "x", mods = "LEADER", action = act({ CloseCurrentPane = { confirm = false } }) },
+	{ key = "m", mods = "LEADER", action = "TogglePaneZoomState" },
+	{ key = "S", mods = "SHIFT|LEADER", action = act.PaneSelect({ mode = "SwapWithActive" }) },
+	{ key = "o", mods = "LEADER", action = act.RotatePanes("Clockwise") },
 
 	-- Pane navigation
 	create_keybind("ActivatePaneDirection", "ALT", "h", "Left"),
@@ -301,142 +343,234 @@ local keys = {
 	create_keybind("ActivatePaneDirection", "ALT", "k", "Up"),
 	create_keybind("ActivatePaneDirection", "ALT", "l", "Right"),
 
+	create_keybind("ActivatePaneDirection", "ALT", "H", "Left"),
+	create_keybind("ActivatePaneDirection", "ALT", "J", "Down"),
+	create_keybind("ActivatePaneDirection", "ALT", "K", "Up"),
+	create_keybind("ActivatePaneDirection", "ALT", "L", "Right"),
+
 	create_keybind("ActivatePaneDirection", "ALT", "[", "Prev"),
 	create_keybind("ActivatePaneDirection", "ALT", "]", "Next"),
 
-	{ key = "a",          mods = "LEADER",   action = act.ActivateKeyTable { name = 'activate_pane', one_shot = false, timeout_milliseconds = 5000 } },
+	{
+		key = "a",
+		mods = "LEADER",
+		action = act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 5000 }),
+	},
+	{ key = "s", mods = "LEADER", action = act.PaneSelect },
 
-	{ key = 'h',          mods = 'LEADER',   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
-	{ key = 'j',          mods = 'LEADER',   action = wezterm.action_callback(activate_pane_with_dir("Down")) },
-	{ key = 'k',          mods = 'LEADER',   action = wezterm.action_callback(activate_pane_with_dir("Up")) },
-	{ key = 'l',          mods = 'LEADER',   action = wezterm.action_callback(activate_pane_with_dir("Right")) },
+	{ key = "h", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Left")) },
+	{ key = "j", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Down")) },
+	{ key = "k", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Up")) },
+	{ key = "l", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Right")) },
 
-	{ key = "UpArrow",    mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Up")) },
-	{ key = "DownArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Down")) },
-	{ key = "LeftArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
-	{ key = "RightArrow", mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Right")) },
+	{ key = "UpArrow", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Up")) },
+	{ key = "DownArrow", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Down")) },
+	{ key = "LeftArrow", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Left")) },
+	{ key = "RightArrow", mods = "LEADER", action = wezterm.action_callback(activate_pane_with_dir("Right")) },
 
-	{ key = "h",          mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Left" } },
-	{ key = "j",          mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Down" } },
-	{ key = "k",          mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Up" } },
-	{ key = "l",          mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Right" } },
+	{ key = "h", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
+	{ key = "j", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
+	{ key = "k", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
+	{ key = "l", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
 
-	{ key = "UpArrow",    mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Up" } },
-	{ key = "DownArrow",  mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Down" } },
-	{ key = "LeftArrow",  mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Left" } },
-	{ key = "RightArrow", mods = "ALT|CTRL", action = act { ActivatePaneDirection = "Right" } },
+	{ key = "H", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
+	{ key = "J", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
+	{ key = "K", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
+	{ key = "L", mods = "SHIFT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
+
+	{ key = "h", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
+	{ key = "j", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
+	{ key = "k", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
+	{ key = "l", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
+
+	{ key = "H", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
+	{ key = "J", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
+	{ key = "K", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
+	{ key = "L", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
+
+	{ key = "UpArrow", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
+	{ key = "DownArrow", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
+	{ key = "LeftArrow", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
+	{ key = "RightArrow", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
 
 	-- Pane resize
 	create_keybind("AdjustPaneSize", "ALT", "LeftArrow", "Left"),
 	create_keybind("AdjustPaneSize", "ALT", "RightArrow", "Right"),
 	create_keybind("AdjustPaneSize", "ALT", "UpArrow", "Up"),
 	create_keybind("AdjustPaneSize", "ALT", "DownArrow", "Down"),
-
-	{ key = 'r',          mods = 'LEADER',         action = act.ActivateKeyTable { name = 'resize_pane', one_shot = false, timeout_milliseconds = 5000 } },
+	{
+		key = "r",
+		mods = "LEADER",
+		action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 5000 }),
+	},
 
 	-- use Multiple keybinds fails because of async, so use action_callback
-	{ key = 'H',          mods = 'SHIFT|LEADER',   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
-	{ key = 'J',          mods = 'SHIFT|LEADER',   action = wezterm.action_callback(resize_pane_with_dir("Down")) },
-	{ key = 'K',          mods = 'SHIFT|LEADER',   action = wezterm.action_callback(resize_pane_with_dir("Up")) },
-	{ key = 'L',          mods = 'SHIFT|LEADER',   action = wezterm.action_callback(resize_pane_with_dir("Right")) },
+	{ key = "H", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Left")) },
+	{ key = "J", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Down")) },
+	{ key = "K", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Up")) },
+	{ key = "L", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Right")) },
+	{ key = "UpArrow", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Up")) },
+	{ key = "DownArrow", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Down")) },
+	{ key = "LeftArrow", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Left")) },
+	{ key = "RightArrow", mods = "SHIFT|LEADER", action = wezterm.action_callback(resize_pane_with_dir("Right")) },
 
-	{ key = "UpArrow",    mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Up")) },
-	{ key = "DownArrow",  mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Down")) },
-	{ key = "LeftArrow",  mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
-	{ key = "RightArrow", mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Right")) },
+	{ key = "H", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Left", 10 } }) },
+	{ key = "J", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Down", 10 } }) },
+	{ key = "K", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Up", 10 } }) },
+	{ key = "L", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Right", 10 } }) },
+	{ key = "h", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Left", 10 } }) },
+	{ key = "j", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Down", 10 } }) },
+	{ key = "k", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Up", 10 } }) },
+	{ key = "l", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Right", 10 } }) },
 
-	{ key = "h",          mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Left", 1 } } },
-	{ key = "l",          mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Right", 1 } } },
-	{ key = "k",          mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Up", 1 } } },
-	{ key = "j",          mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Down", 1 } } },
-
-	{ key = "UpArrow",    mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Up", 1 } } },
-	{ key = "DownArrow",  mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Down", 1 } } },
-	{ key = "LeftArrow",  mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Left", 1 } } },
-	{ key = "RightArrow", mods = "SHIFT|ALT|CTRL", action = act { AdjustPaneSize = { "Right", 1 } } },
+	{ key = "UpArrow", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Up", 10 } }) },
+	{ key = "DownArrow", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Down", 10 } }) },
+	{ key = "LeftArrow", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Left", 10 } }) },
+	{ key = "RightArrow", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Right", 10 } }) },
 
 	-- Pane splitting
-	{ key = "Enter",      mods = "LEADER",         action = wezterm.action_callback(smart_split_callback) },
-	{ key = "Enter",      mods = "ALT|CTRL",       action = wezterm.action_callback(smart_split_callback) },
-	{ key = "Enter",      mods = "SHIFT|CTRL",     action = wezterm.action_callback(smart_split_callback) },
-	{ key = "-",          mods = "ALT|CTRL",       action = act { SplitVertical = { domain = "CurrentPaneDomain" } } },
-	{ key = "\\",         mods = "ALT|CTRL",       action = act { SplitHorizontal = { domain = "CurrentPaneDomain" } } },
-	{ key = "-",          mods = "LEADER",         action = act { SplitVertical = { domain = "CurrentPaneDomain" } } },
-	{ key = "\\",         mods = "LEADER",         action = act { SplitHorizontal = { domain = "CurrentPaneDomain" } } },
-	{ key = "_",          mods = "SHIFT|CTRL",     action = act { SplitVertical = { domain = "CurrentPaneDomain" } } },
-	{ key = "|",          mods = "SHIFT|CTRL",     action = act { SplitHorizontal = { domain = "CurrentPaneDomain" } } },
-	{ key = "m",          mods = "LEADER",         action = "TogglePaneZoomState" },
+	{ key = "Enter", mods = "LEADER", action = wezterm.action_callback(smart_split_callback) },
+	{ key = "Enter", mods = "ALT|CTRL", action = wezterm.action_callback(smart_split_callback) },
+	{ key = "Enter", mods = "SHIFT|CTRL", action = wezterm.action_callback(smart_split_callback) },
+	{ key = "-", mods = "ALT|CTRL", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{ key = "-", mods = "ALT|CTRL", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{
+		key = "\\",
+		mods = "ALT|CTRL",
+		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
+	},
+	{
+		key = "|",
+		mods = "ALT|CTRL",
+		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
+	},
+	{ key = "-", mods = "LEADER", action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{
+		key = "\\",
+		mods = "LEADER",
+		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
+	},
+	-- default
+	{ key = '"', mods = "ALT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = '"', mods = "SHIFT|ALT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "'", mods = "SHIFT|ALT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "%", mods = "ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "%", mods = "SHIFT|ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "5", mods = "SHIFT|ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+
+	-----------TAB----------
+	{ key = "c", mods = "LEADER", action = act({ SpawnTab = "CurrentPaneDomain" }) },
+	{ key = "&", mods = "LEADER", action = act({ CloseCurrentTab = { confirm = false } }) },
+	{ key = "q", mods = "LEADER", action = act({ CloseCurrentTab = { confirm = false } }) },
+	{
+		key = "w",
+		mods = "LEADER",
+		action = act.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES|TABS" }),
+	},
 
 	-- Tab navigation
+	{
+		key = "A",
+		mods = "SHIFT|LEADER",
+		action = act.ActivateKeyTable({ name = "activate_tab", one_shot = false, timeout_milliseconds = 5000 }),
+	},
 	create_keybind("ActivateTabRelative", "ALT|CTRL", "[", -1),
 	create_keybind("ActivateTabRelative", "ALT|CTRL", "]", 1),
-
-	{ key = "A",          mods = "SHIFT|LEADER", action = act.ActivateKeyTable { name = "activate_tab", one_shot = false, timeout_milliseconds = 5000 } },
-
-	{ key = "LeftArrow",  mods = "SHIFT|CTRL",   action = act.ActivateTabRelative(-1) },
-	{ key = "RightArrow", mods = "SHIFT|CTRL",   action = act.ActivateTabRelative(1) },
-
-	{ key = "n",          mods = "LEADER",       action = wezterm.action_callback(activate_tab_with_dir(1)) },
-	{ key = "p",          mods = "LEADER",       action = wezterm.action_callback(activate_tab_with_dir(-1)) },
-
-	{ key = "1",          mods = "LEADER",       action = act { ActivateTab = 0 } },
-	{ key = "2",          mods = "LEADER",       action = act { ActivateTab = 1 } },
-	{ key = "3",          mods = "LEADER",       action = act { ActivateTab = 2 } },
-	{ key = "4",          mods = "LEADER",       action = act { ActivateTab = 3 } },
-	{ key = "5",          mods = "LEADER",       action = act { ActivateTab = 4 } },
-	{ key = "6",          mods = "LEADER",       action = act { ActivateTab = 5 } },
-	{ key = "7",          mods = "LEADER",       action = act { ActivateTab = 6 } },
-	{ key = "8",          mods = "LEADER",       action = act { ActivateTab = 7 } },
-	{ key = "9",          mods = "LEADER",       action = act { ActivateTab = 8 } },
-	{ key = "0",          mods = "LEADER",       action = act { ActivateTab = -1 } },
-
-	create_keybind("ActivateTab", "ALT", "1", 0),
-	create_keybind("ActivateTab", "ALT", "2", 1),
-	create_keybind("ActivateTab", "ALT", "3", 2),
-	create_keybind("ActivateTab", "ALT", "4", 3),
-	create_keybind("ActivateTab", "ALT", "5", 4),
-	create_keybind("ActivateTab", "ALT", "6", 5),
-	create_keybind("ActivateTab", "ALT", "7", 6),
-	create_keybind("ActivateTab", "ALT", "8", 7),
-	create_keybind("ActivateTab", "ALT", "9", 8),
+	{ key = "LeftArrow", mods = "SHIFT|CTRL", action = act.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = "SHIFT|CTRL", action = act.ActivateTabRelative(1) },
+	{ key = "n", mods = "LEADER", action = wezterm.action_callback(activate_tab_with_dir(1)) },
+	{ key = "p", mods = "LEADER", action = wezterm.action_callback(activate_tab_with_dir(-1)) },
+	{ key = "]", mods = "LEADER", action = wezterm.action_callback(activate_tab_with_dir(1)) },
+	{ key = "[", mods = "LEADER", action = wezterm.action_callback(activate_tab_with_dir(-1)) },
+	{ key = "0", mods = "LEADER", action = act({ ActivateTab = -1 }) },
+	{ key = "0", mods = "ALT|CTRL", action = act({ ActivateTab = -1 }) },
 	create_keybind("ActivateTab", "ALT", "0", -1),
 
-	{ key = "1", mods = "ALT|CTRL", action = act { ActivateTab = 0 } },
-	{ key = "2", mods = "ALT|CTRL", action = act { ActivateTab = 1 } },
-	{ key = "3", mods = "ALT|CTRL", action = act { ActivateTab = 2 } },
-	{ key = "4", mods = "ALT|CTRL", action = act { ActivateTab = 3 } },
-	{ key = "5", mods = "ALT|CTRL", action = act { ActivateTab = 4 } },
-	{ key = "6", mods = "ALT|CTRL", action = act { ActivateTab = 5 } },
-	{ key = "7", mods = "ALT|CTRL", action = act { ActivateTab = 6 } },
-	{ key = "8", mods = "ALT|CTRL", action = act { ActivateTab = 7 } },
-	{ key = "9", mods = "ALT|CTRL", action = act { ActivateTab = 8 } },
-	{ key = "0", mods = "ALT|CTRL", action = act { ActivateTab = -1 } },
-
 	-- Tab movement
-	{ key = "R", mods = "LEADER",   action = act.ActivateKeyTable { name = "move_tab", one_shot = false, timeout_milliseconds = 5000 } },
+	{
+		key = "R",
+		mods = "LEADER",
+		action = act.ActivateKeyTable({ name = "move_tab", one_shot = false, timeout_milliseconds = 5000 }),
+	},
 	create_keybind("MoveTabRelative", "SHIFT|ALT", "{", -1),
 	create_keybind("MoveTabRelative", "SHIFT|ALT", "}", 1),
+	{ key = "UpArrow", mods = "SHIFT|CTRL", action = act.MoveTabRelative(-1) },
+	{ key = "DownArrow", mods = "SHIFT|CTRL", action = act.MoveTabRelative(1) },
+	{ key = "P", mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(-1)) },
+	{ key = "N", mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(1)) },
+	{ key = "{", mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(-1)) },
+	{ key = "}", mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(1)) },
 
-	{ key = "UpArrow",   mods = "SHIFT|CTRL",   action = act.MoveTabRelative(-1) },
-	{ key = "DownArrow", mods = "SHIFT|CTRL",   action = act.MoveTabRelative(1) },
-
-	{ key = "P",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(-1)) },
-	{ key = "N",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(1)) },
-
+	-- Scrolling
+	{ key = "PageUp", mods = "SHIFT", action = act.ScrollByPage(-0.5) },
+	{ key = "PageUp", mods = "SHIFT|CTRL", action = act.ScrollByPage(-1) },
+	{ key = "PageDown", mods = "SHIFT", action = act.ScrollByPage(0.5) },
+	{ key = "PageDown", mods = "SHIFT|CTRL", action = act.ScrollByPage(1) },
+	-- OSC 133
+	{ key = "UpArrow", mods = "SHIFT", action = act.ScrollToPrompt(-1) },
+	{ key = "DownArrow", mods = "SHIFT", action = act.ScrollToPrompt(1) },
 
 	-- other
-	{ key = 'S',         mods = 'SHIFT|ALT',    action = act.ShowLauncherArgs { flags = 'FUZZY|TABS|LAUNCH_MENU_ITEMS' }, },
-	{ key = 'F9',        mods = 'ALT',          action = act.ShowTabNavigator },
-	{ key = 'Space',     mods = 'LEADER',       action = act.ShowLauncher },
-	{ key = '/',         mods = 'LEADER',       action = act.ActivateCopyMode },
-
+	{ key = "F9", mods = "ALT", action = act.ShowTabNavigator },
+	{ key = "Space", mods = "LEADER", action = act.ShowLauncher },
+	{ key = "/", mods = "LEADER", action = act.ActivateCopyMode },
+	{ key = "F1", mods = "NONE", action = act.ShowTabNavigator },
+	{ key = "F3",        mods = "NONE",         action = act.ActivateCopyMode },
+	{ key = "F12", mods = "NONE", action = act.ShowDebugOverlay },
+	{ key = "a", mods = "LEADER", action = wezterm.action.EmitEvent("toggle-opacity") },
+	{ key = "O", mods = "SHIFT|CTRL", action = wezterm.action.EmitEvent("toggle-opacity") },
+	{
+		key = "c",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+			if has_selection then
+				window:perform_action(wezterm.action({ CopyTo = "ClipboardAndPrimarySelection" }), pane)
+				window:perform_action("ClearSelection", pane)
+			else
+				window:perform_action(wezterm.action({ SendKey = { key = "c", mods = "CTRL" } }), pane)
+			end
+		end),
+	},
+	{
+		key = "i",
+		mods = "LEADER",
+		action = wezterm.action.AttachDomain("unix"),
+	},
+	{
+		key = "d",
+		mods = "LEADER",
+		action = wezterm.action.DetachDomain({ DomainName = "unix" }),
+	},
+	{
+		key = "K",
+		mods = "CTRL|SHIFT",
+		action = act.Multiple({
+			act.ClearScrollback("ScrollbackAndViewport"),
+			act.SendKey({ key = "L", mods = "CTRL" }),
+		}),
+	},
+	{
+		key = "`",
+		mods = "LEADER",
+		action = wezterm.action.ShowLauncherArgs({
+			flags = "LAUNCH_MENU_ITEMS|FUZZY|TABS|DOMAINS|WORKSPACES",
+		}),
+	},
 }
+
+-- Add keybindings for activating tabs by number
+-- for i = 1, 9 do
+-- 	table.insert(keys, { key = tostring(i), mods = "LEADER", action = act.ActivateTab(i - 1) })
+-- 	table.insert(keys, { key = tostring(i), mods = "ALT|CTRL", action = act.ActivateTab(i - 1) })
+-- 		create_keybind("ActivateTab", "ALT", "1", 0),
+-- end
 
 local mouse_bindings = {
 	{
 		-- right clink select (not wezterm copy mode),copy, and if don't select anything, paste
 		-- https://github.com/wez/wezterm/discussions/3541#discussioncomment-5633570
-		event = { Down = { streak = 1, button = 'Right' } },
+		event = { Down = { streak = 1, button = "Right" } },
 		mods = "NONE",
 		action = wezterm.action_callback(function(window, pane)
 			local has_selection = window:get_selection_text_for_pane(pane) ~= ""
@@ -444,24 +578,27 @@ local mouse_bindings = {
 				window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
 				window:perform_action(act.ClearSelection, pane)
 			else
-				window:perform_action(act({
-					PasteFrom = "Clipboard"
-				}), pane)
+				window:perform_action(
+					act({
+						PasteFrom = "Clipboard",
+					}),
+					pane
+				)
 			end
-		end)
+		end),
 	},
 	-- Change the default click behavior so that it only selects
 	-- text and doesn't open hyperlinks
 	{
-		event = { Up = { streak = 1, button = 'Left' } },
-		mods = 'NONE',
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "NONE",
 		-- action = act.CompleteSelection('ClipboardAndPrimarySelection'),
-		action = act.Nop
+		action = act.Nop,
 	},
 	-- and make CTRL-Click open hyperlinks
 	{
-		event = { Up = { streak = 1, button = 'Left' } },
-		mods = 'CTRL',
+		event = { Up = { streak = 1, button = "Left" } },
+		mods = "CTRL",
 		action = act.OpenLinkAtMouseCursor,
 	},
 }
