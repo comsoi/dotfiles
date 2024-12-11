@@ -4,6 +4,8 @@
 .bash_history
 .zcompdump*
 .config/starship.toml
+.config/bash/custom/
+.config/bash/50-custom.bash/
 .config/fish/fish_variables
 .config/hypr/cache/
 .config/yazi/plugins/
