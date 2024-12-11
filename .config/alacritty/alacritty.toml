@@ -68,6 +68,22 @@ y = 15
 
 [keyboard]
 bindings = [
-   { key = "Return", mods = "Control|Shift", action = "CreateNewWindow" },
-   { key = "N", mods = "Control|Shift", action = "SpawnNewInstance" }
+  { key = "Return", mods = "Control|Shift",    action = "CreateNewWindow" },
+  { key = "N",      mods = "Control|Shift",    action = "SpawnNewInstance" },
+
+  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "ToggleViMode" },
+  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "SearchBackward" },
+  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", chars = "❯" },
+  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "SearchConfirm" },
+  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          action = "SearchBackward" },
+  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          chars = "❯" },
+  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          action = "SearchConfirm" },
+  
+  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "ToggleViMode" },
+  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "SearchForward" },
+  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", chars = "❯" },
+  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "SearchConfirm" },
+  { key = "ArrowDown", mods = "Shift", mode = "Vi",          action = "SearchForward" },
+  { key = "ArrowDown", mods = "Shift", mode = "Vi",          chars = "❯" },
+  { key = "ArrowDown", mods = "Shift", mode = "Vi",          action = "SearchConfirm" },
 ]
