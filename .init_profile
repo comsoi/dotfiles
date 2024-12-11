@@ -9,15 +9,14 @@ fi
 export EDITOR='nvim'
 export LESS="-R"
 
-append_env ()
-{
-	[[ -z "$1" || -z "$2" || ! -d "$2" ]] && return;
-	local v=$(eval echo \$$1);
-	[[ ":$v:" == *":$2:"* ]] && return;
+append_env() {
+	[[ -z "$1" || -z "$2" || ! -d "$2" ]] && return
+	local v=$(eval echo \$$1)
+	[[ ":$v:" == *":$2:"* ]] && return
 	if [[ "$3" == "prefix" ]]; then
-		eval $1=\"$2${v:+:$v}\";
+		eval $1=\"$2${v:+:$v}\"
 	else
-		eval $1=\"${v:+$v:}$2\";
+		eval $1=\"${v:+$v:}$2\"
 	fi
 }
 
@@ -27,24 +26,23 @@ append_env PATH "$HOME/.local/bin" prefix
 {
 	unameOut=$(uname -a)
 	case "${unameOut}" in
-		*Microsoft*)     OS="WSL1";; #wls must be first since it will have Linux in the name too
-		*microsoft*)     OS="WSL2";;
-		Linux*)     OS="Linux";;
-		Darwin*)    OS="Mac";;
-		CYGWIN*)    OS="Cygwin";;
-		MINGW*)     OS="Windows";;
-		*Msys)     OS="Windows";;
-		*)          OS="UNKNOWN:${unameOut}"
+	*Microsoft*)    OS="WSL1" ;; #wls must be first since it will have Linux in the name too
+	*microsoft*)    OS="WSL2" ;;
+	Linux*)         OS="Linux" ;;
+	Darwin*)        OS="Mac" ;;
+	CYGWIN*)        OS="Cygwin" ;;
+	MINGW*)         OS="Windows" ;;
+	*Msys)          OS="Windows" ;;
+	*)              OS="UNKNOWN:${unameOut}" ;;
 	esac
 
 	if [[ ${OS} == "Mac" ]] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
-		# This check should work even if the current processes is running under x86 emulation.
 		OS="MacArm"
 	fi
 	unset unameOut
 	export OS
 }
 
-if [[ -r "${HOME}/.custom_top" ]]; then
-	source ${HOME}/.custom_top
+if [[ -r "${HOME}/.init_custom" ]]; then
+	source ${HOME}/.init_custom
 fi
