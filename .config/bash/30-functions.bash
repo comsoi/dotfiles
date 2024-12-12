@@ -18,12 +18,12 @@
 # To use it, uncomment it, source this file and try 'cd --'.
 # acd_func 1.0.5, 10-nov-2004
 # Petar Marinov, http:/geocities.com/h2428, this is public domain
-mkcd() {
+function mkcd() {
   mkdir -p -- "$1" &&
     cd -- "$1"
 }
 
-tmux() {
+function tmux() {
   if ! command -v tmux &>/dev/null; then
     echo "tmux is not installed. Please install tmux using your package manager."
     return 1
@@ -47,7 +47,7 @@ tmux() {
   fi
 }
 
-cd_func() {
+function cd_func() {
   local x2 the_new_dir adir index
   local -i cnt
 
@@ -111,7 +111,33 @@ function y() {
   rm -f -- "$tmp"
 }
 
-get_model() {
+function gpr() {
+	local username=$(git config user.name)
+	if [ -z "$username" ]; then
+		echo "Please set your git username"
+		return 1
+	fi
+
+	local origin=$(git config remote.origin.url)
+	if [ -z "$origin" ]; then
+		echo "No remote origin found"
+		return 1
+	fi
+
+	local remote_username=$(basename $(dirname $origin))
+	if [ "$remote_username" != "$username" ]; then
+		local new_origin=${origin/\/$remote_username\//\/$username\/}
+		new_origin=${new_origin/https:\/\/github.com\//git@github.com:/}
+
+		git config remote.origin.url $new_origin
+		git remote remove upstream > /dev/null 2>&1
+		git remote add upstream $origin
+	fi
+
+	git checkout -b "pr-$(openssl rand -hex 4)"
+}
+
+function __get_model() {
   case $OS in
   Linux)
     if [[ -d /system/app/ && -d /system/priv-app ]]; then
@@ -182,7 +208,7 @@ function setproxy() {
   if [[ ${OS} == "WSL2" ]]; then
     IP=172.22.48.1
   else
-    get_model
+    __get_model
     if [[ ${model} == *"VMware"* ]]; then
       local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
       IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
