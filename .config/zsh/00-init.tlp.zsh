@@ -11,7 +11,7 @@ if [[ $USE_OMZ == true ]]; then
 	unset HISTFILE
 	export ZSH="${ZDOTDIR}/oh-my-zsh"
 	ZSH_THEME="powerlevel10k/powerlevel10k"
-	HYPHEN_INSENSITIVE=# remove esc seq for alt key enter vicmd mod"true"
+	HYPHEN_INSENSITIVE="true"
 	zstyle ':omz:update' mode reminder; zstyle ':omz:update' frequency 26
 	COMPLETION_WAITING_DOTS="true"; DISABLE_UNTRACKED_FILES_DIRTY="true"
 	plugins=(command-not-found extract docker git github gitignore
