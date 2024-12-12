@@ -4,11 +4,8 @@ unsetopt flowcontrol
 setopt noflowcontrol
 
 # remove esc seq for avoid alt key enter vicmd mode
-# bindkey -rM vicmd '^['
 bindkey -rM viins '^['
-# bindkey -M  viins 'jj'   vi-cmd-mode
 bindkey -M  viins '^j'   vi-cmd-mode
-bindkey -M  vicmd '^j'   vi-insert
 bindkey -M  viins '^X^[' vi-cmd-mode
 
 # Refence:
