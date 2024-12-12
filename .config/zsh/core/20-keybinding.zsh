@@ -1,6 +1,15 @@
 #! /bash
 
 unsetopt flowcontrol
+setopt noflowcontrol
+
+# remove esc seq for avoid alt key enter vicmd mode
+# bindkey -rM vicmd '^['
+bindkey -rM viins '^['
+# bindkey -M  viins 'jj'   vi-cmd-mode
+bindkey -M  viins '^j'   vi-cmd-mode
+bindkey -M  vicmd '^j'   vi-insert
+bindkey -M  viins '^X^[' vi-cmd-mode
 
 # Refence:
 # https://www.reddit.com/r/zsh/comments/eblqvq/comment/fb7337q/
@@ -21,18 +30,16 @@ bindkey -s '^[OB' '^[[B'  # down
 bindkey -s '^[OD' '^[[D'  # left
 bindkey -s '^[OC' '^[[C'  # right
 
-# TTY sends different key codes. Translate them to regular.
+# Linux TTY sends different key codes. Translate them to regular.
 bindkey -s '^[[1~' '^[[H'  # home
 bindkey -s '^[[4~' '^[[F'  # end
 
-# `up-line-or-beginning-search` 函数绑定到向上箭头键，允许您搜索先前的命令。
-# `down-line-or-beginning-search` 函数绑定到向下箭头键，允许您搜索下一个命令。
-# 这些函数是自动加载的，并与 `up-line-or-beginning-search` 和 `down-line-or-beginning-search` ZLE 小部件关联。
+
+# https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
 autoload -Uz up-line-or-beginning-search
 autoload -Uz down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-
 
 # emacs key bindings
 # ctrl+key
@@ -44,6 +51,8 @@ bindkey '^B'      backward-char                        # ctrl+b     move cursor 
 # up and down arrows
 bindkey '^P'      up-line-or-beginning-search          # ctrl+p     prev command in history
 bindkey '^N'      down-line-or-beginning-search        # ctrl+n     next command in history
+bindkey '^[[A'    up-line-or-beginning-search          # arrowdown  prev command in history
+bindkey '^[[B'    down-line-or-beginning-search        # arrowup    next command in history
 # search
 bindkey '^R'      history-incremental-search-backward  # ctrl+r     search history backward
 bindkey '^S'      history-incremental-search-forward   # ctrl+s     search history forward
@@ -90,7 +99,6 @@ bindkey '^[.'     insert-last-word                     # alt+.      insert last 
 
 # key bindings
 bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
-bindkey '^X'      forward-word                         # ctrl+x     go forward one word
 # vim hjkl key bindings with alt
 bindkey '^[h'     backward-char                        # alt+h      move cursor one char backward
 bindkey '^[H'     backward-word                        # alt+H      move cursor one word backward
