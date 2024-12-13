@@ -31,6 +31,20 @@ bindkey -s '^[OC' '^[[C'  # right
 bindkey -s '^[[1~' '^[[H'  # home
 bindkey -s '^[[4~' '^[[F'  # end
 
+typeset -g -A key
+key=(
+    BackSpace  "${terminfo[kbs]}"
+    Home       "${terminfo[khome]}"
+    End        "${terminfo[kend]}"
+    Insert     "${terminfo[kich1]}"
+    Delete     "${terminfo[kdch1]}"
+    Up         "${terminfo[kcuu1]}"
+    Down       "${terminfo[kcud1]}"
+    Left       "${terminfo[kcub1]}"
+    Right      "${terminfo[kcuf1]}"
+    PageUp     "${terminfo[kpp]}"
+    PageDown   "${terminfo[knp]}"
+)
 
 # https://coderwall.com/p/jpj_6q/zsh-better-history-searching-with-arrow-keys
 autoload -Uz up-line-or-beginning-search
@@ -39,15 +53,33 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
 # emacs key bindings
-# ctrl+key
+
+# make sure bind in `bindkey -A viins main`
+# use `bindkey -lL main` to check
+
+# navigation
 bindkey '^A'      beginning-of-line                    # ctrl+a     go to the beginning of line
 bindkey '^E'      end-of-line                          # ctrl+e     go to the end of line
-# <- and -> arrows
-bindkey '^F'      forward-char                         # ctrl+f     move cursor one char forward
-bindkey '^B'      backward-char                        # ctrl+b     move cursor one char backward
+bindkey '^F'      forward-char                         # ctrl+f     go one char forward
+bindkey '^B'      backward-char                        # ctrl+b     go one char backward
+bindkey '^[f'     forward-word                         # alt+f      go forward one word
+bindkey '^[b'     backward-word                        # alt+b      go backward one word
+bindkey '^[[1;5C' forward-word                         # ctrl+right go forward one word
+bindkey '^[[1;5D' backward-word                        # ctrl+left  go backward one word
+bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
+bindkey '^[[F'    end-of-line                          # end        go to the end of line
+# vim hjkl key bindings with alt in viins mode
+bindkey '^[j'     down-line-or-beginning-search        # alt+j      next command in history
+bindkey '^[k'     up-line-or-beginning-search          # alt+k      prev command in history
+bindkey '^[h'     backward-char                        # alt+h      move cursor one char backward
+bindkey '^[l'     forward-char                         # alt+l      move cursor one char forward
+bindkey '^[H'     backward-word                        # alt+H      move cursor one word backward
+bindkey '^[L'     forward-word                         # alt+L      move cursor one word forward
 # up and down arrows
 bindkey '^P'      up-line-or-beginning-search          # ctrl+p     prev command in history
 bindkey '^N'      down-line-or-beginning-search        # ctrl+n     next command in history
+bindkey "^[[5~"   up-line-or-history                   # PageUp
+bindkey "^[[6~"   down-line-or-history                 # PageDown
 bindkey '^[[A'    up-line-or-beginning-search          # arrowdown  prev command in history
 bindkey '^[[B'    down-line-or-beginning-search        # arrowup    next command in history
 # search
@@ -61,31 +93,26 @@ bindkey '^W'      backward-kill-word                   # ctrl+w     delete previ
 # [[ -n ${key[Delete]} ]] && bindkey "${key[Delete]}"  delete-char  # another way to bind delete
 bindkey '^D'      delete-char                          # ctrl+d     delete one char forward
 bindkey '^[[3~'   delete-char                          # delete     delete one char forward
-# Make Ctrl-Left and Ctrl-Right jump words.
-bindkey '^[[1;5C' forward-word                         # ctrl+right go forward one word
-bindkey '^[[1;5D' backward-word                        # ctrl+left  go backward one word
-bindkey '^[[H'    beginning-of-line                    # home       go to the beginning of line
-bindkey '^[[F'    end-of-line                          # end        go to the end of line
+bindkey '^[[3;5~' kill-word                            # ctrl+del   delete next word
+bindkey '^[d'     kill-word                            # alt+d      delete next word
+bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
+bindkey '^[w'     backward-kill-line                   # alt+w      delete from cursor to beginning of line
+
+autoload -U edit-command-line
+zle -N edit-command-line
+# Emacs style
+bindkey '^x^e' edit-command-line
 # Ctrl + y - Paste
 # Ctrl + _ - Undo
 
 # default key bindings
 # bindkey '^?'      backward-delete-char                 # bs         delete one char backward        (default ^?)
 # bindkey '^L'      clear-screen                         # ctrl+l     clear screen                    (default ^L)
-# bindkey '^[[D'    backward-char                        # left       move cursor one char backward
-# bindkey '^[[C'    forward-char                         # right      move cursor one char forward
-# bindkey '^[[A'    up-line-or-beginning-search          # up         prev command in history
-# bindkey '^[[B'    down-line-or-beginning-search        # down       next command in history
 
-# alt+key
-bindkey '^[f'     forward-word                         # alt+f      go forward one word
-bindkey '^[b'     backward-word                        # alt+b      go backward one word
-bindkey '^[d'     kill-word                            # alt+d      delete next word
-bindkey '^[^?'    backward-kill-word                   # alt+bs     delete previous word
-bindkey '^[^H'    backward-kill-word                   # alt+bs     delete previous word
-# bindkey '^U'      backward-kill-line                   # ctrl+u     delete from cursor to beginning of line  (bash default ^U)
-bindkey '^[^W'    backward-kill-line                   # alt+w      delete from cursor to beginning of line (zsh ^[^U)
-bindkey '^[.'     insert-last-word                     # alt+.      insert last word of previous command
+bindkey '^[^M'    self-insert-unmeta                   # alt+ctrl+m   insert next char literally
+bindkey '^[^J'    self-insert-unmeta                   # alt+ctrl+j   insert next char literally
+bindkey '^[.'     insert-last-word                     # alt+.        insert last word of previous command
+
 # bash behave
 # Alt +. or !$ - Previous commands last arguement !* - All arguments of previous command
 # Alt + l/u - Lowercase/Uppercase word
@@ -94,15 +121,5 @@ bindkey '^[.'     insert-last-word                     # alt+.      insert last 
 # Alt + d - Delete next word
 # Alt + t - Swap current word with previous word
 
-# key bindings
-bindkey '^H'      backward-delete-word                 # ctrl+bs    delete one word backward
-# vim hjkl key bindings with alt
-bindkey '^[h'     backward-char                        # alt+h      move cursor one char backward
-bindkey '^[H'     backward-word                        # alt+H      move cursor one word backward
-bindkey '^[j'     down-line-or-beginning-search        # alt+j      next command in history
-bindkey '^[k'     up-line-or-beginning-search          # alt+k      prev command in history
-bindkey '^[l'     forward-char                         # alt+l      move cursor one char forward
-bindkey '^[L'     forward-word                         # alt+L      move cursor one word forward
-
-bindkey '^[u'     undo                                 # alt+u      undo
-bindkey '^[r'     redo                                 # alt+r      redo
+# bindkey '^[u'     undo                                 # alt+u      undo
+# bindkey '^[r'     redo                                 # alt+r      redo

@@ -36,3 +36,18 @@ run  = "plugin --sync hide-preview"
 # For upcoming Yazi 0.4 (nightly version):
 # run  = "plugin hide-preview"
 desc = "Hide or show preview"
+
+[[manager.prepend_keymap]]
+on = [ "g", "s" ]
+run = "cd ~/.local/share/"
+desc = "Goto ~/.local/share/"
+
+[[manager.prepend_keymap]]
+on = [ "g", "u", "s" ]
+run = "cd /usr/share/"
+desc = "Goto /usr/share/"
+
+[[manager.prepend_keymap]]
+on = [ "g", "u", "c" ]
+run = "cd /etc/"
+desc = "Goto /etc/"
