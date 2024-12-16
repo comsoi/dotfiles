@@ -106,4 +106,4 @@ zle -N sudo-command-line
 bindkey -M emacs '\e\e' sudo-command-line
 bindkey -M vicmd '\e\e' sudo-command-line
 bindkey -M viins '\e\e' sudo-command-line
-bindkey -M viins '^S' sudo_command_line
+bindkey -M viins '^S'   sudo-command-line

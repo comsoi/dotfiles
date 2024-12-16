@@ -1,8 +1,4 @@
-#!/bin/bash
-
-#
-# Alias
-#
+## 40-aliases.zsh
 
 alias ..="cd .."
 alias ...="cd ../.."
@@ -28,9 +24,6 @@ alias gr="git rebase"
 alias gt='cd "$(git rev-parse --show-toplevel)"'
 alias lg=lazygit
 
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
 alias wget='wget --hsts-file="${XDG_CACHE_HOME:-$HOME/.cache}/wget-hsts"'
 
 alias ipa='ip -br a'
@@ -42,7 +35,7 @@ alias ipy='ipython'
 alias code.='code .'
 alias dtb='distrobox-enter'
 
-if [ "$(command -v win32yank.exe)" ]; then
+if (( HAS_WIN32YANK )); then
 	alias pbcopy='win32yank.exe -i --crlf'
 	alias pbpaste='win32yank.exe -o --lf'
 fi
@@ -55,14 +48,15 @@ alias sudop='command sudo env PATH="$PATH"'
 alias proxychains='proxychains '
 alias proxychains4='proxychains4 '
 
-if [ "$(command -v nala)" ]; then
+# 优化 nala 别名
+if (( HAS_NALA )); then
 	alias apt="nala"
 	alias nala="sudo nala"
 fi
 
 # 先检测并设置 dircolors，为所有支持的命令设置颜色输出
-if [ -x /usr/bin/dircolors ]; then
-	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+if (( HAS_DIRCOLORS )); then
+	# builtin test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 	alias grep='grep --color=auto'
 	alias fgrep='fgrep --color=auto'
 	alias egrep='egrep --color=auto'
@@ -70,22 +64,21 @@ if [ -x /usr/bin/dircolors ]; then
 	alias dir='dir --color=auto'
 	alias vdir='vdir --color=auto'
 	alias ip='ip --color=auto'
-fi
-
-if [ "$(command -v lsd)" ]; then
-	alias ls="lsd --date +%Y%m%d' '%H:%M"
-	alias l="lsd -AF"
-	alias ll="lsd -alF"
-	alias la="lsd -A"
-	alias tree="lsd --tree"
-elif [ -x /usr/bin/dircolors ]; then
 	alias ls='ls --color=auto'
 	alias l='ls -CF --color=auto'
 	alias ll='ls -alF --color=auto'
 	alias la='ls -A --color=auto'
 fi
 
-if [ "$(command -v eza)" ]; then
+if (( HAS_LSD )); then
+	alias ls="lsd --date +%Y%m%d' '%H:%M"
+	alias l="lsd -AF"
+	alias ll="lsd -alF"
+	alias la="lsd -A"
+	alias tree="lsd --tree"
+fi
+
+if (( HAS_EZA )); then
 	alias l="eza -a --icons --group-directories-first"
 	alias ll="eza -al --icons --group-directories-first"
 	alias tree="eza --tree --icons --group-directories-first"
@@ -94,14 +87,14 @@ if [ "$(command -v eza)" ]; then
 	alias gs=eza_gs
 fi
 
-if [ "$(command -v trash-put)" ]; then
+if (( HAS_TRASH_PUT )); then
 	alias rm='echo "You should not use rm directly, use trash-put instead." && rm -I'
 	alias trm="trash-put"
 	alias tls="trash-list"
 	alias trs="trash-restore"
 fi
 
-if [ "$(command -v bat)" ]; then
+if (( HAS_BAT )); then
 	# apt need to set up a bat -> batcat symlink: ln -s /usr/bin/batcat ~/.local/bin/bat
 	alias cat="bat"
 fi

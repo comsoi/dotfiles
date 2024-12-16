@@ -3,6 +3,7 @@
 .zsh_history
 .bash_history
 .zcompdump*
+*.zwc
 .config/starship.toml
 .config/bash/custom/
 .config/bash/50-custom.bash
