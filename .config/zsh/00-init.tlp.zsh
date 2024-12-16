@@ -1,11 +1,27 @@
-setopt AUTO_CD INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY
-unsetopt AUTO_REMOVE_SLASH HIST_EXPIRE_DUPS_FIRST EXTENDED_HISTORY
+setopt AUTO_CD INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY NOFLOWCONTROL
+unsetopt AUTO_REMOVE_SLASH HIST_EXPIRE_DUPS_FIRST EXTENDED_HISTORY FLOWCONTROL
+
 HISTFILE=$ZDOTDIR/.history; KEYTIMEOUT=20
 
 # p10k
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+HAS_FZF=$+commands[fzf]
+HAS_ZOXIDE=$+commands[zoxide]
+HAS_THEFUCK=$+commands[thefuck]
+HAS_WIN32YANK=$+commands[win32yank.exe]
+HAS_NALA=$+commands[nala]
+HAS_LSD=$+commands[lsd]
+HAS_EZA=$+commands[eza]
+HAS_TRASH_PUT=$+commands[trash-put]
+HAS_BAT=$+commands[bat]
+HAS_DIRCOLORS=$+commands[dircolors]
+
+function zvm_config {
+	ZVM_VI_INSERT_ESCAPE_BINDKEY='jj'; ZVM_INIT_MODE='sourcing'
+}
 
 if [[ $USE_OMZ == true ]]; then
 	unset HISTFILE
@@ -26,7 +42,6 @@ typeset -a PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-vi-mode
 typeset PLUGINS_LOADED=false
 for PLUGIN_DIR in "${PLUGIN_PATHS[@]}"; do
 	if [[ -r "$PLUGIN_DIR" ]]; then
-		ZVM_VI_INSERT_ESCAPE_BINDKEY='jj'; ZVM_INIT_MODE='sourcing'
 		for plugin in "${PLUGINS[@]}"; do
 			source "$PLUGIN_DIR/$plugin/$plugin.zsh"
 		done
@@ -58,31 +73,34 @@ done
 
 # Initialize tools
 # move to the last zshrc
-if command -v fzf >/dev/null && fzf --version | cut -d' ' -f1 | awk '{exit ($1 <= "0.48.0")}'; then
-	source <(fzf --zsh)
+if (( HAS_FZF )); then
+    FZF_VERSION=$(fzf --version)
+    FZF_MAJOR=${FZF_VERSION%%.*}
+    FZF_MINOR=${FZF_VERSION#*.}
+    FZF_MINOR=${FZF_MINOR%%.*}
+    if (( FZF_MAJOR > 0 )) || (( FZF_MAJOR == 0 && FZF_MINOR > 48 )); then
+        source <(fzf --zsh)
+    fi
 fi
 
-if [[ $(command -v zoxide) ]]; then
-	eval "$(zoxide init zsh --cmd j)"
+if (( HAS_ZOXIDE )); then
+    eval "$(zoxide init zsh --cmd j)"
 fi
 
 # eval $(thefuck --alias)
-if [[ $(command -v thefuck) ]]; then
-	fuck () {
-		TF_PYTHONIOENCODING=$PYTHONIOENCODING;
-		export TF_SHELL=zsh;
-		export TF_ALIAS=fuck;
-		TF_SHELL_ALIASES=$(alias);
-		export TF_SHELL_ALIASES;
-		TF_HISTORY="$(fc -ln -10)";
-		export TF_HISTORY;
-		export PYTHONIOENCODING=utf-8;
-		TF_CMD=$(
-			thefuck THEFUCK_ARGUMENT_PLACEHOLDER $@
-		) && eval $TF_CMD;
-		unset TF_HISTORY;
-		export PYTHONIOENCODING=$TF_PYTHONIOENCODING;
-		test -n "$TF_CMD" && print -s $TF_CMD
-	}
+if (( HAS_THEFUCK )); then
+    fuck () {
+        TF_PYTHONIOENCODING=$PYTHONIOENCODING
+        export TF_SHELL=zsh
+        export TF_ALIAS=fuck
+        TF_SHELL_ALIASES=$(alias)
+        export TF_SHELL_ALIASES
+        TF_HISTORY="$(fc -ln -10)"
+        export TF_HISTORY
+        export PYTHONIOENCODING=utf-8
+        TF_CMD=$(thefuck THEFUCK_ARGUMENT_PLACEHOLDER "$@") && eval "$TF_CMD"
+        unset TF_HISTORY
+        export PYTHONIOENCODING=$TF_PYTHONIOENCODING
+        [[ -n "$TF_CMD" ]] && print -s "$TF_CMD"
+    }
 fi
-

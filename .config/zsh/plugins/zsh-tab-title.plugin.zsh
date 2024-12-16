@@ -33,7 +33,7 @@ function title {
     print -Pn "\e]1;$tabTitle:q\a" # set tab name
   else
     case "$TERM" in
-      cygwin|xterm*|putty*|rxvt*|ansi|${~ZSH_TAB_TITLE_ADDITIONAL_TERMS})
+      cygwin|xterm*|tmux*|putty*|rxvt*|ansi|${~ZSH_TAB_TITLE_ADDITIONAL_TERMS})
         print -Pn "\e]2;$termTitle:q\a" # set window name
         print -Pn "\e]1;$tabTitle:q\a" # set tab name
       ;;

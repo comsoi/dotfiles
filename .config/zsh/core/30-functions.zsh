@@ -1,12 +1,9 @@
-#
-# Functions
-#
+## 30-functions.zsh
 autoload -Uz add-zsh-hook
 
 if [[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]]; then
 	source "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash"
 fi
-
 
 function append_env {
 	[[ -z "$1" || -z "$2" || ! -d "$2" || ":${(P)1}:" == *":$2:"* ]] && return
@@ -17,20 +14,26 @@ function append_env {
 	fi
 }
 
+cbread() {
+  if [[ -n "$WAYLAND_DISPLAY" ]]; then
+    wl-copy
+  else
+    xclip -selection primary -i -f | xclip -selection secondary -i -f | xclip -selection clipboard -i
+  fi
+}
 
-# cursor style
-if [[ -z $P9K_TTY || -z $ZVM_INIT_DONE || ! $ZLE_RPROMPT_INDENT ]]; then
-	zle-keymap-select () {
-		case $KEYMAP in
-			(vicmd | block) echo -ne '\e[1 q' ;;
-			(main | viins | '' | beam) echo -ne '\e[5 q' ;;
-		esac
-	}
-	zle-line-init() { zle-keymap-select 'beam' }
-	zle -N zle-keymap-select
-	zle -N zle-line-init
-fi
-
+cbprint() {
+  if [[ -n "$WAYLAND_DISPLAY" ]]; then
+    wl-paste
+  else
+    for sel in clipboard primary secondary; do
+      if x=$(xclip -o -selection $sel 2> /dev/null); then
+        echo -n $x
+        return
+      fi
+    done
+  fi
+}
 
 # Store commands in history only if successful
 # CREDITS:
@@ -43,7 +46,7 @@ __fd18et_prevent_write() {
 __fd18et_save_last_successed() {
 	if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]]; then
 		print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
-	fi
+  fi
 }
 
 add-zsh-hook zshaddhistory __fd18et_prevent_write
