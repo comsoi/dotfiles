@@ -20,3 +20,5 @@ fi
 for file in ~/.config/bash/*; do
   [[ -r "$file" ]] && . "$file"
 done
+
+unset file
