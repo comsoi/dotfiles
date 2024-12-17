@@ -4,6 +4,6 @@
 ZDOTDIR="${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}"
 typeset -U path PATH
 
-for file in "$ZDOTDIR"/core/*.zsh(N); do
+for file ("$ZDOTDIR"/core/*.zsh(N)) {
 	source "$file"
-done
+}

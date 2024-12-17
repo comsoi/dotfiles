@@ -10,14 +10,14 @@ zle       -N   up-line-or-beginning-search
 zle       -N   down-line-or-beginning-search
 zle       -N   edit-command-line
 
-function bind2maps () {
+function bind2maps {
 	local i sequence widget
 	local -a maps
 
-	while [[ "$1" != "--" ]]; do
+	while [[ "$1" != "--" ]] {
 		maps+=( "$1" )
 		shift
-	done
+	}
 	shift
 
 	sequence="${key[$1]}"
@@ -26,9 +26,9 @@ function bind2maps () {
 	[[ -z "$sequence" && "$1" == '^'* ]] && sequence="$1"
 	# [[ -z "$sequence" ]] && { printf "bind2maps: unknown key: %s\n" "$1"; return 1; }
 
-	for i in "${maps[@]}"; do
+	for i ( ${maps[@]} ) {
 			bindkey -M "$i" "$sequence" "$widget"
-	done
+	}
 }
 
 # remove esc seq for avoid alt key enter vicmd mode
@@ -56,31 +56,6 @@ bindkey -s '^[OC' '^[[C'  # right
 # Linux TTY sends different key codes. Translate them to regular.
 bindkey -s '^[[1~' '^[[H'  # home
 bindkey -s '^[[4~' '^[[F'  # end
-
-# typeset -g -A key
-# key=(
-#     BackSpace  "${terminfo[kbs]}"
-#     Home       "${terminfo[khome]}"
-#     End        "${terminfo[kend]}"
-#     Insert     "${terminfo[kich1]}"
-#     Delete     "${terminfo[kdch1]}"
-#     Up         "${terminfo[kcuu1]}"
-#     Down       "${terminfo[kcud1]}"
-#     Left       "${terminfo[kcub1]}"
-#     Right      "${terminfo[kcuf1]}"
-#     PageUp     "${terminfo[kpp]}"
-#     PageDown   "${terminfo[knp]}"
-# )
-
-# if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
-# 	autoload -Uz add-zle-hook-widget
-# 	function zle_application_mode_start { echoti smkx }
-# 	function zle_application_mode_stop { echoti rmkx }
-# 	add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
-# 	add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-# 	bind2key
-#   return
-# fi
 
 source $ZDOTDIR/.zkbd/$TERM
 
@@ -135,11 +110,41 @@ bindkey '^[^M'    self-insert-unmeta                   # alt + ctrl + m
 bindkey '^[^J'    self-insert-unmeta                   # alt + ctrl + j
 
 bindkey '^x^e'    edit-command-line
+bindkey '^[.'     insert-last-word                     # alt+. (bash !$)
+
+return
+
+# cannot work fine
+# typeset -g -A key
+# key=(
+#     BackSpace  "${terminfo[kbs]}"
+#     Home       "${terminfo[khome]}"
+#     End        "${terminfo[kend]}"
+#     Insert     "${terminfo[kich1]}"
+#     Delete     "${terminfo[kdch1]}"
+#     Up         "${terminfo[kcuu1]}"
+#     Down       "${terminfo[kcud1]}"
+#     Left       "${terminfo[kcub1]}"
+#     Right      "${terminfo[kcuf1]}"
+#     PageUp     "${terminfo[kpp]}"
+#     PageDown   "${terminfo[knp]}"
+#     Ctrl-Left  "${terminfo[kLFT5]}"
+#     Ctrl-Right "${terminfo[kRIT5]}"
+# )
+
+# if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
+# 	autoload -Uz add-zle-hook-widget
+# 	function zle_application_mode_start { echoti smkx }
+# 	function zle_application_mode_stop { echoti rmkx }
+# 	add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
+# 	add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
+# 	bind2key
+#   return
+# fi
+
 # bindkey '^V'      vi-quoted-insert                    # ctrl+v
 # Ctrl + y - Paste
 # Ctrl + _ - Undo
-bindkey '^[.'     insert-last-word                     # alt+. (bash !$)
-
 # bash behave
 # Alt +. or !$ - Previous commands last arguement !* - All arguments of previous command
 # Alt + l/u - Lowercase/Uppercase word
