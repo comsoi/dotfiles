@@ -7,3 +7,5 @@ typeset -U path PATH
 for file ("$ZDOTDIR"/core/*.zsh(N)) {
 	source "$file"
 }
+
+unset file
