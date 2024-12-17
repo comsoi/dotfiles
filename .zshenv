@@ -5,7 +5,6 @@ HISTCONTROL=ignoreboth
 HISTFILE=$ZDOTDIR/.history
 HISTSIZE=10000
 SAVEHIST=10000
-KEYTIMEOUT=1  # makes the switch between modes quicker
-HISTORY_SUBSTRING_SEARCH_PREFIXED=1  # enables prefixed search for zsh-history-substring-search
-
-[[ -f ${HOME}/.init_profile ]] && . ${HOME}/.init_profile
+KEYTIMEOUT=20
+# enables prefixed search for zsh-history-substring-search
+HISTORY_SUBSTRING_SEARCH_PREFIXED=1
