@@ -1,38 +1,64 @@
 ## 30-functions.zsh
 autoload -Uz add-zsh-hook
 
-if [[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]]; then
+if [[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]] {
 	source "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash"
-fi
+}
 
 function append_env {
 	[[ -z "$1" || -z "$2" || ! -d "$2" || ":${(P)1}:" == *":$2:"* ]] && return
-	if [[ "$3" == "prefix" ]]; then
+	if [[ "$3" == "prefix" ]] {
 		typeset -g $1="$2${(P)1:+:${(P)1}}"
-	else
+	} else {
 		typeset -g $1="${(P)1:+${(P)1}:}$2"
-	fi
-}
-
-cbread() {
-  if [[ -n "$WAYLAND_DISPLAY" ]]; then
-    wl-copy
-  else
-    xclip -selection primary -i -f | xclip -selection secondary -i -f | xclip -selection clipboard -i
-  fi
+	}
 }
 
 cbprint() {
-  if [[ -n "$WAYLAND_DISPLAY" ]]; then
-    wl-paste
-  else
-    for sel in clipboard primary secondary; do
-      if x=$(xclip -o -selection $sel 2> /dev/null); then
-        echo -n $x
-        return
-      fi
-    done
-  fi
+	if [[ $OS == "Linux" ]] {
+		if [[ -n "$WAYLAND_DISPLAY" ]] {
+		wl-copy
+		} else {
+			xclip -selection primary -i -f | xclip -selection secondary -i -f | xclip -selection clipboard -i
+		}
+	} elif [[ $OS == "Mac" ]] {
+		pbcopy
+	} elif [[ $OS == "WSL"* ]] {
+		win32yank.exe -i --format text
+	}
+}
+
+cbprint() {
+	if [[ $OS == "Linux" ]] {
+		if [[ -n "$WAYLAND_DISPLAY" ]] {
+			for sel (clipboard primary) {
+				if x=$(wl-paste --no-newline --$sel 2> /dev/null) {
+					echo -n $x
+					return
+				}
+			}
+		} elif (( $+commands[xsel] )) {
+			for sel (clipboard primary secondary) {
+				if x=$(xsel --output --$sel 2> /dev/null) {
+					echo -n $x
+					return
+				}
+		}
+		} elif (( $+commands[xclip] )) {
+			for sel (clipboard primary secondary ){
+				if x=$(xclip -o -selection $sel 2> /dev/null) {
+					echo -n $x
+					return
+				}
+			}
+		}
+	} elif [[ $OS == "Mac"* ]] {
+		pbpaste
+	} elif [[ $OS == "Windows_NT" ]] {
+		clip.exe
+	} elif [[ $OS == "WSL"* ]] {
+		win32yank.exe -o --format text
+	}
 }
 
 # Store commands in history only if successful
@@ -46,7 +72,7 @@ __fd18et_prevent_write() {
 __fd18et_save_last_successed() {
 	if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]]; then
 		print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
-  fi
+	fi
 }
 
 add-zsh-hook zshaddhistory __fd18et_prevent_write
@@ -54,8 +80,8 @@ add-zsh-hook precmd __fd18et_save_last_successed
 add-zsh-hook zshexit __fd18et_save_last_successed
 
 # plugins
-source "${ZDOTDIR}/plugins/completion.plugin.zsh"
-if [[ ! $USE_OMZ ]]; then
-	source "${ZDOTDIR}/plugins/sudo.plugin.zsh"
-	source "${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh"
-fi
+source ${ZDOTDIR}/plugins/completion.plugin.zsh
+if [[ ! $USE_OMZ ]] {
+	source ${ZDOTDIR}/plugins/sudo.plugin.zsh
+	source ${ZDOTDIR}/plugins/zsh-tab-title.plugin.zsh
+}
