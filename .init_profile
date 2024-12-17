@@ -1,10 +1,4 @@
-#! /bin/bash
-
-# Set language environment
-if [[ $(tty) == /dev/pts/* ]]; then
-	export LANG=zh_CN.UTF-8
-	export LANGUAGE=zh_CN:en_US:en
-fi
+## .init_profile
 
 export EDITOR='nvim'
 export LESS="-R"
