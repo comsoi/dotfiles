@@ -74,6 +74,8 @@ bind2maps emacs viins vicmd -- Ctrl-Left      backward-word
 bind2maps emacs viins vicmd -- Ctrl-Right     forward-word
 bind2maps emacs viins vicmd -- Ctrl-Delete    kill-word
 bind2maps emacs viins vicmd -- Ctrl-Backspace backward-delete-word
+# for CSI-u
+bind2maps emacs viins vicmd -- '^[[8;5u'      backward-delete-word
 # vim hjkl key bindings with alt
 bind2maps emacs viins       -- '^[j'          down-line-or-beginning-search  # alt+j
 bind2maps emacs viins       -- '^[k'          up-line-or-beginning-search    # alt+k
