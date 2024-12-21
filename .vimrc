@@ -12,7 +12,9 @@ if has('gui_running')
 endif
 
 " see :h 'kpc'
-set keyprotocol=kitty:kitty,foot:kitty,wezterm:kitty,xterm:mok2
+if exists('&keyprotocol')
+	set keyprotocol=kitty:kitty,foot:kitty,wezterm:kitty,xterm:mok2
+endif
 
 "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
 "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
@@ -44,9 +46,12 @@ if (has("termguicolors"))
 	if ($TERM == 'wezterm')
 		" see :h kpc
 		" CSI > flag u and CSI < number u to push and pop state
+		" xterm's modifyOtherKeys
+		" CSI > 4 ; flag m change status (flag={0..2})
 		let &t_TI = "\e[1 q \e[=1;1u \e[?u \e[>1u \e[>c"    " enter vim
 		let &t_TE = "\e[5 q \e[>4;m \e[<u"                  " leave vim
 	else
+		" old vim do not recognize ..= .=
 		let &t_TI ..= "\e[2 q"
 		let &t_TE ..= "\e[5 q"
 	endif
