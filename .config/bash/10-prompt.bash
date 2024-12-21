@@ -7,6 +7,7 @@
 # Notes:
 # - $local_username - username you don’t want to see in the prompt - can be defined in ~/.bashlocal : `local_username="admin"`
 #
+
 [ -z "$color_prompt" ] && return
 
 RED="$(tput setaf 1)"

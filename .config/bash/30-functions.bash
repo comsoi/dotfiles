@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #
 # ~/.bash_functions
 #
@@ -23,19 +21,25 @@ function mkcd() {
     cd -- "$1"
 }
 
-function tmux() {
+function hyprun() {
+  if [ "$#" -eq 0 ]; then
+    echo "Usage: hyprun <command>"
+    return 1
+  fi
+  hyprctl dispatch exec "$@"
+}
 
-  # If already inside a tmux session, open a new window
+function tmux() {
   if [[ -n $TMUX ]]; then
     if [[ $# -eq 0 ]]; then
       command tmux new-window
       return
     else
       command tmux "$@"
+      return
     fi
   fi
 
-  # If not inside a tmux session, attach to an existing session or start a new one
   if [[ $# -eq 0 ]]; then
     command tmux attach-session || command tmux new-session
   else
