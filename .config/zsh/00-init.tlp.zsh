@@ -62,42 +62,41 @@ typeset -a THEME_P10K=(
 )
 # command -v brew >/dev/null 2>&1 && THEME+=("$(brew --prefix)/share/powerlevel10k")
 for theme_file (${^THEME_P10K}/powerlevel10k.zsh-theme(N)) {
-    POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
-    POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-    source "$theme_file"
-    break
+	POWERLEVEL9K_TERM_SHELL_INTEGRATION=true; POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+	source "$theme_file"
+	break
 }
 
 # Initialize tools
 # move to the last zshrc
 if (( HAS_FZF )); then
-    FZF_VERSION=$(fzf --version)
-    FZF_MAJOR=${FZF_VERSION%%.*}
-    FZF_MINOR=${FZF_VERSION#*.}
-    FZF_MINOR=${FZF_MINOR%%.*}
-    if (( FZF_MAJOR > 0 )) || (( FZF_MAJOR == 0 && FZF_MINOR > 48 )); then
-        source <(fzf --zsh)
-    fi
+	FZF_VERSION=$(fzf --version)
+	FZF_MAJOR=${FZF_VERSION%%.*}
+	FZF_MINOR=${FZF_VERSION#*.}
+	FZF_MINOR=${FZF_MINOR%%.*}
+	if (( FZF_MAJOR > 0 )) || (( FZF_MAJOR == 0 && FZF_MINOR > 48 )); then
+		source <(fzf --zsh)
+	fi
 fi
 
 if (( HAS_ZOXIDE )); then
-    eval "$(zoxide init zsh --cmd j)"
+	eval "$(zoxide init zsh --cmd j)"
 fi
 
 # eval $(thefuck --alias)
 if (( HAS_THEFUCK )); then
-    fuck () {
-        TF_PYTHONIOENCODING=$PYTHONIOENCODING
-        export TF_SHELL=zsh
-        export TF_ALIAS=fuck
-        TF_SHELL_ALIASES=$(alias)
-        export TF_SHELL_ALIASES
-        TF_HISTORY="$(fc -ln -10)"
-        export TF_HISTORY
-        export PYTHONIOENCODING=utf-8
-        TF_CMD=$(thefuck THEFUCK_ARGUMENT_PLACEHOLDER "$@") && eval "$TF_CMD"
-        unset TF_HISTORY
-        export PYTHONIOENCODING=$TF_PYTHONIOENCODING
-        [[ -n "$TF_CMD" ]] && print -s "$TF_CMD"
-    }
+	fuck () {
+		TF_PYTHONIOENCODING=$PYTHONIOENCODING
+		export TF_SHELL=zsh
+		export TF_ALIAS=fuck
+		TF_SHELL_ALIASES=$(alias)
+		export TF_SHELL_ALIASES
+		TF_HISTORY="$(fc -ln -10)"
+		export TF_HISTORY
+		export PYTHONIOENCODING=utf-8
+		TF_CMD=$(thefuck THEFUCK_ARGUMENT_PLACEHOLDER "$@") && eval "$TF_CMD"
+		unset TF_HISTORY
+		export PYTHONIOENCODING=$TF_PYTHONIOENCODING
+		[[ -n "$TF_CMD" ]] && print -s "$TF_CMD"
+	}
 fi
