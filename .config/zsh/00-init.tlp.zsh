@@ -21,7 +21,7 @@ function zvm_config {
 	ZVM_VI_INSERT_ESCAPE_BINDKEY='jj'; ZVM_INIT_MODE='sourcing'
 }
 
-if [[ $USE_OMZ == true ]]; then
+if [[ $USE_OMZ == true ]] {
 	unset HISTFILE
 	export ZSH="${ZDOTDIR}/oh-my-zsh"
 	ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -30,44 +30,43 @@ if [[ $USE_OMZ == true ]]; then
 	COMPLETION_WAITING_DOTS="true"; DISABLE_UNTRACKED_FILES_DIRTY="true"
 	plugins=(command-not-found extract docker git github gitignore
 	history-substring-search node npm nvm vscode sudo web-search
-	zsh-autosuggestions zsh-syntax-highlighting ohmyzsh-full-autoupdate)
+	zsh-autosuggestions zsh-syntax-highlighting #ohmyzsh-full-autoupdate # zsh-vi-mode
+	)
 	source $ZSH/oh-my-zsh.sh
 	return
-fi
+}
 
-typeset -a PLUGIN_PATHS=("/usr/share/zsh/plugins" "${ZDOTDIR}/plugins/custom")
-typeset -a PLUGINS=("zsh-autosuggestions" "zsh-syntax-highlighting" "zsh-vi-mode")
-typeset PLUGINS_LOADED=false
-for PLUGIN_DIR in "${PLUGIN_PATHS[@]}"; do
-	if [[ -r "$PLUGIN_DIR" ]]; then
-		for plugin in "${PLUGINS[@]}"; do
-			source "$PLUGIN_DIR/$plugin/$plugin.zsh"
-		done
-		PLUGINS_LOADED=true; break
-	fi
-done
-if ! $PLUGINS_LOADED; then
-	for plugin in "${PLUGINS[@]}"; do
-		source "/usr/share/$plugin/$plugin.zsh"
-	done
-	PLUGINS_LOADED="manual"
-fi
+typeset -a PLUGIN_PATHS=(
+	"${ZDOTDIR}/plugins/custom"
+	"/usr/share/zsh/plugins"
+	"/usr/share"
+)
+typeset -a PLUGINS=(
+	zsh-autosuggestions
+	zsh-syntax-highlighting
+	zsh-vi-mode
+	zsh-no-ps2
+)
+for plugin (${PLUGINS[@]}) {
+	for plugin_file (${^PLUGIN_PATHS}/$plugin/$plugin.plugin.zsh(N)) {
+		source $plugin_file
+		# echo "Loaded plugin: $plugin ($plugin_file)"
+		break
+	}
+}
 
-[[ -f ${ZDOTDIR}/.p10k.zsh ]] && source ${ZDOTDIR}/.p10k.zsh
-typeset -a THEME=(
+source ${ZDOTDIR}/p10k-classic.zsh
+typeset -a THEME_P10K=(
 	"/usr/share/zsh-theme-powerlevel10k"
 	"${ZDOTDIR}/themes/powerlevel10k"
-	# "$(brew --prefix)/share/powerlevel10k"
 )
 # command -v brew >/dev/null 2>&1 && THEME+=("$(brew --prefix)/share/powerlevel10k")
-
-for THEME_DIR in "${THEME[@]}"; do
-	if [[ -r "$THEME_DIR" ]]; then
-		POWERLEVEL9K_TERM_SHELL_INTEGRATION=true; POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-		source "$THEME_DIR/powerlevel10k.zsh-theme"
-		break
-	fi
-done
+for theme_file (${^THEME_P10K}/powerlevel10k.zsh-theme(N)) {
+    POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+    POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+    source "$theme_file"
+    break
+}
 
 # Initialize tools
 # move to the last zshrc
