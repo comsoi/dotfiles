@@ -10,23 +10,13 @@ shopt -s checkwinsize
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
-HAS_FZF=$+commands[fzf]
-HAS_ZOXIDE=$+commands[zoxide]
-HAS_THEFUCK=$+commands[thefuck]
-HAS_WIN32YANK=$+commands[win32yank.exe]
-HAS_NALA=$+commands[nala]
-HAS_LSD=$+commands[lsd]
-HAS_EZA=$+commands[eza]
-HAS_TRASH_PUT=$+commands[trash-put]
-HAS_BAT=$+commands[bat]
-HAS_DIRCOLORS=$+commands[dircolors]
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm-color | *-256color | *kitty | *alacritty* | wezterm) color_prompt=yes ;;
+xterm-color | *-256color | xterm-kitty | alacritty | foot | wezterm) color_prompt=yes ;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -54,7 +44,7 @@ unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm* | rxvt*)
+xterm* | rxvt* | xterm-kitty | alacritty | foot | wezterm)
   PS1="\[\e]0;\u@\h: \w\a\]$PS1"
   ;;
 *) ;;

@@ -21,12 +21,29 @@ function mkcd() {
     cd -- "$1"
 }
 
+function quote() {
+  declare -a params
+  for param; do
+    if [[ -z "${param}" || "${param}" =~ [^A-Za-z0-9_@%+=:,./-] ]]; then
+      params+=("'${param//\'/\'\"\'\"\'}'")
+    else
+      params+=("${param}")
+    fi
+  done
+  echo "${params[*]}"
+}
+
 function hyprun() {
   if [ "$#" -eq 0 ]; then
     echo "Usage: hyprun <command>"
     return 1
   fi
-  hyprctl dispatch exec "$@"
+  # Use the quote function to properly handle special characters and quoting
+  local quoted_command
+  quoted_command=$(quote "$@")
+
+  echo "Executing: hyprctl dispatch -- exec $quoted_command"
+  hyprctl dispatch -- exec "$quoted_command"
 }
 
 function tmux() {
