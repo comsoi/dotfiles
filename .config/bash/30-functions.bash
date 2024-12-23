@@ -16,11 +16,11 @@
 # To use it, uncomment it, source this file and try 'cd --'.
 # acd_func 1.0.5, 10-nov-2004
 # Petar Marinov, http:/geocities.com/h2428, this is public domain
-function mkcd() {
+function mkcd {
 	mkdir -p -- "$1" && cd -- "$1"
 }
 
-function quote() {
+function quote {
 	declare -a params
 	for param; do
 		if [[ -z "${param}" || "${param}" =~ [^A-Za-z0-9_@%+=:,./-] ]]; then
@@ -32,7 +32,7 @@ function quote() {
 	echo "${params[*]}"
 }
 
-function hyprun() {
+function hyprun {
 	if [ "$#" -eq 0 ]; then
 		echo "Usage: hyprun <command>"
 		return 1
@@ -45,7 +45,7 @@ function hyprun() {
 	hyprctl dispatch -- exec "$quoted_command"
 }
 
-function tmux() {
+function tmux {
 	if [[ -n $TMUX ]]; then
 		if [[ $# -eq 0 ]]; then
 			command tmux new-window
@@ -63,7 +63,7 @@ function tmux() {
 	fi
 }
 
-function cd_func() {
+function cd_func {
 	local x2 the_new_dir adir index
 	local -i cnt
 
@@ -114,11 +114,11 @@ function cd_func() {
 	return 0
 }
 
-function eza_gs() {
+function eza_gs {
 	eza -al --group-directories-first --git --git-ignore --no-user --no-filesize --no-time --no-permissions --tree --color=always | awk '$1 !~ /--/ { print }'
 }
 
-function y() {
+function y {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
 	yazi "$@" --cwd-file="$tmp"
 	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
@@ -127,7 +127,7 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-function gpr() {
+function gpr {
 	local username=$(git config user.name)
 	if [ -z "$username" ]; then
 		echo "Please set your git username"
@@ -153,7 +153,7 @@ function gpr() {
 	git checkout -b "pr-$(openssl rand -hex 4)"
 }
 
-function __get_model() {
+function __get_model {
 	case $OS in
 	Linux)
 		if [[ -d /system/app/ && -d /system/priv-app ]]; then
@@ -209,7 +209,7 @@ function __get_model() {
 	esac
 }
 
-function noproxy() {
+function noproxy {
 	unset ALL_PROXY
 	unset HTTP_PROXY
 	unset HTTPS_PROXY
@@ -217,7 +217,7 @@ function noproxy() {
 	echo "Proxy settings removed."
 }
 
-function setproxy() {
+function setproxy {
 	# local IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	local IP="127.0.0.1"
 	local PORT="7897"
