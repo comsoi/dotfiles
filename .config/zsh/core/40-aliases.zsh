@@ -34,6 +34,8 @@ alias p='prime-run'
 alias ipy='ipython'
 alias code.='code .'
 alias dtb='distrobox-enter'
+alias tmux-copy='tmux loadb -'
+alias tmux-paste='tmux saveb -'
 
 if (( HAS_WIN32YANK )); then
 	alias pbcopy='win32yank.exe -i --crlf'
