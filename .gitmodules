@@ -1,12 +1,16 @@
+[submodule ".config/zsh/oh-my-zsh"]
+	path = .config/zsh/oh-my-zsh
+	url = https://github.com/ohmyzsh/ohmyzsh
 [submodule ".config/zsh/themes/powerlevel10k"]
 	path = .config/zsh/themes/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k.git
+	url = https://github.com/romkatv/powerlevel10k
 [submodule ".config/tmux/plugins/tmux-battery"]
 	path = .config/tmux/plugins/tmux-battery
 	url = https://github.com/tmux-plugins/tmux-battery
 [submodule ".config/tmux/plugins/tmux-catppuccin"]
 	path = .config/tmux/plugins/tmux-catppuccin
 	url = https://github.com/catppuccin/tmux
+	branch = v2.1.2
 [submodule ".config/tmux/plugins/tmux-cpu"]
 	path = .config/tmux/plugins/tmux-cpu
 	url = https://github.com/tmux-plugins/tmux-cpu
