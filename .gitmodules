@@ -10,7 +10,7 @@
 [submodule ".config/tmux/plugins/tmux-catppuccin"]
 	path = .config/tmux/plugins/tmux-catppuccin
 	url = https://github.com/catppuccin/tmux
-	branch = v2.1.2
+	branch = latest
 [submodule ".config/tmux/plugins/tmux-cpu"]
 	path = .config/tmux/plugins/tmux-cpu
 	url = https://github.com/tmux-plugins/tmux-cpu
