@@ -67,23 +67,153 @@ y = 15
 # y = 200
 
 [keyboard]
-bindings = [
-  { key = "Return", mods = "Control|Shift",    action = "CreateNewWindow" },
-  { key = "N",      mods = "Control|Shift",    action = "SpawnNewInstance" },
 
-  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "ToggleViMode" },
-  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "SearchBackward" },
-  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", chars = "❯" },
-  { key = "ArrowUp",   mods = "Shift", mode = "~Vi|~Search", action = "SearchConfirm" },
-  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          action = "SearchBackward" },
-  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          chars = "❯" },
-  { key = "ArrowUp",   mods = "Shift", mode = "Vi",          action = "SearchConfirm" },
-  
-  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "ToggleViMode" },
-  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "SearchForward" },
-  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", chars = "❯" },
-  { key = "ArrowDown", mods = "Shift", mode = "~Vi|~Search", action = "SearchConfirm" },
-  { key = "ArrowDown", mods = "Shift", mode = "Vi",          action = "SearchForward" },
-  { key = "ArrowDown", mods = "Shift", mode = "Vi",          chars = "❯" },
-  { key = "ArrowDown", mods = "Shift", mode = "Vi",          action = "SearchConfirm" },
-]
+[[keyboard.bindings]]
+key = "Return"
+mods = "Control|Shift"
+action = "CreateNewWindow"
+
+[[keyboard.bindings]]
+key = "N"
+mods = "Control|Shift"
+action = "SpawnNewInstance"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "ToggleViMode"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "SearchBackward"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "~Vi|~Search"
+chars = "❯"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "SearchConfirm"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "Vi"
+action = "SearchBackward"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "Vi"
+chars = "❯"
+
+[[keyboard.bindings]]
+key = "ArrowUp"
+mods = "Shift"
+mode = "Vi"
+action = "SearchConfirm"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "ToggleViMode"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "SearchForward"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "~Vi|~Search"
+chars = "❯"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "~Vi|~Search"
+action = "SearchConfirm"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "Vi"
+action = "SearchForward"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "Vi"
+chars = "❯"
+
+[[keyboard.bindings]]
+key = "ArrowDown"
+mods = "Shift"
+mode = "Vi"
+action = "SearchConfirm"
+
+# CSI u
+# Tab 相关
+[[keyboard.bindings]]
+key = "Tab"
+mods = "Control"
+chars = "\u001b[9;5u"
+
+[[keyboard.bindings]]
+key = "Tab"
+mods = "Control|Shift"
+chars = "\u001b[9;6u"
+
+# 方向键
+[[keyboard.bindings]]
+key = "Left"
+mods = "Control"
+chars = "\u001b[68;5u"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Control"
+chars = "\u001b[67;5u"
+
+[[keyboard.bindings]]
+key = "Up"
+mods = "Control"
+chars = "\u001b[65;5u"
+
+[[keyboard.bindings]]
+key = "Down"
+mods = "Control"
+chars = "\u001b[66;5u"
+
+# 常用功能键
+[[keyboard.bindings]]
+key = "Return"
+mods = "Control"
+chars = "\u001b[13;5u"
+
+[[keyboard.bindings]]
+key = "Space"
+mods = "Control"
+chars = "\u001b[32;5u"
+
+
+# Ctrl+Shift 组合
+[[keyboard.bindings]]
+key = "T"
+mods = "Control|Shift"
+chars = "\u001b[84;6u"
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Control|Shift"
+chars = "\u001b[87;6u"
