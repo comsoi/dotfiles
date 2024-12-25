@@ -1,11 +1,19 @@
 local wezterm = require("wezterm")
-local keymap_config = require("keymap")
-local style = require("style")
 
-local config = {}
+local config = wezterm.config_builder()
 local launch_menu = {}
 local set_environment_variables_linux = {}
 local set_environment_variables_windows = {}
+
+local function merge_config(module)
+	local mod_config = require(module)
+	for key, value in pairs(mod_config) do
+		config[key] = value
+	end
+end
+
+merge_config("style")
+merge_config("keymap")
 
 config.check_for_updates = false
 config.default_prog = { "bash" }
@@ -41,15 +49,11 @@ config.inactive_pane_hsb = {
 	brightness = 0.8,
 }
 config.ssh_domains = {}
-config.leader = keymap_config.leader
-config.key_tables = keymap_config.key_tables
-config.keys = keymap_config.keys
-config.mouse_bindings = keymap_config.mouse_bindings
-config.tab_bar_style = style.tab_bar_style
+-- config.leader = keymap_config.leader
+-- config.key_tables = keymap_config.key_tables
+-- config.keys = keymap_config.keys
+-- config.mouse_bindings = keymap_config.mouse_bindings
 config.launch_menu = launch_menu
-for k, v in pairs(style.style_config) do
-	config[k] = v
-end
 
 -- platform specific settings
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
@@ -66,7 +70,7 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 else
 	config.term = "xterm-256color"
 	config.set_environment_variables = set_environment_variables_windows
-	table.insert(keymap_config.keys, { key = "Return", mods = "ALT", action = "ToggleFullScreen" })
+	table.insert(config.keys, { key = "Return", mods = "ALT", action = "ToggleFullScreen" })
 	-- config.win32_system_backdrop = 'Acrylic'
 	-- config.win32_system_backdrop = 'Mica'
 	-- config.win32_system_backdrop = 'Tabbed'
@@ -116,6 +120,8 @@ end
 -- 		return cmd
 -- 	end),
 -- }
+
+-- require("tabline")(config)
 
 for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
 	if gpu.backend == "Vulkan" and gpu.device_type == "IntegratedGpu" then

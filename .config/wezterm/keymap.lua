@@ -2,6 +2,7 @@
 -- ESPECIALLY FOR THE KEYBINDS WITH ALPHABET
 local wezterm = require("wezterm")
 local act = wezterm.action
+local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
 
 -- key bindings
 local leader = {
@@ -332,6 +333,10 @@ local keys = {
 	{ key = "Tab", mods = "CTRL",         action = act.ActivateTabRelative(1) },
 	{ key = "F11", mods = "",             action = "ToggleFullScreen" },
 
+	-----------WORKSPACES----------
+	{ key = "E",   mods = "SHIFT|LEADER", action = workspace_switcher.switch_to_prev_workspace() },
+	{ key = "e",   mods = "LEADER",       action = workspace_switcher.switch_workspace() },
+
 	-----------PANE------------
 	{ key = "x",   mods = "LEADER",       action = act({ CloseCurrentPane = { confirm = false } }) },
 	{ key = "z",   mods = "LEADER",       action = "TogglePaneZoomState" },
@@ -626,7 +631,7 @@ return {
 	leader = leader,
 	key_tables = key_tables,
 	keys = keys,
-	mouse_bindings = mouse_bindings,
+	mouse_bindings =  mouse_bindings,
 }
 
 -- https://github.com/wez/wezterm/issues/909#issuecomment-1738831414
