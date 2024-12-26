@@ -26,7 +26,11 @@ local function tab_title(tab_info)
 	if tab_info.tab_title and #tab_info.tab_title > 0 then
 		return tab_info.tab_title
 	else
-		return cmd_abbr.abbreviate_title(tab_info.active_pane.title)
+		local title = cmd_abbr.abbreviate_title(tab_info.active_pane.title)
+		if title:sub(1, 1) == " " then
+			return title:sub(2)
+		end
+		return title
 	end
 end
 
@@ -38,13 +42,13 @@ local function leader(window)
 end
 
 tabline.setup({
-	options = { theme = "Catppuccin Mocha", tabs_enabled = true },
+	options = { theme = "Catppuccin Macchiato", tabs_enabled = true },
 	sections = {
 		tabline_c = { leader },
 		tab_active = {
 			"index",
 			"⌘ ",
-			{ "cwd", padding = 0 },
+			{ "cwd",    padding = 0 },
 			{ "process" },
 			tab_title,
 			{ "zoomed", padding = 0 },
@@ -176,9 +180,11 @@ wezterm.on("update-status", function(window, pane)
 	if pane:is_alt_screen_active() then
 		overrides.colors.scrollbar_thumb = "transparent"
 		overrides.enable_scroll_bar = false
+		overrides.hide_tab_bar_if_only_one_tab = true
 	else
 		overrides.colors.scrollbar_thumb = nil
 		overrides.enable_scroll_bar = true
+		overrides.hide_tab_bar_if_only_one_tab = false
 	end
 	window:set_config_overrides(overrides)
 	-- right status
