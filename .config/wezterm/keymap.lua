@@ -16,7 +16,7 @@ if wezterm.target_triple:find("linux") then
 	leader = {
 		key = "Space",
 		mods = "SHIFT",
-		timeout_milliseconds = math.maxinteger,
+		timeout_milliseconds = 3000,
 	}
 end
 
@@ -123,9 +123,9 @@ local key_tables = {
 --------------------------------------------------------------------------------
 -- enable actions for activating and resizing panes similar to tmux.
 local function activate_pane_with_dir(dir)
-	return function(win, pane)
-		win:perform_action(act.ActivatePaneDirection(dir), pane)
-		win:perform_action(
+	return function(window, pane)
+		window:perform_action(act.ActivatePaneDirection(dir), pane)
+		window:perform_action(
 			act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 600 }),
 			pane
 		)
@@ -133,9 +133,9 @@ local function activate_pane_with_dir(dir)
 end
 
 local function resize_pane_with_dir(dir)
-	return function(win, pane)
-		win:perform_action(act.AdjustPaneSize({ dir, 10 }), pane)
-		win:perform_action(
+	return function(window, pane)
+		window:perform_action(act.AdjustPaneSize({ dir, 10 }), pane)
+		window:perform_action(
 			act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 600 }),
 			pane
 		)
@@ -143,9 +143,9 @@ local function resize_pane_with_dir(dir)
 end
 
 local function activate_tab_with_dir(dir)
-	return function(win, pane)
-		win:perform_action(act.ActivateTabRelative(dir), pane)
-		win:perform_action(
+	return function(window, pane)
+		window:perform_action(act.ActivateTabRelative(dir), pane)
+		window:perform_action(
 			act.ActivateKeyTable({ name = "activate_tab", one_shot = false, timeout_milliseconds = 600 }),
 			pane
 		)
@@ -153,9 +153,9 @@ local function activate_tab_with_dir(dir)
 end
 
 local function move_tab_with_dir(dir)
-	return function(win, pane)
-		win:perform_action(act.MoveTabRelative(dir), pane)
-		win:perform_action(
+	return function(window, pane)
+		window:perform_action(act.MoveTabRelative(dir), pane)
+		window:perform_action(
 			act.ActivateKeyTable({ name = "move_tab", one_shot = false, timeout_milliseconds = 600 }),
 			pane
 		)
@@ -171,8 +171,8 @@ local function smart_split_callback(window, pane)
 	end
 end
 
-local function is_one_tab(win)
-	if #win:mux_window():tabs() == 1 then
+local function is_one_tab(window)
+	if #window:mux_window():tabs() == 1 then
 		return true
 	end
 	return false
@@ -240,10 +240,10 @@ end
 -- end
 
 local ACTION_HANDLERS = {
-	AdjustPaneSize = function(win, pane, dir)
+	AdjustPaneSize = function(window, pane, dir)
 		return { AdjustPaneSize = { dir, 5 } }
 	end,
-	ActivatePaneDirection = function(win, pane, dir)
+	ActivatePaneDirection = function(window, pane, dir)
 		local panes = pane:tab():panes_with_info()
 		local is_zoomed = false
 		for _, p in ipairs(panes) do
@@ -256,22 +256,22 @@ local ACTION_HANDLERS = {
 			dir = (dir == "Up" or dir == "Right") and "Next" or "Prev"
 		end
 		if dir == "Left" or dir == "Right" then
-			activate_pane_and_tab(win, pane, dir)
+			activate_pane_and_tab(window, pane, dir)
 			return
 		end
-		win:perform_action({ ActivatePaneDirection = dir }, pane)
-		win:perform_action({ SetPaneZoomState = is_zoomed }, pane)
+		window:perform_action({ ActivatePaneDirection = dir }, pane)
+		window:perform_action({ SetPaneZoomState = is_zoomed }, pane)
 	end,
-	ActivateTab = function(win, pane, dir)
+	ActivateTab = function(dir)
 		return wezterm.action.ActivateTab(dir)
 	end,
-	ActivateTabRelative = function(win, pane, dir)
+	ActivateTabRelative = function(dir)
 		return wezterm.action.ActivateTabRelative(dir)
 	end,
-	MoveTabRelative = function(win, pane, dir)
+	MoveTabRelative = function(dir)
 		return wezterm.action.MoveTabRelative(dir)
 	end,
-	SpawnTab = function(win, pane, dir)
+	SpawnTab = function(dir)
 		return wezterm.action.SpawnTab(dir)
 	end,
 	CloseCurrentTab = function()
@@ -287,21 +287,21 @@ local function create_keybind(action_str, mods, key, dir)
 	return {
 		key = key,
 		mods = mods,
-		action = wezterm.action_callback(function(win, pane)
+		action = wezterm.action_callback(function(window, pane)
 			if is_nvim_or_tmux_or_zellij(pane) then
-				win:perform_action({
+				window:perform_action({
 					SendKey = { key = key, mods = mods },
 				}, pane)
 				return
 			end
 			local handler = ACTION_HANDLERS[action_str]
 			if handler then
-				local result = handler(win, pane, dir)
+				local result = handler(window, pane, dir)
 				if result then
-					win:perform_action(result, pane)
+					window:perform_action(result, pane)
 				end
 			else
-				win:perform_action({
+				window:perform_action({
 					SendKey = { key = key, mods = mods },
 				}, pane)
 			end
@@ -321,7 +321,6 @@ local keys = {
 	create_keybind("CloseCurrentPane", "ALT", "x"),
 	create_keybind("CloseCurrentPane", "ALT", "X"),
 
-	{ key = "T",   mods = "SHIFT|CTRL",   action = act({ SpawnTab = "CurrentPaneDomain" }) },
 	{ key = "V",   mods = "SHIFT|CTRL",   action = act({ PasteFrom = "Clipboard" }) },
 	{ key = "C",   mods = "SHIFT|CTRL",   action = act({ CopyTo = "Clipboard" }) },
 	{ key = "F",   mods = "SHIFT|CTRL",   action = act.Search({ CaseSensitiveString = "" }) },
@@ -329,8 +328,6 @@ local keys = {
 	{ key = "+",   mods = "SHIFT|CTRL",   action = act.IncreaseFontSize },
 	{ key = "_",   mods = "SHIFT|CTRL",   action = act.DecreaseFontSize },
 	{ key = ")",   mods = "SHIFT|CTRL",   action = act.ResetFontSize },
-	{ key = "Tab", mods = "SHIFT|CTRL",   action = act.ActivateTabRelative(-1) },
-	{ key = "Tab", mods = "CTRL",         action = act.ActivateTabRelative(1) },
 	{ key = "F11", mods = "",             action = "ToggleFullScreen" },
 
 	-----------WORKSPACES----------
@@ -448,11 +445,7 @@ local keys = {
 	{ key = "c", mods = "LEADER",         action = act({ SpawnTab = "CurrentPaneDomain" }) },
 	{ key = "&", mods = "SHIFT|LEADER",   action = act({ CloseCurrentTab = { confirm = false } }) },
 	{ key = "q", mods = "LEADER",         action = act({ CloseCurrentTab = { confirm = false } }) },
-	{
-		key = "w",
-		mods = "LEADER",
-		action = act.ShowTabNavigator,
-	},
+	{ key = "w", mods = "LEADER",         action = act.ShowTabNavigator },
 
 	-- Tab navigation
 	{
@@ -508,12 +501,55 @@ local keys = {
 	{
 		key = "W",
 		mods = "CTRL|SHIFT",
-		action = wezterm.action_callback(function(win, pane)
-			if is_one_tab(win) then
-				win:perform_action(act({ SpawnTab = "CurrentPaneDomain" }), pane)
-				win:perform_action(act({ ActivateTabRelative = -1 }), pane)
+		action = wezterm.action_callback(function(window, pane)
+			if not is_one_tab(window) then
+				window:perform_action(act({ CloseCurrentTab = { confirm = true } }), pane)
+				return
 			end
-			win:perform_action(act({ CloseCurrentTab = { confirm = true } }), pane)
+			if is_nvim_or_tmux_or_zellij(pane) then
+				window:perform_action(act.SendString("\x1b[87;6u"), pane)
+				return
+			end
+			window:perform_action(act({ SpawnTab = "CurrentPaneDomain" }), pane)
+			window:perform_action(act({ ActivateTabRelative = -1 }), pane)
+			window:perform_action(act({ CloseCurrentTab = { confirm = true } }), pane)
+		end),
+	},
+	{
+		key = "T",
+		mods = "CTRL|SHIFT",
+		action = wezterm.action_callback(function(window, pane)
+			if not is_one_tab(window) then
+				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
+				return
+			end
+			if is_nvim_or_tmux_or_zellij(pane) then
+				window:perform_action(act.SendString("\x1b[84;6u"), pane)
+			else
+				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
+			end
+		end)
+	},
+	{
+		key = "Tab",
+		mods = "SHIFT|CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			if not is_one_tab(window) then
+				window:perform_action(act.ActivateTabRelative(-1), pane)
+				return
+			end
+			window:perform_action(act.SendString("\x1b[9;6u"), pane)
+		end),
+	},
+	{
+		key = "Tab",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			if not is_one_tab(window) then
+				window:perform_action(act.ActivateTabRelative(1), pane)
+				return
+			end
+			window:perform_action(act.SendString("\x1b[9;5u"), pane)
 		end),
 	},
 	{
@@ -521,7 +557,7 @@ local keys = {
 		mods = "LEADER",
 		action = act.PromptInputLine({
 			description = "Enter new name for tab",
-			action = wezterm.action_callback(function(window, pane, line)
+			action = wezterm.action_callback(function(window, line)
 				if line then
 					window:active_tab():set_title(line)
 				end
@@ -557,7 +593,7 @@ local keys = {
 		mods = "SHIFT|LEADER",
 		action = act.PromptInputLine({
 			description = "Enter new name for workspace",
-			action = wezterm.action_callback(function(window, pane, line)
+			action = wezterm.action_callback(function(line)
 				if line then
 					wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
 				end
@@ -631,7 +667,7 @@ return {
 	leader = leader,
 	key_tables = key_tables,
 	keys = keys,
-	mouse_bindings =  mouse_bindings,
+	mouse_bindings = mouse_bindings,
 }
 
 -- https://github.com/wez/wezterm/issues/909#issuecomment-1738831414

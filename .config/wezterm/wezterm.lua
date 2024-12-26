@@ -63,7 +63,7 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	table.insert(launch_menu, { label = "zsh", args = { "zsh" } })
 	-- for fixing https://github.com/wez/wezterm/issues/5387
 	config.default_prog = { "zsh" }
-	config.default_gui_startup_args = { "start", "sh", "-c", "sleep 0.4; exec zsh" }
+	config.default_gui_startup_args = { "start", "sh", "-c", "sleep 0.3; exec zsh" }
 	config.window_decorations = "NONE" -- DO NOT SET IN WAYLAND!
 	config.set_environment_variables = set_environment_variables_linux
 	config.unicode_version = 14
@@ -120,8 +120,6 @@ end
 -- 		return cmd
 -- 	end),
 -- }
-
--- require("tabline")(config)
 
 for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
 	if gpu.backend == "Vulkan" and gpu.device_type == "IntegratedGpu" then
