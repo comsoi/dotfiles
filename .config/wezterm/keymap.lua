@@ -171,8 +171,15 @@ local function smart_split_callback(window, pane)
 	end
 end
 
-local function is_one_tab(window)
-	if #window:mux_window():tabs() == 1 then
+local function is_one_tab(pane)
+	if #pane:window():tabs() == 1 then
+		return true
+	end
+	return false
+end
+
+local function is_one_pane(pane)
+	if #pane:tab():panes() == 1 then
 		return true
 	end
 	return false
@@ -505,11 +512,11 @@ local keys = {
 		key = "W",
 		mods = "CTRL|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
-			if not is_one_tab(window) then
+			if not is_one_tab(pane) then
 				window:perform_action(act({ CloseCurrentTab = { confirm = true } }), pane)
 				return
 			end
-			if is_mux_or_sp(pane, false) then
+			if is_mux_or_sp(pane, false) and is_one_pane(pane) then
 				window:perform_action(act.SendString("\x1b[87;6u"), pane)
 				return
 			end
@@ -522,11 +529,11 @@ local keys = {
 		key = "T",
 		mods = "CTRL|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
-			if not is_one_tab(window) then
+			if not is_one_tab(pane) then
 				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
 				return
 			end
-			if is_mux_or_sp(pane, false) then
+			if is_mux_or_sp(pane, false) and is_one_pane(pane) then
 				window:perform_action(act.SendString("\x1b[84;6u"), pane)
 			else
 				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
@@ -537,7 +544,7 @@ local keys = {
 		key = "Tab",
 		mods = "SHIFT|CTRL",
 		action = wezterm.action_callback(function(window, pane)
-			if not is_one_tab(window) then
+			if not is_one_tab(pane) then
 				window:perform_action(act.ActivateTabRelative(-1), pane)
 				return
 			end
@@ -548,7 +555,7 @@ local keys = {
 		key = "Tab",
 		mods = "CTRL",
 		action = wezterm.action_callback(function(window, pane)
-			if not is_one_tab(window) then
+			if not is_one_tab(pane) then
 				window:perform_action(act.ActivateTabRelative(1), pane)
 				return
 			end

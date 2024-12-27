@@ -180,7 +180,9 @@ wezterm.on("update-status", function(window, pane)
 	if pane:is_alt_screen_active() then
 		overrides.colors.scrollbar_thumb = "transparent"
 		overrides.enable_scroll_bar = false
-		overrides.hide_tab_bar_if_only_one_tab = true
+		if #pane:tab():panes() == 1 then
+			overrides.hide_tab_bar_if_only_one_tab = true
+		end
 	else
 		overrides.colors.scrollbar_thumb = nil
 		overrides.enable_scroll_bar = true
