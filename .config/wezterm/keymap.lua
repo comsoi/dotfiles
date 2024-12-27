@@ -178,7 +178,7 @@ local function is_one_tab(window)
 	return false
 end
 
-local function is_nvim_or_tmux_or_zellij(pane)
+local function is_mux_or_sp(pane, tags)
 	local foreground_process = pane:get_foreground_process_name() or ""
 	local user_vars = pane:get_user_vars()
 	if user_vars.IS_TMUX == "true" or foreground_process:find("tmux") then
@@ -186,6 +186,9 @@ local function is_nvim_or_tmux_or_zellij(pane)
 	end
 	if user_vars.IS_ZELLIJ == "true" or foreground_process:find("zellij") then
 		return true
+	end
+	if tags == "false" then
+		return false
 	end
 	if user_vars.IS_NVIM == "true" or foreground_process:find("n?vim") then
 		return true
@@ -288,7 +291,7 @@ local function create_keybind(action_str, mods, key, dir)
 		key = key,
 		mods = mods,
 		action = wezterm.action_callback(function(window, pane)
-			if is_nvim_or_tmux_or_zellij(pane) then
+			if is_mux_or_sp(pane) then
 				window:perform_action({
 					SendKey = { key = key, mods = mods },
 				}, pane)
@@ -506,7 +509,7 @@ local keys = {
 				window:perform_action(act({ CloseCurrentTab = { confirm = true } }), pane)
 				return
 			end
-			if is_nvim_or_tmux_or_zellij(pane) then
+			if is_mux_or_sp(pane, false) then
 				window:perform_action(act.SendString("\x1b[87;6u"), pane)
 				return
 			end
@@ -523,12 +526,12 @@ local keys = {
 				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
 				return
 			end
-			if is_nvim_or_tmux_or_zellij(pane) then
+			if is_mux_or_sp(pane, false) then
 				window:perform_action(act.SendString("\x1b[84;6u"), pane)
 			else
 				window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
 			end
-		end)
+		end),
 	},
 	{
 		key = "Tab",
