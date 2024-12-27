@@ -42,7 +42,7 @@ local function leader(window)
 end
 
 tabline.setup({
-	options = { theme = "Catppuccin Macchiato", tabs_enabled = true },
+	options = { theme = "Catppuccin Frappe", tabs_enabled = true },
 	sections = {
 		tabline_c = { leader },
 		tab_active = {
