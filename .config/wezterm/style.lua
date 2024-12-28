@@ -1,10 +1,13 @@
 local wezterm = require("wezterm")
 local cmd_abbr = require("cmd_abbr")
-
 local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
 local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+local config = wezterm.config_builder()
+local light_theme = nil
+local dark_theme = nil
 local text_opacity = 1
 
+cmd_abbr.set_max_length(20)
 workspace_switcher.workspace_formatter = function(label)
 	return wezterm.format({
 		{ Attribute = { Italic = true } },
@@ -18,21 +21,26 @@ local function tab_title(tab_info)
 	end
 	if not tab_info.is_active then
 		if #tab_info.tab_title > 0 then
-			return "⌘ " .. tab_info.tab_title .. ": "
+			return "⌘ " .. tab_info.tab_title .. "|"
 		else
 			return ""
 		end
 	end
-	if tab_info.tab_title and #tab_info.tab_title > 0 then
-		return tab_info.tab_title
-	else
-		local title = cmd_abbr.abbreviate_title(tab_info.active_pane.title)
-		if title:sub(1, 1) == " " then
-			return title:sub(2)
-		end
-		return title
+	local title = cmd_abbr.abbreviate_title(tab_info.active_pane.title)
+	if title:sub(1, 1) == " " then
+		return title:sub(2)
 	end
+	return title
 end
+-- if tab_info.tab_title and #tab_info.tab_title > 0 then
+-- 	return tab_info.tab_title
+-- else
+-- 	local title = cmd_abbr.abbreviate_title(tab_info.active_pane.title)
+-- 	if title:sub(1, 1) == " " then
+-- 		return title:sub(2)
+-- 	end
+-- 	return title
+-- end
 
 local function leader(window)
 	if window:leader_is_active() then
@@ -41,14 +49,40 @@ local function leader(window)
 	return ""
 end
 
+local function scheme_for_appearance(appearance, force)
+	force = force or false
+	-- color_scheme
+	-- t = 'Catppuccin Frappe'
+	-- t = 'Catppuccin Latte'
+	-- t = 'Catppuccin Mocha'
+	-- t = 'Catppuccin Macchiato'
+	-- t = 'Tokyo Night Day'
+	-- t = 'Tokyo Night Light (Gogh)'
+	-- t = 'Horizon Bright (Gogh)'
+	-- t = 'Brush Trees (base16)'
+	if force then
+		local t = ""
+		t = "Catppuccin Mocha"
+		return t
+	end
+	if appearance:find("Light") then
+		light_theme = "Tokyo Night Day"
+		return light_theme
+	end
+	dark_theme = "Catppuccin Macchiato"
+	return dark_theme
+end
+
+local auto_theme = scheme_for_appearance(wezterm.gui.get_appearance())
+
 tabline.setup({
-	options = { theme = "Catppuccin Frappe", tabs_enabled = true },
+	options = { theme = auto_theme, tabs_enabled = true },
 	sections = {
 		tabline_c = { leader },
 		tab_active = {
 			"index",
 			"⌘ ",
-			{ "cwd",    padding = 0 },
+			{ "cwd", padding = 0 },
 			{ "process" },
 			tab_title,
 			{ "zoomed", padding = 0 },
@@ -59,31 +93,20 @@ tabline.setup({
 	extensions = { "smart_workspace_switcher" },
 })
 
-local function scheme_for_appearance(appearance)
-	-- color_scheme
-	-- 'Catppuccin Frappe'
-	-- 'Catppuccin Latte'
-	-- 'Catppuccin Mocha',
-	if appearance:find("Light") then
-		return "Everforest Light Soft (Gogh)"
-	end
-	return "Catppuccin Macchiato"
-end
-
 -- Tab bar
-local COLORS = {
-	leading_bg = "rgba(35, 38, 52, 1.0)",
-	leading_fg = "rgba(165, 173, 206, 1.0)",
-	background_inactive = "rgba(35, 38, 52, 1.0)",
-	foreground_inactive = "rgba(165, 173, 206, 1.0)",
-	background_active = "rgba(114, 135, 253, 1.0)",
-	foreground_active = "rgba(255, 255, 255, 1.0)",
-	background_hover = "rgba(140, 170, 238, 1.0)",
-	foreground_hover = "rgba(65, 69, 89, 1.0)",
-	new_tab_bg = "rgba(140, 170, 238, 1.0)",
-	new_tab_fg = "rgba(255, 255, 255, 1.0)",
-}
-local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+-- local COLORS = {
+-- 	leading_bg = "rgba(35, 38, 52, 1.0)",
+-- 	leading_fg = "rgba(165, 173, 206, 1.0)",
+-- 	background_inactive = "rgba(35, 38, 52, 1.0)",
+-- 	foreground_inactive = "rgba(165, 173, 206, 1.0)",
+-- 	background_active = "rgba(114, 135, 253, 1.0)",
+-- 	foreground_active = "rgba(255, 255, 255, 1.0)",
+-- 	background_hover = "rgba(140, 170, 238, 1.0)",
+-- 	foreground_hover = "rgba(65, 69, 89, 1.0)",
+-- 	new_tab_bg = "rgba(140, 170, 238, 1.0)",
+-- 	new_tab_fg = "rgba(255, 255, 255, 1.0)",
+-- }
+-- local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
 --
 -- local function adjust_alpha(color, new_alpha)
 -- 	-- 提取原始的 r, g, b 值
@@ -103,7 +126,7 @@ local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
 -- end
 --
 -- https://github.com/wez/wezterm/discussions/4044
-wezterm.on("toggle-opacity", function(window, pane)
+wezterm.on("toggle-opacity", function(window)
 	wezterm.log_info("toggling the leader")
 	local overrides = window:get_config_overrides() or {}
 	if not overrides.window_background_opacity then
@@ -174,13 +197,20 @@ end)
 -- https://github.com/wez/wezterm/issues/4330
 wezterm.on("update-status", function(window, pane)
 	local overrides = window:get_config_overrides() or {}
+	local user_vars = pane:get_user_vars()
+	local foreground_process = pane:get_foreground_process_name() or ""
+	local is_tmux_or_zellij = user_vars.TMUX
+		or user_vars.ZELLIJ
+		or foreground_process:find("tmux")
+		or foreground_process:find("zellij")
 	if not overrides.colors then
-		overrides.colors = {}
+		overrides.colors = config.colors or {}
 	end
+	-- wezterm.log_info("foreground_process: " .. foreground_process)
 	if pane:is_alt_screen_active() then
 		overrides.colors.scrollbar_thumb = "transparent"
 		overrides.enable_scroll_bar = false
-		if #pane:tab():panes() == 1 then
+		if #pane:tab():panes() == 1 and is_tmux_or_zellij then
 			overrides.hide_tab_bar_if_only_one_tab = true
 		end
 	else
@@ -213,12 +243,10 @@ wezterm.on("update-status", function(window, pane)
 	-- }))
 end)
 
-local config = wezterm.config_builder()
-
 -- 基本配置
 config.default_cursor_style = "BlinkingBar"
 config.min_scroll_bar_height = "1cell"
-config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
+config.color_scheme = auto_theme
 
 -- 窗口配置
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
@@ -234,15 +262,16 @@ config.window_padding = {
 
 -- 配色
 config.colors = {
-	compose_cursor = "orange",
+	-- compose_cursor = "orange",
 	tab_bar = {
 		-- text_background_opacity = 1.0,
-		-- background = 'rgba(0, 0, 0, 0.0)',
+		background = "rgba(0, 0, 0, 0.0)",
 	},
 }
 
 -- 标签栏配置
 config.enable_tab_bar = true
+config.show_new_tab_button_in_tab_bar = false
 config.use_fancy_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = false
 config.show_tab_index_in_tab_bar = false
@@ -253,30 +282,30 @@ config.window_frame = {
 }
 
 config.tab_bar_style = {
-	new_tab = wezterm.format({
-		{ Background = { Color = COLORS.new_tab_bg } },
-		{ Foreground = { Color = COLORS.leading_bg } },
-		{ Text = SOLID_RIGHT_ARROW },
-		{ Background = { Color = COLORS.new_tab_bg } },
-		{ Foreground = { Color = COLORS.new_tab_fg } },
-		{ Text = " + " },
-		{ Background = { Color = COLORS.leading_bg } },
-		{ Foreground = { Color = COLORS.new_tab_bg } },
-		{ Text = SOLID_RIGHT_ARROW },
-	}),
-	new_tab_hover = wezterm.format({
-		{ Attribute = { Italic = false } },
-		{ Attribute = { Intensity = "Bold" } },
-		{ Background = { Color = COLORS.leading_bg } },
-		{ Foreground = { Color = COLORS.leading_bg } },
-		{ Text = SOLID_RIGHT_ARROW },
-		{ Background = { Color = COLORS.leading_bg } },
-		{ Foreground = { Color = COLORS.foreground_inactive } },
-		{ Text = " + " },
-		{ Background = { Color = COLORS.leading_bg } },
-		{ Foreground = { Color = COLORS.leading_bg } },
-		{ Text = SOLID_RIGHT_ARROW },
-	}),
+	-- 	new_tab = wezterm.format({
+	-- 		{ Background = { Color = COLORS.new_tab_bg } },
+	-- 		{ Foreground = { Color = COLORS.leading_bg } },
+	-- 		{ Text = SOLID_RIGHT_ARROW },
+	-- 		{ Background = { Color = COLORS.new_tab_bg } },
+	-- 		{ Foreground = { Color = COLORS.new_tab_fg } },
+	-- 		{ Text = " + " },
+	-- 		{ Background = { Color = COLORS.leading_bg } },
+	-- 		{ Foreground = { Color = COLORS.new_tab_bg } },
+	-- 		{ Text = SOLID_RIGHT_ARROW },
+	-- 	}),
+	-- 	new_tab_hover = wezterm.format({
+	-- 		{ Attribute = { Italic = false } },
+	-- 		{ Attribute = { Intensity = "Bold" } },
+	-- 		{ Background = { Color = COLORS.leading_bg } },
+	-- 		{ Foreground = { Color = COLORS.leading_bg } },
+	-- 		{ Text = SOLID_RIGHT_ARROW },
+	-- 		{ Background = { Color = COLORS.leading_bg } },
+	-- 		{ Foreground = { Color = COLORS.foreground_inactive } },
+	-- 		{ Text = " + " },
+	-- 		{ Background = { Color = COLORS.leading_bg } },
+	-- 		{ Foreground = { Color = COLORS.leading_bg } },
+	-- 		{ Text = SOLID_RIGHT_ARROW },
+	-- 	}),
 }
 -- config.font_rules = {
 --  for Fira Code no italic

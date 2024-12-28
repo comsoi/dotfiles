@@ -188,10 +188,10 @@ end
 local function is_mux_or_sp(pane, tags)
 	local foreground_process = pane:get_foreground_process_name() or ""
 	local user_vars = pane:get_user_vars()
-	if user_vars.IS_TMUX == "true" or foreground_process:find("tmux") then
+	if user_vars.TMUX or foreground_process:find("tmux") then
 		return true
 	end
-	if user_vars.IS_ZELLIJ == "true" or foreground_process:find("zellij") then
+	if user_vars.ZELLIJ == "true" or foreground_process:find("zellij") then
 		return true
 	end
 	if tags == "false" then
@@ -223,6 +223,7 @@ local function activate_pane_and_tab(window, pane, dir)
 
 	window:perform_action(action, pane)
 end
+
 -- local function activate_pane_prev(window, pane)
 -- 	local tab = window:mux_window():active_tab()
 -- 	local panes = tab:panes_with_info()
@@ -250,7 +251,7 @@ end
 -- end
 
 local ACTION_HANDLERS = {
-	AdjustPaneSize = function(window, pane, dir)
+	AdjustPaneSize = function(_, _, dir)
 		return { AdjustPaneSize = { dir, 5 } }
 	end,
 	ActivatePaneDirection = function(window, pane, dir)
@@ -272,16 +273,16 @@ local ACTION_HANDLERS = {
 		window:perform_action({ ActivatePaneDirection = dir }, pane)
 		window:perform_action({ SetPaneZoomState = is_zoomed }, pane)
 	end,
-	ActivateTab = function(dir)
+	ActivateTab = function(_, _, dir)
 		return wezterm.action.ActivateTab(dir)
 	end,
-	ActivateTabRelative = function(dir)
+	ActivateTabRelative = function(_, _, dir)
 		return wezterm.action.ActivateTabRelative(dir)
 	end,
-	MoveTabRelative = function(dir)
+	MoveTabRelative = function(_, _, dir)
 		return wezterm.action.MoveTabRelative(dir)
 	end,
-	SpawnTab = function(dir)
+	SpawnTab = function(_, _, dir)
 		return wezterm.action.SpawnTab(dir)
 	end,
 	CloseCurrentTab = function()
@@ -298,7 +299,7 @@ local function create_keybind(action_str, mods, key, dir)
 		key = key,
 		mods = mods,
 		action = wezterm.action_callback(function(window, pane)
-			if is_mux_or_sp(pane) then
+			if is_mux_or_sp(pane, false) then
 				window:perform_action({
 					SendKey = { key = key, mods = mods },
 				}, pane)
@@ -501,8 +502,8 @@ local keys = {
 
 	-- other
 	{ key = "Space",     mods = "LEADER",       action = act.ShowLauncher },
-	{ key = "]",         mods = "LEADER",       action = act({ PasteFrom = "Clipboard" }) },
 	{ key = "Escape",    mods = "LEADER",       action = act.ActivateCopyMode },
+	{ key = "[",         mods = "CTRL|LEADER",  action = act.ActivateCopyMode },
 	{ key = "Space",     mods = "SHIFT|CTRL",   action = act.QuickSelect },
 	{ key = "F1",        mods = "NONE",         action = act.ShowTabNavigator },
 	{ key = "F12",       mods = "LEADER",       action = act.ShowDebugOverlay },
@@ -563,18 +564,6 @@ local keys = {
 		end),
 	},
 	{
-		key = ",",
-		mods = "LEADER",
-		action = act.PromptInputLine({
-			description = "Enter new name for tab",
-			action = wezterm.action_callback(function(window, line)
-				if line then
-					window:active_tab():set_title(line)
-				end
-			end),
-		}),
-	},
-	{
 		key = "c",
 		mods = "CTRL",
 		action = wezterm.action_callback(function(window, pane)
@@ -599,16 +588,55 @@ local keys = {
 		action = wezterm.action.DetachDomain({ DomainName = "unix" }),
 	},
 	{
+		key = ".",
+		mods = "LEADER",
+		action = act.PromptInputLine({
+			description = "Enter target workspace(empty) for move",
+			initial_value = "q",
+			action = wezterm.action_callback(function(_, pane, line)
+				if line == "q" or line == "quit" then
+					return
+				elseif line ~= "" then
+					pane:move_to_new_window(line)
+				else
+					if #pane:window():tabs() == 1 then
+						return
+					end
+					pane:move_to_new_window()
+				end
+			end),
+		}),
+	},
+	{
+		key = ",",
+		mods = "LEADER",
+		action = act.PromptInputLine({
+			description = "Enter new name for tab",
+			action = wezterm.action_callback(function(window, _, line)
+				if line then
+					window:active_tab():set_title(line)
+				end
+			end),
+		}),
+	},
+	{
 		key = "$",
 		mods = "SHIFT|LEADER",
 		action = act.PromptInputLine({
 			description = "Enter new name for workspace",
-			action = wezterm.action_callback(function(line)
+			action = wezterm.action_callback(function(_, _, line)
 				if line then
 					wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
 				end
 			end),
 		}),
+	},
+	{
+		key = "!",
+		mods = "LEADER | SHIFT",
+		action = wezterm.action_callback(function(win, pane)
+			local tab, window = pane:move_to_new_tab()
+		end),
 	},
 	{
 		key = "L",
@@ -671,6 +699,21 @@ local mouse_bindings = {
 		mods = "CTRL",
 		action = act.OpenLinkAtMouseCursor,
 	},
+
+	-- Scrolling up while holding CTRL increases the font size
+	{
+		event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+		mods = 'CTRL',
+		action = act.IncreaseFontSize,
+	},
+
+	-- Scrolling down while holding CTRL decreases the font size
+	{
+		event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+		mods = 'CTRL',
+		action = act.DecreaseFontSize,
+	},
+
 }
 
 return {
