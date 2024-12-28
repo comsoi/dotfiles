@@ -1,6 +1,11 @@
 emulate -L zsh
 
-autoload -Uz backward-kill-word-match
-zle      -N  backward-delete-word-fix backward-kill-word-match
-zstyle :zle:backward-delete-word-fix word-chars ''
-zstyle :zle:backward-delete-word-fix word-style shell
+# kill-word has confilct with zsh-autosuggestion
+# autoload -Uz backward-kill-word-match
+# zle      -N  backward-delete-word-shell backward-kill-word-match
+# autoload -Uz delete-whole-word-match
+# zle -N backward-delete-word-shell delete-whole-word-match
+# zstyle  :zle:backward-delete-word-shell word-chars ''
+zstyle  :zle:backward-delete-word-shell word-style shell
+
+zle .backward-delete-word
