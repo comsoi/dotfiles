@@ -1,0 +1,13 @@
+emulate -L zsh
+
+if [[ $OS == "Linux" ]] {
+	if [[ -n "$WAYLAND_DISPLAY" ]] {
+	wl-copy
+	} else {
+		xclip -selection primary -i -f | xclip -selection secondary -i -f | xclip -selection clipboard -i
+	}
+} elif [[ $OS == "Mac" ]] {
+	pbcopy
+} elif [[ $OS == "WSL"* ]] {
+	win32yank.exe -i --format text
+}

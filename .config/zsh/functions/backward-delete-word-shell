@@ -1,0 +1,6 @@
+emulate -L zsh
+
+autoload -Uz backward-kill-word-match
+zle      -N  backward-delete-word-fix backward-kill-word-match
+zstyle :zle:backward-delete-word-fix word-chars ''
+zstyle :zle:backward-delete-word-fix word-style shell

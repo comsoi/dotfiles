@@ -1,0 +1,21 @@
+emulate -L zsh
+
+local len=${#LBUFFER}
+local i=$len
+
+local last_char=${LBUFFER[-1]}
+
+if [[ $last_char == " " ]] {
+	while ((i > 0)) && [[ ${LBUFFER[i]} == " " ]] {
+		((i--))
+	}
+} elif [[ $last_char == [a-zA-Z0-9_\-] ]] {
+	while ((i > 0)) && [[ ${LBUFFER[i]} == [a-zA-Z0-9_\-] ]] {
+		((i--))
+	}
+} else {
+	while ((i > 0)) && [[ ${LBUFFER[i]} == "${last_char}" ]] {
+		((i--))
+	}
+}
+LBUFFER=${LBUFFER[1,i]}

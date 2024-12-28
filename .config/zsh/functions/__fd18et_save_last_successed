@@ -1,0 +1,5 @@
+emulate -L zsh
+
+if [[ ($? == 0 || $? == 130) && -n $__fd18et_LASTHIST && -n $HISTFILE ]]; then
+    print -sr -- ${=${__fd18et_LASTHIST%%'\n'}}
+fi

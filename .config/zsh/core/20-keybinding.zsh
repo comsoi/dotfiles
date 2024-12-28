@@ -9,28 +9,22 @@ autoload  -Uz  edit-command-line
 zle       -N   up-line-or-beginning-search
 zle       -N   down-line-or-beginning-search
 zle       -N   edit-command-line
+# load from $ZDOTDIR funtions
+autoload  -Uz  bind2maps
+autoload  -Uz  backward-delete-word-shell
+autoload  -Uz  backward-kill-vscode-word
+zle       -N   backward-delete-word-shell
+zle       -N   backward-kill-vscode-word
 
-function bind2maps {
-	local i sequence widget
-	local -a maps
+# autoload  -Uz  select-word-style
+# select-word-style bash
 
-	while [[ "$1" != "--" ]] {
-		maps+=( "$1" )
-		shift
-	}
-	shift
 
-	sequence="${key[$1]}"
-	widget="$2"
-
-	[[ -z "$sequence" && "$1" == '^'* ]] && sequence="$1"
-	# [[ -z "$sequence" ]] && { printf "bind2maps: unknown key: %s\n" "$1"; return 1; }
-
-	for i ( ${maps[@]} ) {
-			bindkey -M "$i" "$sequence" "$widget"
-	}
-}
-
+# local WORDCHARS="$WORDCHARS"
+# WORDCHARS="${WORDCHARS//:}"
+# WORDCHARS="${WORDCHARS//\/}"
+# WORDCHARS="${WORDCHARS//.}"
+# zle backward-delete-word
 # remove esc seq for avoid alt key enter vicmd mode
 bindkey -rM viins '^['
 bindkey -M  viins '^X^[' vi-cmd-mode
@@ -73,7 +67,10 @@ bind2maps emacs viins vicmd -- PageDown       down-line-or-history
 bind2maps emacs viins vicmd -- Ctrl-Left      backward-word
 bind2maps emacs viins vicmd -- Ctrl-Right     forward-word
 bind2maps emacs viins vicmd -- Ctrl-Delete    kill-word
-bind2maps emacs viins vicmd -- Ctrl-Backspace backward-delete-word
+bind2maps emacs viins vicmd -- Ctrl-Backspace backward-delete-word-shell
+bind2maps emacs viins vicmd -- Alt-Left       vi-backward-word
+bind2maps emacs viins vicmd -- Alt-Right      vi-forward-word
+bind2maps emacs viins vicmd -- Alt-Backspace  backward-kill-vscode-word
 # for CSI-u
 bind2maps emacs viins vicmd -- '^[[8;5u'      backward-delete-word
 # vim hjkl key bindings with alt
@@ -91,7 +88,7 @@ bind2maps emacs viins       -- '^[L'          forward-word                   # a
 bindkey '^A'      beginning-of-line                    # ctrl + a
 bindkey '^E'      end-of-line                          # ctrl + e
 bindkey '^F'      forward-char                         # ctrl + f
-bindkey '^[f'     forward-word                         # alt  + f
+bindkey '^[f'     vi-forward-word                      # alt  + f
 bindkey '^B'      backward-char                        # ctrl + b
 bindkey '^[b'     backward-word                        # alt  + b
 bindkey '^P'      up-line-or-beginning-search          # ctrl + p

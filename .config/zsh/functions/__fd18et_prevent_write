@@ -1,0 +1,4 @@
+emulate -L zsh
+
+__fd18et_LASTHIST=$1
+return 2
