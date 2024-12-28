@@ -12,19 +12,14 @@ zle       -N   edit-command-line
 # load from $ZDOTDIR funtions
 autoload  -Uz  bind2maps
 autoload  -Uz  backward-delete-word-shell
-autoload  -Uz  backward-kill-vscode-word
+autoload  -Uz  backward-delete-word-vscode
 zle       -N   backward-delete-word-shell
-zle       -N   backward-kill-vscode-word
+zle       -N   backward-delete-word-vscode
 
 # autoload  -Uz  select-word-style
 # select-word-style bash
 
 
-# local WORDCHARS="$WORDCHARS"
-# WORDCHARS="${WORDCHARS//:}"
-# WORDCHARS="${WORDCHARS//\/}"
-# WORDCHARS="${WORDCHARS//.}"
-# zle backward-delete-word
 # remove esc seq for avoid alt key enter vicmd mode
 bindkey -rM viins '^['
 bindkey -M  viins '^X^[' vi-cmd-mode
@@ -70,7 +65,7 @@ bind2maps emacs viins vicmd -- Ctrl-Delete    kill-word
 bind2maps emacs viins vicmd -- Ctrl-Backspace backward-delete-word-shell
 bind2maps emacs viins vicmd -- Alt-Left       vi-backward-word
 bind2maps emacs viins vicmd -- Alt-Right      vi-forward-word
-bind2maps emacs viins vicmd -- Alt-Backspace  backward-kill-vscode-word
+bind2maps emacs viins vicmd -- Alt-Backspace  backward-delete-word-vscode
 # for CSI-u
 bind2maps emacs viins vicmd -- '^[[8;5u'      backward-delete-word
 # vim hjkl key bindings with alt
