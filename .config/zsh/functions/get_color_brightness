@@ -1,0 +1,33 @@
+emulate -L zsh
+
+local col=11
+local result=""
+
+exec < /dev/tty
+local oldstty=$(stty -g)
+stty raw -echo min 0
+print -n "\033]${col};?\033\\" >/dev/tty
+
+if { IFS=';' read -r -d '\' color } {
+    result=${${${color##*;}:#(#i)[rgb:0-9a-f/]##}//[[:cntrl:]]/}
+    stty $oldstty
+
+    if [[ -n $result ]] {
+        local hex=${result#rgb:}
+        local -a components=(${(s:/:)hex})
+        local r g b
+
+        ((
+            r = (16#${components[1]:0:4}) >> 8,
+            g = (16#${components[2]:0:4}) >> 8,
+            b = (16#${components[3]:0:4}) >> 8
+        ))
+
+        float luma
+        (( luma = (0.2627 * r + 0.6780 * g + 0.0593 * b) / 256.0 ))
+        print -f "%.2f" $luma
+        return 0
+    }
+}
+stty $oldstty
+return 1

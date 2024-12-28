@@ -1,0 +1,20 @@
+emulate -L zsh
+
+local i sequence widget
+local -a maps
+
+while [[ "$1" != "--" ]] {
+	maps+=( "$1" )
+	shift
+}
+shift
+
+sequence="${key[$1]}"
+widget="$2"
+
+[[ -z "$sequence" && "$1" == '^'* ]] && sequence="$1"
+# [[ -z "$sequence" ]] && { printf "bind2maps: unknown key: %s\n" "$1"; return 1; }
+
+for i ( ${maps[@]} ) {
+		bindkey -M "$i" "$sequence" "$widget"
+}

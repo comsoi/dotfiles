@@ -1,0 +1,32 @@
+emulate -L zsh
+
+if [[ $OS == "Linux" ]] {
+	if [[ -n "$WAYLAND_DISPLAY" ]] {
+		for sel (clipboard primary) {
+			if x=$(wl-paste --no-newline --$sel 2> /dev/null) {
+				echo -n $x
+				return
+		}
+	}
+} elif (( $+commands[xsel] )) {
+	for sel (clipboard primary secondary) {
+		if x=$(xsel --output --$sel 2> /dev/null) {
+			echo -n $x
+			return
+		}
+	}
+} elif (( $+commands[xclip] )) {
+	for sel (clipboard primary secondary ){
+		if x=$(xclip -o -selection $sel 2> /dev/null) {
+			echo -n $x
+			return
+		}
+	}
+	}
+} elif [[ $OS == "Mac"* ]] {
+	pbpaste
+} elif [[ $OS == "Windows_NT" ]] {
+	clip.exe
+} elif [[ $OS == "WSL"* ]] {
+	win32yank.exe -o --format text
+}
