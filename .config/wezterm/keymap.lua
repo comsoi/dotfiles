@@ -191,7 +191,7 @@ local function is_mux_or_sp(pane, tags)
 	if user_vars.TMUX or foreground_process:find("tmux") then
 		return true
 	end
-	if user_vars.ZELLIJ == "true" or foreground_process:find("zellij") then
+	if user_vars.ZELLIJ or foreground_process:find("zellij") then
 		return true
 	end
 	if tags == "false" then
