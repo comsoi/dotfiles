@@ -4,11 +4,11 @@ local M = {}
 -- 判断字符串是否为路径
 local function is_path(str)
 	-- 移除引号
-	str = str:gsub('^"(.*)"$', '%1')
-	str = str:gsub("^'(.*)'$", '%1')
+	str = str:gsub('^"(.*)"$', "%1")
+	str = str:gsub("^'(.*)'$", "%1")
 
 	-- 替换转义的空格
-	str = str:gsub('\\ ', ' ')
+	str = str:gsub("\\ ", " ")
 
 	-- 检查是否以 / 或 ~ 开头
 	if str:sub(1, 1) == "/" or str:sub(1, 1) == "~" then
@@ -71,9 +71,9 @@ end
 -- 智能缩写路径
 local function abbreviate_path(path, max_length)
 	-- 预处理路径
-	path = path:gsub('^"(.*)"$', '%1')
-	path = path:gsub("^'(.*)'$", '%1')
-	path = path:gsub('\\ ', ' ')
+	path = path:gsub('^"(.*)"$', "%1")
+	path = path:gsub("^'(.*)'$", "%1")
+	path = path:gsub("\\ ", " ")
 
 	-- 如果路径已经足够短，直接返回
 	if #path <= max_length then
@@ -137,7 +137,9 @@ local function abbreviate_path(path, max_length)
 			end
 		end
 		min_segment_length = min_segment_length - 1
-		if min_segment_length < 1 then break end
+		if min_segment_length < 1 then
+			break
+		end
 	end
 
 	-- 4. 如果还是太长，使用最简单的缩写形式
@@ -178,7 +180,7 @@ end
 
 -- 缩写标题的函数
 function M.abbreviate_title(title)
-	local max_length = 25
+	local max_length = M.max_length or 25
 	if #title <= max_length then
 		return title
 	end
@@ -190,8 +192,8 @@ function M.abbreviate_title(title)
 	end
 
 	-- 优先确保命令名称可读
-	local cmd_length = math.min(#args[1], 8)               -- 命令名最多保留8个字符
-	local remaining_length = max_length - cmd_length - 1   -- 减去空格
+	local cmd_length = math.min(#args[1], 8) -- 命令名最多保留8个字符
+	local remaining_length = max_length - cmd_length - 1 -- 减去空格
 
 	-- 如果只有命令，没有参数
 	if #args == 1 then
@@ -208,7 +210,7 @@ function M.abbreviate_title(title)
 		return result .. " " .. processed_arg
 	else
 		-- 多个参数时，只显示第一个参数的缩写
-		local first_arg = process_argument(args[2], remaining_length - 3)     -- 为"..."预留空间
+		local first_arg = process_argument(args[2], remaining_length - 3) -- 为"..."预留空间
 		return result .. " " .. first_arg .. "..."
 	end
 end
