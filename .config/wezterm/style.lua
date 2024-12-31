@@ -5,7 +5,7 @@ local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabl
 local config = wezterm.config_builder()
 local light_theme = nil
 local dark_theme = nil
-local text_opacity = 1
+local text_opacity = 0.85
 
 cmd_abbr.set_max_length(20)
 workspace_switcher.workspace_formatter = function(label)
@@ -51,18 +51,18 @@ end
 
 local function scheme_for_appearance(appearance, force)
 	force = force or false
+	-- force = true
 	-- color_scheme
-	-- t = 'Catppuccin Frappe'
-	-- t = 'Catppuccin Latte'
-	-- t = 'Catppuccin Mocha'
-	-- t = 'Catppuccin Macchiato'
-	-- t = 'Tokyo Night Day'
-	-- t = 'Tokyo Night Light (Gogh)'
-	-- t = 'Horizon Bright (Gogh)'
-	-- t = 'Brush Trees (base16)'
+	-- t = "Catppuccin Frappe"
+	-- t = "Catppuccin Latte"
+	-- t = "Catppuccin Mocha"
+	-- t = "Catppuccin Macchiato"
+	-- t = "Tokyo Night Day"
+	-- t = "Tokyo Night Light (Gogh)"
+	-- t = "Horizon Bright (Gogh)"
+	-- t = "Brush Trees (base16)"
 	if force then
 		local t = ""
-		t = "Catppuccin Mocha"
 		return t
 	end
 	if appearance:find("Light") then
@@ -250,7 +250,7 @@ config.color_scheme = auto_theme
 
 -- 窗口配置
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
-config.window_background_opacity = 0.75
+config.window_background_opacity = 0.80
 config.text_background_opacity = text_opacity
 config.adjust_window_size_when_changing_font_size = false
 config.window_padding = {

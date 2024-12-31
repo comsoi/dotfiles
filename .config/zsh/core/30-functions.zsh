@@ -1,6 +1,4 @@
 ## 30-functions.zsh
-autoload -Uz add-zsh-hook
-
 if [[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]] {
 	source "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash"
 }
