@@ -204,7 +204,7 @@ local function is_mux_or_sp(pane, tags)
 	return false
 end
 
-local function activate_pane_and_tab(window, pane, dir)
+local function activate_pane_or_tab_callback(window, pane, dir)
 	local tab = window:mux_window():active_tab()
 	local directions = {
 		Left = { pane_check = "Left", tab_offset = -1 },
@@ -219,6 +219,11 @@ local function activate_pane_and_tab(window, pane, dir)
 	window:perform_action(action, pane)
 end
 
+local function activate_pane_or_tab(dir)
+	return function(window, pane)
+		activate_pane_or_tab_callback(window, pane, dir)
+	end
+end
 -- local function activate_pane_prev(window, pane)
 -- 	local tab = window:mux_window():active_tab()
 -- 	local panes = tab:panes_with_info()
@@ -262,7 +267,7 @@ local ACTION_HANDLERS = {
 			dir = (dir == "Up" or dir == "Right") and "Next" or "Prev"
 		end
 		if dir == "Left" or dir == "Right" then
-			activate_pane_and_tab(window, pane, dir)
+			activate_pane_or_tab_callback(window, pane, dir)
 			return
 		end
 		window:perform_action({ ActivatePaneDirection = dir }, pane)
@@ -327,26 +332,47 @@ local keys = {
 	create_keybind("CloseCurrentPane", "ALT", "x"),
 	create_keybind("CloseCurrentPane", "ALT", "X"),
 
-	{ key = "V",   mods = "SHIFT|CTRL",   action = act({ PasteFrom = "Clipboard" }) },
-	{ key = "C",   mods = "SHIFT|CTRL",   action = act({ CopyTo = "Clipboard" }) },
-	{ key = "F",   mods = "SHIFT|CTRL",   action = act.Search({ CaseSensitiveString = "" }) },
-	{ key = "P",   mods = "SHIFT|CTRL",   action = act.ActivateCommandPalette },
-	{ key = "+",   mods = "SHIFT|CTRL",   action = act.IncreaseFontSize },
-	{ key = "_",   mods = "SHIFT|CTRL",   action = act.DecreaseFontSize },
-	{ key = ")",   mods = "SHIFT|CTRL",   action = act.ResetFontSize },
-	{ key = "F11", mods = "",             action = "ToggleFullScreen" },
+	{ key = "V",   mods = "SHIFT|CTRL", action = act({ PasteFrom = "Clipboard" }) },
+	{ key = "C",   mods = "SHIFT|CTRL", action = act({ CopyTo = "Clipboard" }) },
+	{ key = "F",   mods = "SHIFT|CTRL", action = act.Search({ CaseSensitiveString = "" }) },
+	{ key = "P",   mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
+	{ key = "+",   mods = "SHIFT|CTRL", action = act.IncreaseFontSize },
+	{ key = "_",   mods = "SHIFT|CTRL", action = act.DecreaseFontSize },
+	{ key = ")",   mods = "SHIFT|CTRL", action = act.ResetFontSize },
+	{ key = "F11", mods = "",           action = "ToggleFullScreen" },
+
+	{
+		key = "a",
+		mods = "CTRL|LEADER",
+		action = act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 5000 }),
+	},
+	{
+		key = "A",
+		mods = "SHIFT|CTRL|LEADER",
+		action = act.ActivateKeyTable({ name = "activate_tab", one_shot = false, timeout_milliseconds = 5000 }),
+	},
+	{
+		key = "r",
+		mods = "CTRL|LEADER",
+		action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 5000 }),
+	},
+	{
+		key = "R",
+		mods = "SHIFT|CTRL|LEADER",
+		action = act.ActivateKeyTable({ name = "move_tab", one_shot = false, timeout_milliseconds = 5000 }),
+	},
 
 	-----------WORKSPACES----------
-	{ key = "E",   mods = "SHIFT|LEADER", action = workspace_switcher.switch_to_prev_workspace() },
-	{ key = "e",   mods = "LEADER",       action = workspace_switcher.switch_workspace() },
+	{ key = "E", mods = "SHIFT|LEADER", action = workspace_switcher.switch_to_prev_workspace() },
+	{ key = "e", mods = "LEADER",       action = workspace_switcher.switch_workspace() },
 
 	-----------PANE------------
-	{ key = "x",   mods = "LEADER",       action = act({ CloseCurrentPane = { confirm = false } }) },
-	{ key = "z",   mods = "LEADER",       action = "TogglePaneZoomState" },
-	{ key = "m",   mods = "LEADER",       action = "TogglePaneZoomState" },
-	{ key = "S",   mods = "SHIFT|LEADER", action = act.PaneSelect({ mode = "SwapWithActive" }) },
-	{ key = "o",   mods = "CTRL|LEADER",  action = act.RotatePanes("Clockwise") },
-	{ key = "o",   mods = "ALT|LEADER",   action = act.RotatePanes("CounterClockwise") },
+	{ key = "x", mods = "LEADER",       action = act({ CloseCurrentPane = { confirm = false } }) },
+	{ key = "z", mods = "LEADER",       action = "TogglePaneZoomState" },
+	{ key = "m", mods = "LEADER",       action = "TogglePaneZoomState" },
+	{ key = "S", mods = "SHIFT|LEADER", action = act.PaneSelect({ mode = "SwapWithActive" }) },
+	{ key = "o", mods = "CTRL|LEADER",  action = act.RotatePanes("Clockwise") },
+	{ key = "o", mods = "ALT|LEADER",   action = act.RotatePanes("CounterClockwise") },
 
 	-- Pane navigation
 	create_keybind("ActivatePaneDirection", "ALT", "h", "Left"),
@@ -357,12 +383,7 @@ local keys = {
 	create_keybind("ActivatePaneDirection", "ALT", "[", "Prev"),
 	create_keybind("ActivatePaneDirection", "ALT", "]", "Next"),
 
-	{
-		key = "a",
-		mods = "LEADER",
-		action = act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 5000 }),
-	},
-	{ key = "s",          mods = "LEADER",   action = act.PaneSelect },
+	{ key = "s",          mods = "LEADER",   action = act.PaneSelect { alphabet = "123456789" } },
 
 	{ key = "h",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
 	{ key = "j",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Down")) },
@@ -376,26 +397,21 @@ local keys = {
 	{ key = "LeftArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
 	{ key = "RightArrow", mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Right")) },
 
-	{ key = "h",          mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
-	{ key = "j",          mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
-	{ key = "k",          mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
-	{ key = "l",          mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
+	{ key = "h",          mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Left")) },
+	{ key = "l",          mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Right")) },
+	{ key = "k",          mods = "ALT|CTRL", action = act.ActivatePaneDirection("Up") },
+	{ key = "j",          mods = "ALT|CTRL", action = act.ActivatePaneDirection("Down") },
 
-	{ key = "UpArrow",    mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Up" }) },
-	{ key = "DownArrow",  mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Down" }) },
-	{ key = "LeftArrow",  mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Left" }) },
-	{ key = "RightArrow", mods = "ALT|CTRL", action = act({ ActivatePaneDirection = "Right" }) },
+	{ key = "LeftArrow",  mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Left")) },
+	{ key = "RightArrow", mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Right")) },
+	{ key = "UpArrow",    mods = "ALT|CTRL", action = act.ActivatePaneDirection("Up") },
+	{ key = "DownArrow",  mods = "ALT|CTRL", action = act.ActivatePaneDirection("Down") },
 
 	-- Pane resize
 	create_keybind("AdjustPaneSize", "ALT", "LeftArrow", "Left"),
 	create_keybind("AdjustPaneSize", "ALT", "RightArrow", "Right"),
 	create_keybind("AdjustPaneSize", "ALT", "UpArrow", "Up"),
 	create_keybind("AdjustPaneSize", "ALT", "DownArrow", "Down"),
-	{
-		key = "r",
-		mods = "LEADER",
-		action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false, timeout_milliseconds = 5000 }),
-	},
 
 	-- use Multiple keybinds fails because of async, so use action_callback
 	{ key = "H",          mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
@@ -407,22 +423,22 @@ local keys = {
 	{ key = "LeftArrow",  mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
 	{ key = "RightArrow", mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Right")) },
 
-	{ key = "H",          mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Left", 10 } }) },
-	{ key = "J",          mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Down", 10 } }) },
-	{ key = "K",          mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Up", 10 } }) },
-	{ key = "L",          mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Right", 10 } }) },
+	{ key = "H",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Left", 10 }) },
+	{ key = "J",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Down", 10 }) },
+	{ key = "K",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
+	{ key = "L",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
 
-	{ key = "UpArrow",    mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Up", 10 } }) },
-	{ key = "DownArrow",  mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Down", 10 } }) },
-	{ key = "LeftArrow",  mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Left", 10 } }) },
-	{ key = "RightArrow", mods = "SHIFT|ALT|CTRL", action = act({ AdjustPaneSize = { "Right", 10 } }) },
+	{ key = "UpArrow",    mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
+	{ key = "DownArrow",  mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Down", 10 }) },
+	{ key = "LeftArrow",  mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Left", 10 }) },
+	{ key = "RightArrow", mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
 
 	-- Pane splitting
 	{ key = "Enter",      mods = "LEADER",         action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter",      mods = "ALT|CTRL",       action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter",      mods = "SHIFT|CTRL",     action = wezterm.action_callback(smart_split_callback) },
-	{ key = "-",          mods = "ALT|CTRL",       action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-	{ key = "-",          mods = "ALT|CTRL",       action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{ key = "-",          mods = "ALT|CTRL",       action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "-",          mods = "ALT|CTRL",       action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{
 		key = "\\",
 		mods = "ALT|CTRL",
@@ -448,17 +464,12 @@ local keys = {
 	{ key = "5", mods = "SHIFT|ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
 	-----------TAB----------
-	{ key = "c", mods = "LEADER",         action = act({ SpawnTab = "CurrentPaneDomain" }) },
-	{ key = "&", mods = "SHIFT|LEADER",   action = act({ CloseCurrentTab = { confirm = false } }) },
-	{ key = "q", mods = "LEADER",         action = act({ CloseCurrentTab = { confirm = false } }) },
+	{ key = "c", mods = "LEADER",         action = act.SpawnTab("CurrentPaneDomain") },
+	{ key = "&", mods = "SHIFT|LEADER",   action = act.CloseCurrentTab({ confirm = false }) },
+	{ key = "q", mods = "LEADER",         action = act.CloseCurrentTab({ confirm = false }) },
 	{ key = "w", mods = "LEADER",         action = act.ShowTabNavigator },
 
 	-- Tab navigation
-	{
-		key = "A",
-		mods = "SHIFT|LEADER",
-		action = act.ActivateKeyTable({ name = "activate_tab", one_shot = false, timeout_milliseconds = 5000 }),
-	},
 	create_keybind("ActivateTabRelative", "ALT|CTRL", "[", -1),
 	create_keybind("ActivateTabRelative", "ALT|CTRL", "]", 1),
 	{ key = "LeftArrow",  mods = "SHIFT|CTRL", action = act.ActivateTabRelative(-1) },
@@ -470,11 +481,6 @@ local keys = {
 	create_keybind("ActivateTab", "ALT", "0", -1),
 
 	-- Tab movement
-	{
-		key = "R",
-		mods = "LEADER",
-		action = act.ActivateKeyTable({ name = "move_tab", one_shot = false, timeout_milliseconds = 5000 }),
-	},
 	create_keybind("MoveTabRelative", "SHIFT|ALT", "{", -1),
 	create_keybind("MoveTabRelative", "SHIFT|ALT", "}", 1),
 	{ key = "UpArrow",   mods = "SHIFT|CTRL",   action = act.MoveTabRelative(-1) },
