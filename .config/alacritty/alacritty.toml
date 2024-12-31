@@ -12,6 +12,9 @@ shape = "Block"
 TERM_PROGRAM = "alacritty"
 WSLENV = "TERM:COLORTERM:TERM_PROGRAM"
 
+[colors]
+# transparent_background_colors = true
+
 [font]
 size = 12
 
@@ -37,9 +40,6 @@ style = "Regular"
 x = 0
 y = 0
 
-[[mouse.bindings]]
-action = "Paste"
-mouse = "Right"
 
 [scrolling]
 history = 10000
@@ -52,6 +52,7 @@ program = "/usr/bin/zsh"
 decorations = "none"
 dynamic_padding = true
 opacity = 0.85
+blur = true
 # startup_mode = "Maximized"
 
 [window.dimensions]
@@ -65,6 +66,13 @@ y = 15
 # [window.position]
 # x = 200
 # y = 200
+
+[mouse]
+hide_when_typing = true
+
+[[mouse.bindings]]
+action = "Paste"
+mouse = "Right"
 
 [keyboard]
 

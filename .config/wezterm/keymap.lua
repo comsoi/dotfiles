@@ -6,19 +6,11 @@ local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/s
 
 -- key bindings
 local leader = {
-	-- win + alt + space
 	key = "Space",
-	mods = "SUPER|ALT",
-	timeout_milliseconds = math.maxinteger,
+	mods = "SHIFT",
+	timeout_milliseconds = 3000,
 }
 
-if wezterm.target_triple:find("linux") then
-	leader = {
-		key = "Space",
-		mods = "SHIFT",
-		timeout_milliseconds = 3000,
-	}
-end
 
 local key_tables = {
 	resize_pane = {
@@ -188,24 +180,27 @@ end
 local function is_mux_or_sp(pane, tags)
 	local foreground_process = pane:get_foreground_process_name() or ""
 	local user_vars = pane:get_user_vars()
+
 	if user_vars.TMUX or foreground_process:find("tmux") then
 		return true
 	end
 	if user_vars.ZELLIJ or foreground_process:find("zellij") then
 		return true
 	end
-	if tags == "false" then
-		return false
+
+	if tags == nil then
+		tags = true
 	end
-	if user_vars.IS_NVIM == "true" or foreground_process:find("n?vim") then
-		return true
+
+	if tags then
+		if user_vars.IS_NVIM == "true" or foreground_process:find("n?vim") then
+			return true
+		end
+		if foreground_process:find("kitten") then
+			return true
+		end
 	end
-	if foreground_process:find("kitten") then
-		return true
-	end
-	if foreground_process:find("bat") or foreground_process:find("cat") then
-		return true
-	end
+
 	return false
 end
 
@@ -703,17 +698,16 @@ local mouse_bindings = {
 	-- Scrolling up while holding CTRL increases the font size
 	{
 		event = { Down = { streak = 1, button = { WheelUp = 1 } } },
-		mods = 'CTRL',
+		mods = "CTRL",
 		action = act.IncreaseFontSize,
 	},
 
 	-- Scrolling down while holding CTRL decreases the font size
 	{
 		event = { Down = { streak = 1, button = { WheelDown = 1 } } },
-		mods = 'CTRL',
+		mods = "CTRL",
 		action = act.DecreaseFontSize,
 	},
-
 }
 
 return {
