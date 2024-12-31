@@ -75,18 +75,29 @@ end
 
 local auto_theme = scheme_for_appearance(wezterm.gui.get_appearance())
 
+local tab_active = {}
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+	tab_active = {
+		"index",
+		"⌘ ",
+		{ "cwd",    padding = 0 },
+		{ "process" },
+		tab_title,
+		{ "zoomed", padding = 0 },
+	}
+elseif wezterm.target_triple == "x86_64-pc-windows-msvc" then
+	tab_active = {
+		"index",
+		"⌘ ",
+		tab_title,
+		{ "zoomed", padding = 0 },
+	}
+end
 tabline.setup({
 	options = { theme = auto_theme, tabs_enabled = true },
 	sections = {
 		tabline_c = { leader },
-		tab_active = {
-			"index",
-			"⌘ ",
-			{ "cwd", padding = 0 },
-			{ "process" },
-			tab_title,
-			{ "zoomed", padding = 0 },
-		},
+		tab_active = tab_active,
 		tab_inactive = { tab_title, { "process", padding = { left = 0, right = 1 } } },
 	},
 	tabline_x = { { "cpu", throttle = 5 } },
