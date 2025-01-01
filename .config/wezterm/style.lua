@@ -16,12 +16,11 @@ workspace_switcher.workspace_formatter = function(label)
 end
 
 local function tab_title(tab_info)
-	if tab_info.active_pane.domain_name ~= "local" then
-		return ""
-	end
 	if not tab_info.is_active then
-		if #tab_info.tab_title > 0 then
-			return "⌘ " .. tab_info.tab_title .. "|"
+		if tab_info.active_pane.domain_name ~= "local" then
+			return ""
+		elseif #tab_info.tab_title > 0 then
+			return tab_info.tab_title .. "|"
 		else
 			return ""
 		end
@@ -94,11 +93,10 @@ elseif wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	}
 end
 tabline.setup({
-	options = { theme = auto_theme, tabs_enabled = true },
 	sections = {
 		tabline_c = { leader },
 		tab_active = tab_active,
-		tab_inactive = { tab_title, { "process", padding = { left = 0, right = 1 } } },
+		tab_inactive = { { "index", padding = 0 }, ". ", tab_title, { "process", padding = { left = 0, right = 1 } } },
 	},
 	tabline_x = { { "cpu", throttle = 5 } },
 	extensions = { "smart_workspace_switcher" },
@@ -254,13 +252,11 @@ wezterm.on("update-status", function(window, pane)
 	-- }))
 end)
 
--- 基本配置
 config.default_cursor_style = "BlinkingBar"
 config.min_scroll_bar_height = "1cell"
 config.color_scheme = auto_theme
 
--- 窗口配置
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_decorations = "RESIZE" -- | INTEGRATED_BUTTONS
 config.window_background_opacity = 0.80
 config.text_background_opacity = text_opacity
 config.adjust_window_size_when_changing_font_size = false
@@ -286,7 +282,7 @@ config.show_new_tab_button_in_tab_bar = false
 config.use_fancy_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = false
 config.show_tab_index_in_tab_bar = false
-config.tab_max_width = 50 -- +8
+config.tab_max_width = 32
 config.tab_bar_at_bottom = true
 config.window_frame = {
 	font_size = 8.0,
