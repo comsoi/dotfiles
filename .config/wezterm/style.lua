@@ -97,8 +97,8 @@ tabline.setup({
 		tabline_c = { leader },
 		tab_active = tab_active,
 		tab_inactive = { { "index", padding = 0 }, ". ", tab_title, { "process", padding = { left = 0, right = 1 } } },
+		tabline_x = { { "cpu", throttle = 5 } },
 	},
-	tabline_x = { { "cpu", throttle = 5 } },
 	extensions = { "smart_workspace_switcher" },
 })
 
