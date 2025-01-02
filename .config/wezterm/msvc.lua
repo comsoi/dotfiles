@@ -151,6 +151,7 @@ function msvc.apply(config)
 		table.insert(config.keys, key)
 	end
 
+	config.color_scheme = "Catppuccin Macchiato"
 	config.set_environment_variables = {}
 	config.win32_system_backdrop = 'Acrylic'
 
