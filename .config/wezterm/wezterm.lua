@@ -5,8 +5,9 @@ local config = wezterm.config_builder()
 local function merge_config(module)
 	local mod_config = require(module)
 	for key, value in pairs(mod_config) do
-		if config[key] ~= nil and type(config[key]) == "table"
-			and type(value) == "table" then
+		if config[key] ~= nil
+				and type(config[key]) == "table"
+				and type(value) == "table" then
 			for _, v in ipairs(value) do
 				table.insert(config[key], v)
 			end
@@ -22,13 +23,14 @@ config.check_for_updates = false
 config.term = "wezterm"
 config.default_prog = { "bash" }
 -- config.enable_wayland = false,
-config.max_fps = 165
-config.log_unknown_escape_sequences = true
+config.max_fps = 240
+-- config.log_unknown_escape_sequences = true
 config.enable_kitty_keyboard = true
 -- config.enable_csi_u_key_encoding = true
 config.disable_default_key_bindings = true
 config.initial_cols = 120
 config.initial_rows = 35
+config.scrollback_lines = 9000
 config.audible_bell = "Disabled"
 -- Fonts
 config.font_size = 12.0
@@ -40,11 +42,10 @@ config.font = wezterm.font_with_fallback({
 	{ family = "LXGW WenKai", scale = 1.05 },
 	-- { family = "PingFang SC", scale = 1.05 },
 	-- { family = "Microsoft YaHei", scale = 1.05 },
-	"Sarasa Term J",
 	"Symbols Nerd Font",
 	"Noto Color Emoji",
 	-- "Noto Emoji",
-	"Segoe UI Emoji",
+	-- "Segoe UI Emoji",
 })
 -- misc
 config.inactive_pane_hsb = {

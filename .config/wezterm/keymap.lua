@@ -1,5 +1,6 @@
 -- NOTICE CAPSLOCK WILL CHANGE KEYBINDS TO UPPERCASE|lowercase
 -- ESPECIALLY FOR THE KEYBINDS WITH ALPHABET
+-- Multiple keybinds failed because of async, so use action_callback
 local wezterm = require("wezterm")
 local act = wezterm.action
 local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
@@ -10,7 +11,6 @@ local leader = {
 	mods = "SHIFT",
 	timeout_milliseconds = 3000,
 }
-
 
 local key_tables = {
 	resize_pane = {
@@ -51,76 +51,70 @@ local key_tables = {
 		{ key = "DownArrow",  action = act.ActivatePaneDirection("Down") },
 		{ key = "j",          action = act.ActivatePaneDirection("Down") },
 
-		{ key = "O",          action = act.ActivatePaneDirection("Prev") },
 		{ key = "o",          action = act.ActivatePaneDirection("Next") },
+		{ key = "O",          action = act.ActivatePaneDirection("Prev") },
 
 		{ key = "Escape",     action = "PopKeyTable" },
 		{ key = "q",          action = "PopKeyTable" },
 		{ key = "Q",          action = "PopKeyTable" },
 	},
 	move_tab = {
-		{ key = "P",          action = act.MoveTabRelative(-1), mods = "SHIFT" },
-		{ key = "N",          action = act.MoveTabRelative(1),  mods = "SHIFT" },
+		{ key = "P",      action = act.MoveTab(999),       mods = "SHIFT" },
+		{ key = "N",      action = act.MoveTab(1),         mods = "SHIFT" },
 
-		{ key = "{",          action = act.MoveTabRelative(-1), mods = "SHIFT" },
-		{ key = "}",          action = act.MoveTabRelative(1),  mods = "SHIFT" },
+		{ key = "p",      action = act.MoveTabRelative(-1) },
+		{ key = "n",      action = act.MoveTabRelative(1) },
 
-		{ key = "p",          action = act.MoveTabRelative(-1) },
-		{ key = "n",          action = act.MoveTabRelative(1) },
-
-		{ key = "[",          action = act.MoveTabRelative(-1) },
-		{ key = "]",          action = act.MoveTabRelative(1) },
-
-		{ key = "h",          action = act.MoveTabRelative(-1) },
-		{ key = "j",          action = act.MoveTabRelative(1) },
-		{ key = "k",          action = act.MoveTabRelative(-1) },
-		{ key = "l",          action = act.MoveTabRelative(1) },
-
-		{ key = "LeftArrow",  action = act.MoveTabRelative(-1) },
-		{ key = "RightArrow", action = act.MoveTabRelative(1) },
-		{ key = "UpArrow",    action = act.MoveTabRelative(-1) },
-		{ key = "DownArrow",  action = act.MoveTabRelative(1) },
-
-		{ key = "Escape",     action = "PopKeyTable" },
-		{ key = "q",          action = "PopKeyTable" },
-		{ key = "Q",          action = "PopKeyTable" },
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q",      action = "PopKeyTable" },
+		{ key = "Q",      action = "PopKeyTable" },
 	},
 	activate_tab = {
-		{ key = "N",          action = act.ActivateTab(-1) },
-		{ key = "P",          action = act.ActivateTab(0) },
+		{ key = "N",      action = act.ActivateTab(-1) },
+		{ key = "P",      action = act.ActivateTab(0) },
 
-		{ key = "n",          action = act.ActivateTabRelative(1) },
-		{ key = "p",          action = act.ActivateTabRelative(-1) },
+		{ key = "n",      action = act.ActivateTabRelative(1) },
+		{ key = "p",      action = act.ActivateTabRelative(-1) },
 
-		{ key = "]",          action = act.ActivateTabRelative(1) },
-		{ key = "[",          action = act.ActivateTabRelative(-1) },
-
-		{ key = "h",          action = act.ActivateTabRelative(-1) },
-		{ key = "j",          action = act.ActivateTabRelative(1) },
-		{ key = "k",          action = act.ActivateTabRelative(-1) },
-		{ key = "l",          action = act.ActivateTabRelative(1) },
-
-		{ key = "LeftArrow",  action = act.ActivateTabRelative(-1) },
-		{ key = "RightArrow", action = act.ActivateTabRelative(1) },
-		{ key = "UpArrow",    action = act.ActivateTabRelative(-1) },
-		{ key = "DownArrow",  action = act.ActivateTabRelative(1) },
-
-		{ key = "Escape",     action = "PopKeyTable" },
-		{ key = "q",          action = "PopKeyTable" },
-		{ key = "Q",          action = "PopKeyTable" },
+		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "q",      action = "PopKeyTable" },
+		{ key = "Q",      action = "PopKeyTable" },
 	},
 }
 
 -- Helper functions
---------------------------------------------------------------------------------
--- enable actions for activating and resizing panes similar to tmux.
-local function activate_pane_with_dir(dir)
-	return function(window, pane)
-		window:perform_action(act.ActivatePaneDirection(dir), pane)
+local function activate_pane_or_tab_callback(window, pane, dir, mods)
+	local tab = pane:window():active_tab()
+	local directions = {
+		Left = { pane_check = "Left", tab_offset = -1 },
+		Right = { pane_check = "Right", tab_offset = 1 },
+		Prev = { pane_check = "Left", tab_offset = -1 },
+		Next = { pane_check = "Right", tab_offset = 1 },
+		Up = { pane_check = "Up", tab_offset = 0 },
+		Down = { pane_check = "Down", tab_offset = 0 },
+	}
+	local dir_config = directions[dir]
+	local action
+	if #pane:window():tabs() > 1 then
+		action = tab:get_pane_direction(dir_config.pane_check) ~= nil and wezterm.action.ActivatePaneDirection(dir)
+				or wezterm.action.ActivateTabRelative(dir_config.tab_offset)
+	else
+		action = wezterm.action.ActivatePaneDirection(dir)
+	end
+
+	window:perform_action(action, pane)
+
+	if mods and string.lower(mods):find("leader") then
 		window:perform_action(
 			act.ActivateKeyTable({ name = "activate_pane", one_shot = false, timeout_milliseconds = 600 }),
 			pane
 		)
+	end
+end
+
+local function activate_pane_or_tab(dir, mods)
+	return function(window, pane)
+		activate_pane_or_tab_callback(window, pane, dir, mods)
 	end
 end
 
@@ -204,52 +198,6 @@ local function is_mux_or_sp(pane, tags)
 	return false
 end
 
-local function activate_pane_or_tab_callback(window, pane, dir)
-	local tab = window:mux_window():active_tab()
-	local directions = {
-		Left = { pane_check = "Left", tab_offset = -1 },
-		Right = { pane_check = "Right", tab_offset = 1 },
-	}
-
-	local dir_config = directions[dir]
-	local action = tab:get_pane_direction(dir_config.pane_check) ~= nil
-			and wezterm.action.ActivatePaneDirection(dir_config.pane_check)
-			or wezterm.action.ActivateTabRelative(dir_config.tab_offset)
-
-	window:perform_action(action, pane)
-end
-
-local function activate_pane_or_tab(dir)
-	return function(window, pane)
-		activate_pane_or_tab_callback(window, pane, dir)
-	end
-end
--- local function activate_pane_prev(window, pane)
--- 	local tab = window:mux_window():active_tab()
--- 	local panes = tab:panes_with_info()
--- 	local max_panes = 0
--- 	for _, p in ipairs(panes) do
--- 		if p.pane_index > max_panes then
--- 			max_panes = p.pane_index
--- 		end
--- 	end
--- 	local max_tabs = 0
--- 	for _, t in ipairs(window:mux_window():tabs()) do
--- 		if t.tab_index > max_tabs then
--- 			max_tabs = t.tab_index
--- 		end
--- 	end
--- 	if max_tabs == 1 then
--- 		window:perform_action(wezterm.action.ActivatePaneDirection("Prev"), pane)
--- 	else
--- 		if pane.pane_index ~= 0 then
--- 			window:perform_action(wezterm.action.ActivatePaneDirection("Prev"), pane)
--- 		else
--- 			window:perform_action(wezterm.action.ActivateTabRelative(-1), pane)
--- 		end
--- 	end
--- end
-
 local ACTION_HANDLERS = {
 	AdjustPaneSize = function(_, _, dir)
 		return { AdjustPaneSize = { dir, 5 } }
@@ -299,7 +247,7 @@ local function create_keybind(action_str, mods, key, dir)
 		key = key,
 		mods = mods,
 		action = wezterm.action_callback(function(window, pane)
-			if is_mux_or_sp(pane, false) then
+			if is_mux_or_sp(pane, true) then
 				window:perform_action({
 					SendKey = { key = key, mods = mods },
 				}, pane)
@@ -383,29 +331,25 @@ local keys = {
 	create_keybind("ActivatePaneDirection", "ALT", "[", "Prev"),
 	create_keybind("ActivatePaneDirection", "ALT", "]", "Next"),
 
-	{ key = "s",          mods = "LEADER",   action = act.PaneSelect { alphabet = "123456789" } },
+	{ key = "s",          mods = "LEADER",   action = act.PaneSelect({ alphabet = "123456789" }) },
 
-	{ key = "h",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
-	{ key = "j",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Down")) },
-	{ key = "k",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Up")) },
-	{ key = "l",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Right")) },
-	{ key = "o",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Next")) },
-	{ key = "O",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Prev")) },
+	{ key = "o",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Next", "LEADER")) },
+	{ key = "O",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Prev", "LEADER")) },
 
-	{ key = "UpArrow",    mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Up")) },
-	{ key = "DownArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Down")) },
-	{ key = "LeftArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Left")) },
-	{ key = "RightArrow", mods = "LEADER",   action = wezterm.action_callback(activate_pane_with_dir("Right")) },
+	{ key = "k",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Up", "LEADER")) },
+	{ key = "j",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Down", "LEADER")) },
+	{ key = "h",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Left", "LEADER")) },
+	{ key = "l",          mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Right", "LEADER")) },
+
+	{ key = "UpArrow",    mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Up", "LEADER")) },
+	{ key = "DownArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Down", "LEADER")) },
+	{ key = "LeftArrow",  mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Left", "LEADER")) },
+	{ key = "RightArrow", mods = "LEADER",   action = wezterm.action_callback(activate_pane_or_tab("Right", "LEADER")) },
 
 	{ key = "h",          mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Left")) },
 	{ key = "l",          mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Right")) },
 	{ key = "k",          mods = "ALT|CTRL", action = act.ActivatePaneDirection("Up") },
 	{ key = "j",          mods = "ALT|CTRL", action = act.ActivatePaneDirection("Down") },
-
-	{ key = "LeftArrow",  mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Left")) },
-	{ key = "RightArrow", mods = "ALT|CTRL", action = wezterm.action_callback(activate_pane_or_tab("Right")) },
-	{ key = "UpArrow",    mods = "ALT|CTRL", action = act.ActivatePaneDirection("Up") },
-	{ key = "DownArrow",  mods = "ALT|CTRL", action = act.ActivatePaneDirection("Down") },
 
 	-- Pane resize
 	create_keybind("AdjustPaneSize", "ALT", "LeftArrow", "Left"),
@@ -413,11 +357,11 @@ local keys = {
 	create_keybind("AdjustPaneSize", "ALT", "UpArrow", "Up"),
 	create_keybind("AdjustPaneSize", "ALT", "DownArrow", "Down"),
 
-	-- use Multiple keybinds fails because of async, so use action_callback
 	{ key = "H",          mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
 	{ key = "J",          mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Down")) },
 	{ key = "K",          mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Up")) },
 	{ key = "L",          mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Right")) },
+
 	{ key = "UpArrow",    mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Up")) },
 	{ key = "DownArrow",  mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Down")) },
 	{ key = "LeftArrow",  mods = "SHIFT|LEADER",   action = wezterm.action_callback(resize_pane_with_dir("Left")) },
@@ -428,75 +372,51 @@ local keys = {
 	{ key = "K",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
 	{ key = "L",          mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
 
-	{ key = "UpArrow",    mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Up", 10 }) },
-	{ key = "DownArrow",  mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Down", 10 }) },
-	{ key = "LeftArrow",  mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Left", 10 }) },
-	{ key = "RightArrow", mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
-
 	-- Pane splitting
 	{ key = "Enter",      mods = "LEADER",         action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter",      mods = "ALT|CTRL",       action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter",      mods = "SHIFT|CTRL",     action = wezterm.action_callback(smart_split_callback) },
 	{ key = "-",          mods = "ALT|CTRL",       action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = "-",          mods = "ALT|CTRL",       action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{
-		key = "\\",
-		mods = "ALT|CTRL",
-		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
-	},
-	{
-		key = "|",
-		mods = "ALT|CTRL",
-		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
-	},
-	{ key = "-", mods = "LEADER",         action = act({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
-	{
-		key = "\\",
-		mods = "LEADER",
-		action = act({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
-	},
-	-- default
-	{ key = '"', mods = "ALT|CTRL",       action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = '"', mods = "SHIFT|ALT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = "'", mods = "SHIFT|ALT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = "%", mods = "ALT|CTRL",       action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-	{ key = "%", mods = "SHIFT|ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-	{ key = "5", mods = "SHIFT|ALT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "\\",         mods = "ALT|CTRL",       action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
+	{ key = "-",          mods = "LEADER",         action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "\\",         mods = "LEADER",         action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 
 	-----------TAB----------
-	{ key = "c", mods = "LEADER",         action = act.SpawnTab("CurrentPaneDomain") },
-	{ key = "&", mods = "SHIFT|LEADER",   action = act.CloseCurrentTab({ confirm = false }) },
-	{ key = "q", mods = "LEADER",         action = act.CloseCurrentTab({ confirm = false }) },
-	{ key = "w", mods = "LEADER",         action = act.ShowTabNavigator },
+	{ key = "c",          mods = "LEADER",         action = act.SpawnTab("CurrentPaneDomain") },
+	{ key = "&",          mods = "SHIFT|LEADER",   action = act.CloseCurrentTab({ confirm = false }) },
+	{ key = "q",          mods = "LEADER",         action = act.CloseCurrentTab({ confirm = false }) },
+	{ key = "w",          mods = "LEADER",         action = act.ShowTabNavigator },
 
 	-- Tab navigation
-	create_keybind("ActivateTabRelative", "ALT|CTRL", "[", -1),
-	create_keybind("ActivateTabRelative", "ALT|CTRL", "]", 1),
-	{ key = "LeftArrow",  mods = "SHIFT|CTRL", action = act.ActivateTabRelative(-1) },
-	{ key = "RightArrow", mods = "SHIFT|CTRL", action = act.ActivateTabRelative(1) },
-	{ key = "n",          mods = "LEADER",     action = wezterm.action_callback(activate_tab_with_dir(1)) },
-	{ key = "p",          mods = "LEADER",     action = wezterm.action_callback(activate_tab_with_dir(-1)) },
-	{ key = "0",          mods = "LEADER",     action = act({ ActivateTab = -1 }) },
-	{ key = "0",          mods = "ALT|CTRL",   action = act({ ActivateTab = -1 }) },
+	{ key = "LeftArrow",  mods = "SHIFT|CTRL",     action = act.ActivateTabRelative(-1) },
+	{ key = "RightArrow", mods = "SHIFT|CTRL",     action = act.ActivateTabRelative(1) },
+
+	{ key = "n",          mods = "LEADER",         action = wezterm.action_callback(activate_tab_with_dir(1)) },
+	{ key = "p",          mods = "LEADER",         action = wezterm.action_callback(activate_tab_with_dir(-1)) },
+
+	{ key = "0",          mods = "LEADER",         action = act({ ActivateTab = -1 }) },
+	{ key = "0",          mods = "ALT|CTRL",       action = act({ ActivateTab = -1 }) },
 	create_keybind("ActivateTab", "ALT", "0", -1),
 
 	-- Tab movement
-	create_keybind("MoveTabRelative", "SHIFT|ALT", "{", -1),
-	create_keybind("MoveTabRelative", "SHIFT|ALT", "}", 1),
-	{ key = "UpArrow",   mods = "SHIFT|CTRL",   action = act.MoveTabRelative(-1) },
-	{ key = "DownArrow", mods = "SHIFT|CTRL",   action = act.MoveTabRelative(1) },
+	{ key = "<",         mods = "SHIFT|CTRL",   action = act.MoveTabRelative(-1) },
+	{ key = ">",         mods = "SHIFT|CTRL",   action = act.MoveTabRelative(1) },
 	{ key = "P",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(-1)) },
 	{ key = "N",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(1)) },
-	{ key = "{",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(-1)) },
-	{ key = "}",         mods = "SHIFT|LEADER", action = wezterm.action_callback(move_tab_with_dir(1)) },
 
 	-- Scrolling
 	{ key = "PageUp",    mods = "SHIFT",        action = act.ScrollByPage(-0.5) },
 	{ key = "PageUp",    mods = "SHIFT|CTRL",   action = act.ScrollByPage(-1) },
 	{ key = "PageDown",  mods = "SHIFT",        action = act.ScrollByPage(0.5) },
 	{ key = "PageDown",  mods = "SHIFT|CTRL",   action = act.ScrollByPage(1) },
-	{ key = "K",         mods = "SHIFT|CTRL",   action = act.ScrollByLine(-1) },
-	{ key = "J",         mods = "SHIFT|CTRL",   action = act.ScrollByLine(1) },
+	{ key = "Home",      mods = "SHIFT|CTRL",   action = act.ScrollToTop },
+	{ key = "End",       mods = "SHIFT|CTRL",   action = act.ScrollToBottom },
+	{ key = "K",         mods = "SHIFT|CTRL",   action = act.ScrollByLine(-3) },
+	{ key = "J",         mods = "SHIFT|CTRL",   action = act.ScrollByLine(3) },
+	{ key = "UpArrow",   mods = "SHIFT|CTRL",   action = act.ScrollByLine(-1) },
+	{ key = "DownArrow", mods = "SHIFT|CTRL",   action = act.ScrollByLine(1) },
+	{ key = "k",         mods = "SUPER",        action = act.ClearScrollback("ScrollbackAndViewport") },
+	{ key = "Delete",    mods = "CTRL|SHIFT",   action = act.ClearScrollback("ScrollbackAndViewport") },
 	-- OSC 133
 	{ key = "UpArrow",   mods = "SHIFT",        action = act.ScrollToPrompt(-1) },
 	{ key = "DownArrow", mods = "SHIFT",        action = act.ScrollToPrompt(1) },
@@ -508,8 +428,7 @@ local keys = {
 	{ key = "Space",     mods = "SHIFT|CTRL",   action = act.QuickSelect },
 	{ key = "F1",        mods = "NONE",         action = act.ShowTabNavigator },
 	{ key = "F12",       mods = "LEADER",       action = act.ShowDebugOverlay },
-	-- { key = "",         mods = "LEADER",       action = wezterm.action.EmitEvent("toggle-opacity") },
-	{ key = "O",         mods = "SHIFT|CTRL",   action = wezterm.action.EmitEvent("toggle-opacity") },
+	{ key = "o",         mods = "CTRL|LEADER",  action = wezterm.action.EmitEvent("toggle-opacity") },
 	{
 		key = "W",
 		mods = "CTRL|SHIFT",
@@ -639,16 +558,6 @@ local keys = {
 			local tab, window = pane:move_to_new_tab()
 		end),
 	},
-	{
-		key = "L",
-		mods = "CTRL|SHIFT",
-		action = act.Multiple({
-			act.ClearScrollback("ScrollbackAndViewport"),
-			act.SendKey({ key = "L", mods = "CTRL" }),
-		}),
-	},
-	{ key = "Delete", mods = "CTRL|SHIFT", action = act.ClearScrollback("ScrollbackAndViewport") },
-	{ key = "k",      mods = "SUPER",      action = act.ClearScrollback("ScrollbackAndViewport") },
 	{
 		key = "`",
 		mods = "LEADER",

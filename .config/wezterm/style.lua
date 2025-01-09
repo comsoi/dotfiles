@@ -79,7 +79,7 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	tab_active = {
 		"index",
 		"⌘ ",
-		{ "cwd",    padding = 0 },
+		{ "cwd", padding = 0, max_length = 6 },
 		{ "process" },
 		tab_title,
 		{ "zoomed", padding = 0 },
@@ -141,11 +141,14 @@ wezterm.on("toggle-opacity", function(window)
 	if not overrides.window_background_opacity then
 		-- if no override is setup, override the default opacity value with 1.0
 		overrides.window_background_opacity = 1
+		overrides.text_background_opacity = 1
 	else
 		if overrides.window_background_opacity == 0.75 then
 			overrides.window_background_opacity = 1
+			overrides.text_background_opacity = 1
 		elseif overrides.window_background_opacity == 1 then
 			overrides.window_background_opacity = 0.75
+			overrides.text_background_opacity = text_opacity
 		end
 	end
 	window:set_config_overrides(overrides)
@@ -280,12 +283,13 @@ config.colors = {
 config.enable_tab_bar = true
 config.show_new_tab_button_in_tab_bar = false
 config.use_fancy_tab_bar = false
+config.show_close_tab_button_in_tabs = false
 config.hide_tab_bar_if_only_one_tab = false
 config.show_tab_index_in_tab_bar = false
-config.tab_max_width = 32
+config.tab_max_width = 50
 config.tab_bar_at_bottom = true
 config.window_frame = {
-	font_size = 8.0,
+	font_size = 9,
 }
 
 config.tab_bar_style = {
