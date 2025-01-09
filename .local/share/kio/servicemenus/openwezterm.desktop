@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=inode/directory
+Actions=openwezterm
+
+[Desktop Action openwezterm]
+Name = Open WezTerm Here
+Name[zh_CN] = 在 WezTerm 中打开
+Exec=wezterm-gui start --cwd %F
+Icon=wezterm
+
