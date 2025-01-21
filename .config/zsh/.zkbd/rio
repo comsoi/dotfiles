@@ -26,7 +26,7 @@ key=(
     Right                     '^[[C'
     # Ctrl-Tab
     Ctrl-Backspace            '^H'
-    Ctrl-Delete               '^[[3;5~'
+    # Ctrl-Delete is Backspace
     Ctrl-Up                   '^[[1;5A'
     Ctrl-Left                 '^[[1;5D'
     Ctrl-Down                 '^[[1;5B'
@@ -50,7 +50,7 @@ key=(
     Shift-PageUp              '^[[5;2~'
     Shift-PageDown            '^[[6;2~'
     # Alt-Tab
-    Alt-Delete                '^[[3;3~'
+    # Alt-Delete is Alt-Backspace
     Alt-Up                    '^[[1;3A'
     Alt-Left                  '^[[1;3D'
     Alt-Down                  '^[[1;3B'
@@ -61,7 +61,7 @@ key=(
     Alt-PageUp                '^[[5;3~'
     Alt-PageDown              '^[[6;3~'
     Alt-Shift-Tab             '^[^[[Z'
-    Alt-Shift-Delete          '^[[3;4~'
+    # Alt-Shift-Delete
     Alt-Shift-Up              '^[[1;4A'
     Alt-Shift-Left            '^[[1;4D'
     Alt-Shift-Down            '^[[1;4B'
@@ -82,7 +82,7 @@ key=(
     Ctrl-Shift-PageUp         '^[[5;6~'
     Ctrl-Shift-PageDown       '^[[6;6~'
     Ctrl-Alt-Backspace        '^[^H'
-    Ctrl-Alt-Delete           '^[[3;7~'
+    # Ctrl-Alt-Delete
     Ctrl-Alt-Up               '^[[1;7A'
     Ctrl-Alt-Left             '^[[1;7D'
     Ctrl-Alt-Down             '^[[1;7B'
@@ -93,7 +93,7 @@ key=(
     Ctrl-Alt-PageUp           '^[[5;7~'
     Ctrl-Alt-PageDown         '^[[6;7~'
     # Ctrl-Shift-Alt-Tab
-    Ctrl-Shift-Alt-Delete     '^[[3;8~'
+    # Ctrl-Shift-Alt-Delete
     Ctrl-Shift-Alt-Up         '^[[1;8A'
     Ctrl-Shift-Alt-Left       '^[[1;8D'
     Ctrl-Shift-Alt-Down       '^[[1;8B'
