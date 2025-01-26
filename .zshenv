@@ -1,10 +1,7 @@
-ZDOTDIR=$HOME/.config/zsh
-
+ZDOTDIR=${ZDOTDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/zsh}
+HISTFILE=${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history
 # don't put duplicate lines or lines starting with space in the history.
 HISTCONTROL=ignoreboth
-HISTFILE=$ZDOTDIR/.history
 HISTSIZE=10000
 SAVEHIST=10000
 KEYTIMEOUT=20
-# enables prefixed search for zsh-history-substring-search
-HISTORY_SUBSTRING_SEARCH_PREFIXED=1
