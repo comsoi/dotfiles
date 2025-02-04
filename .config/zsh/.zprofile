@@ -1,3 +1,3 @@
 # .zprofile
 
-[[ -f ${HOME}/.init_profile ]] && . ${HOME}/.init_profile
+[[ -f ${XDG_CONFIG_HOME:-${HOME}/.config}/init_profile ]] && source ${XDG_CONFIG_HOME:-${HOME}/.config}/init_profile
