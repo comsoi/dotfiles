@@ -77,6 +77,7 @@ if (( HAS_FZF )); then
 	FZF_MINOR=${FZF_MINOR%%.*}
 	if (( FZF_MAJOR > 0 )) || (( FZF_MAJOR == 0 && FZF_MINOR > 48 )); then
 		source <(fzf --zsh)
+		FZF_DEFAULT_OPTS='--bind "tab:down,shift-tab:up,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
 	fi
 fi
 
