@@ -7,6 +7,13 @@
 # Since Plasma 5.26 the lookandfeeltool does not work anymore without "faking" the screen.
 # Reference: https://bugs.kde.org/show_bug.cgi?id=460643
 
-plasma-apply-colorscheme --platform offscreen Layan
-plasma-apply-desktoptheme --platform wayland Layan || plasma-apply-desktoptheme --platform minimal Layan
-# plasma-apply-desktoptheme --platform xcb Layan
+QT_QPA_PLATFORMTHEME=$(systemctl --user show-environment | grep -oP '(?<=^QT_QPA_PLATFORMTHEME=).*')
+
+if [[ ! "$QT_QPA_PLATFORMTHEME" =~ ^qt[56]ct$ ]]; then
+	# Icons
+	/usr/lib/plasma-changeicons --platform offscreen WhiteSur-dark
+	# Color Scheme
+	plasma-apply-colorscheme --platform offscreen Layan
+	# Plasma Style
+	plasma-apply-desktoptheme --platform wayland Layan || plasma-apply-desktoptheme --platform minimal Layan
+fi
