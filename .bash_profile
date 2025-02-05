@@ -25,5 +25,5 @@ done
 
 unset commands_vars
 
-[[ -f ~/.bashrc ]] && . ~/.bashrc
-[[ -f ${HOME}/.init_profile ]] && . ${HOME}/.init_profile
+[[ -f "${HOME}/.bashrc" ]] && . "${HOME}/.bashrc"
+[[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/init_profile" ]] && source "${XDG_CONFIG_HOME:-${HOME}/.config}/init_profile"
