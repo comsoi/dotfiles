@@ -8,5 +8,5 @@ Actions=openwezterm
 Name = Open WezTerm Here
 Name[zh_CN] = 在 WezTerm 中打开
 Exec=wezterm-gui start --cwd %F
-Icon=wezterm
+Icon=org.wezfurlong.wezterm
 
