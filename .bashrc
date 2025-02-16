@@ -8,7 +8,7 @@
 # Load modular configarion
 # -----------------------------------------------------
 
- # If not running interactively, don't do anything
+# If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
 # Set language environment
@@ -18,7 +18,7 @@ if [[ $(tty) == /dev/pts/* ]]; then
 fi
 
 for file in ~/.config/bash/*; do
-  [[ -r "$file" ]] && . "$file"
+	[[ -r "$file" ]] && . "$file"
 done
 
 unset file

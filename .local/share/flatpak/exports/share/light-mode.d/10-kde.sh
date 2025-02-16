@@ -13,28 +13,29 @@ ICON_THEME="Colloid-Catppuccin-Light"
 # COLOR_SCHEME="FlatRemixBlueLight"
 COLOR_SCHEME="GraphiteNordLight"
 
-DESKTOP_THEME="Graphite-nord-light"
+# DESKTOP_THEME="Graphite-nord-light"
+DESKTOP_THEME="Colloid-light-nord"
 
-# WINDOW_DECORATIONS="Darkly"
 WINDOW_DECORATIONS="kvantum"
+WINDOW_DECORATIONS="Darkly"
 
-QT_QPA_PLATFORMTHEME=$(systemctl --user show-environment | grep -oP '(?<=^QT_QPA_PLATFORMTHEME=).*')
+XDG_CURRENT_DESKTOP=$(systemctl --user show-environment | grep -oP '(?<=^XDG_CURRENT_DESKTOP=).*')
 
-if [[ ! "$QT_QPA_PLATFORMTHEME" =~ ^qt[56]ct$ ]]; then
-	# Icons
-	/usr/lib/plasma-changeicons --platform offscreen "$ICON_THEME"
+[[ $XDG_CURRENT_DESKTOP != "KDE" ]] && exit 0
 
-	# Color Scheme
-	plasma-apply-colorscheme --platform offscreen "$COLOR_SCHEME"
+# Icons
+/usr/lib/plasma-changeicons --platform offscreen "$ICON_THEME"
 
-	# Plasma Style
-	plasma-apply-desktoptheme --platform wayland "$DESKTOP_THEME" || plasma-apply-desktoptheme --platform minimal "$DESKTOP_THEME"
+# Color Scheme
+plasma-apply-colorscheme --platform offscreen "$COLOR_SCHEME"
 
-	# Windows Decorations
-	kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle --type string "$WINDOW_DECORATIONS"
-fi
+# Plasma Style
+plasma-apply-desktoptheme --platform wayland "$DESKTOP_THEME" || plasma-apply-desktoptheme --platform minimal "$DESKTOP_THEME"
 
-if [[ "$1" != "--no-restart" ]] && [[ "$WINDOW_DECORATIONS" == "kvantum" ]]; then
+# Windows Decorations
+kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle --type string "$WINDOW_DECORATIONS"
+
+if [[ "$1" != "--no-restart" ]]; then
 	sleep 2
 	kquitapp6 plasmashell
 	kstart --platform offscreen plasmashell
