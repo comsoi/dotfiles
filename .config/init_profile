@@ -36,7 +36,3 @@ append_env PATH "$HOME/.local/bin" prefix
 	unset unameOut
 	export OS
 }
-
-if [[ -r "${HOME}/.init_custom" ]]; then
-	source ${HOME}/.init_custom
-fi
