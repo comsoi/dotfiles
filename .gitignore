@@ -19,4 +19,8 @@
 .config/zsh/.custom
 .config/zsh/plugins/custom/
 .config/scoop/
+.local/share/flatpak/exports/share/applications/
+.local/share/flatpak/exports/share/dbus-1/
+.local/share/flatpak/exports/share/icons/
+.local/share/flatpak/exports/share/metainfo/
 .vscode/
