@@ -182,27 +182,6 @@ key = "Tab"
 mods = "Control|Shift"
 chars = "\u001b[9;6u"
 
-# 方向键
-[[keyboard.bindings]]
-key = "Left"
-mods = "Control"
-chars = "\u001b[68;5u"
-
-[[keyboard.bindings]]
-key = "Right"
-mods = "Control"
-chars = "\u001b[67;5u"
-
-[[keyboard.bindings]]
-key = "Up"
-mods = "Control"
-chars = "\u001b[65;5u"
-
-[[keyboard.bindings]]
-key = "Down"
-mods = "Control"
-chars = "\u001b[66;5u"
-
 # 常用功能键
 [[keyboard.bindings]]
 key = "Return"
