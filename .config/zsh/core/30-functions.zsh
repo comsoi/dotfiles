@@ -1,11 +1,11 @@
 ## 30-functions.zsh
+
+autoload -Uz get_color_brightness env_append env_insert cbprint cbcopy fuck
+autoload -Uz __fd18et_setup_history_hooks
+
 if [[ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash" ]] {
 	source "${XDG_CONFIG_HOME:-${HOME}/.config}/bash/30-functions.bash"
 }
-
-autoload -Uz get_color_brightness append_env cbprint cbcopy fuck
-autoload -Uz __fd18et_setup_history_hooks
-
 __fd18et_setup_history_hooks
 
 # plugins

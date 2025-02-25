@@ -1,5 +1,7 @@
 setopt AUTO_CD INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY NOFLOWCONTROL
 unsetopt AUTO_REMOVE_SLASH HIST_EXPIRE_DUPS_FIRST EXTENDED_HISTORY FLOWCONTROL
+KEYTIMEOUT=20
+DIRSTACKSIZE=20
 
 # p10k
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -51,7 +53,6 @@ typeset -a PLUGINS=(
 for plugin (${PLUGINS[@]}) {
 	for plugin_file (${^PLUGIN_PATHS}/$plugin/$plugin.plugin.zsh(N)) {
 		source $plugin_file
-		# echo "Loaded plugin: $plugin ($plugin_file)"
 		break
 	}
 }
@@ -69,20 +70,40 @@ for theme_file (${^THEME_P10K}/powerlevel10k.zsh-theme(N)) {
 }
 
 # Initialize tools
-# move to the last zshrc
-if (( HAS_FZF )); then
-	FZF_VERSION=$(fzf --version)
-	FZF_MAJOR=${FZF_VERSION%%.*}
-	FZF_MINOR=${FZF_VERSION#*.}
-	FZF_MINOR=${FZF_MINOR%%.*}
-	if (( FZF_MAJOR > 0 )) || (( FZF_MAJOR == 0 && FZF_MINOR > 48 )); then
-		source <(fzf --zsh)
-		FZF_DEFAULT_OPTS='--bind "tab:down,shift-tab:up,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
-	fi
-fi
 
+# fzf
+if (( HAS_FZF )); then
+	_fzf_ver=$(fzf --version | cut -d' ' -f1)
+	if (( ${_fzf_ver%%.*} > 0 || ${${_fzf_ver#*.}%%.*} > 48 )); then
+		source <(fzf --zsh)
+	fi
+	unset _fzf_ver
+fi
+# fzf --zsh > ${ZDOTDIR}/cache/fzf.zsh
+# source ${ZDOTDIR}/cache/fzf.zsh
+FZF_DEFAULT_OPTS='--bind "tab:down,shift-tab:up,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
+
+# zoxide
 if (( HAS_ZOXIDE )); then
 	eval "$(zoxide init zsh --cmd j)"
 fi
+# zoxide init zsh --cmd j > ${ZDOTDIR}/cache/zoxide.zsh
+# source ${ZDOTDIR}/cache/zoxide.zsh
 
+# thefuck -- define fuck() in functions
 # eval $(thefuck --alias)
+
+# already defined in /etc/profile.d/cuda.sh
+# export CUDA_PATH=/opt/cuda
+# export NVCC_CCBIN=/usr/bin/g++-13
+# path=(
+#   "$CUDA_PATH/bin"
+#   "$CUDA_PATH/nsight_compute"
+#   "$CUDA_PATH/nsight_systems/bin"
+#   $path
+# )
+# export CUDA_HOME="$CUDA_PATH"
+# export CUDACXX="$CUDA_PATH"/bin/nvcc
+# export CUDAHOSTCXX=/usr/bin/g++-13
+# export HOST_COMPILER=/usr/bin/g++-13
+# export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'
