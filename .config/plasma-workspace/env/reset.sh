@@ -1,18 +1,20 @@
-#! /usr/bin/bash
+# reset.sh
+AUTO_THEME=$(qdbus org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Settings.Read "org.freedesktop.appearance" "color-scheme" 2>/dev/null || echo "0")
 
-systemctl --user unset-environment QT_QPA_PLATFORMTHEME
-systemctl --user daemon-reload
-
-AUTO_THEME=$(cat ~/.cache/darkman/mode.txt)
-DM_PATH=$(grep -oP '(?<=^ExecStart=).*' /etc/systemd/system/display-manager.service 2>/dev/null)
-
-if [[ "$DM_PATH" == "/usr/bin/gdm" ]]; then
-	source "/etc/profile"
-	source "$HOME/.bash_profile"
+if [ "$AUTO_THEME" != "1" ] && [ "$AUTO_THEME" != "2" ]; then
+	_output=$(kreadconfig6 --group General --key ColorScheme)
+	case "$_output" in
+	*[Ll]ight*)
+		AUTO_THEME=2
+		;;
+	*[Dd]ark*)
+		AUTO_THEME=1
+		;;
+	esac
 fi
 
-if [[ "$AUTO_THEME" == "dark" ]]; then
-	(sleep 5 && "$HOME/.local/share/flatpak/exports/share/dark-mode.d/10-kde.sh" --no-restart) &
-elif [[ "$AUTO_THEME" == "light" ]]; then
-	(sleep 5 && "$HOME/.local/share/flatpak/exports/share/light-mode.d/10-kde.sh" --no-restart) &
+if [ "$AUTO_THEME" = "1" ]; then
+	(sleep 6 && bash "$HOME/.local/share/flatpak/exports/share/dark-mode.d/10-kde.sh" --no-restart) &
+elif [ "$AUTO_THEME" = "2" ]; then
+	(sleep 6 && bash "$HOME/.local/share/flatpak/exports/share/light-mode.d/10-kde.sh" --no-restart) &
 fi

@@ -1,8 +1,27 @@
-[plugin]
-deps = [
-{ use = "Ape/open-with-cmd", rev = "8d7abc8" }, { use = "yazi-rs/plugins:hide-preview", rev = "40eafa3" }, { use = "yazi-rs/plugins:max-preview", rev = "40eafa3" }, 
-#{ use = "ahkohd/eza-preview", rev = "18e1637" },
-]
+[[plugin.deps]]
+use = "Ape/open-with-cmd"
+rev = "433cf30"
+hash = "86e0312b01bc5762813c6c1d0517f073"
+
+[[plugin.deps]]
+use = "llanosrocas/yaziline"
+rev = "e06c47f"
+hash = "7df84299e89ffefd4686d1e20a295c8a"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "b44c245"
+hash = "812fd49667ab6823250f0411f8cf793a"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "b44c245"
+hash = "9dce00232a0e0e2502565c7aa2b0ed4e"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "b44c245"
+hash = "bcbf72738d4b7fb9a03cac84465b9ba4"
 
 [flavor]
 deps = []

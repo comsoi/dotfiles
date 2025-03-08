@@ -1,12 +1,11 @@
-# MUST USE POSIX shell SYNTAX!
+# MUST
 export LANG=zh_CN.UTF-8
 export XDG_SESSION_TYPE=wayland
-
-export PATH=$HOME/.local/bin:$PATH
-
+	
 # QT
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
+export QT_ENABLE_HIGHDPI_SCALING=1
 export QT_QPA_PLATFORMTHEME=qt5ct
 
 # GDK
@@ -27,27 +26,3 @@ export APPIMAGELAUNCHER_DISABLE=1
 # CHROMIUM
 export ELECTRON_OZONE_PLATFORM_HINT=auto
 
-# MISC
-export EDITOR='nvim'
-export LESS="-R"
-
-# OS
-{
-	unameOut=$(uname -a)
-	case "${unameOut}" in
-	*Microsoft*)    OS="WSL1" ;; #wls must be first since it will have Linux in the name too
-	*microsoft*)    OS="WSL2" ;;
-	Linux*)         OS="Linux" ;;
-	Darwin*)        OS="Mac" ;;
-	CYGWIN*)        OS="Cygwin" ;;
-	MINGW*)         OS="Windows" ;;
-	*Msys)          OS="Windows" ;;
-	*)              OS="UNKNOWN:${unameOut}" ;;
-	esac
-
-	if [[ ${OS} == "Mac" ]] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
-		OS="MacArm"
-	fi
-	unset unameOut
-	export OS
-}

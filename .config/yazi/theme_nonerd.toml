@@ -1,16 +1,13 @@
 [manager]
-
-
-# Border
 border_symbol = " "
 
 [status]
-separator_open  = ""
+separator_open = ""
 separator_close = ""
 
 [icon]
 globs = []
-dirs  = []
+dirs = []
 files = []
-exts  = []
+exts = []
 conds = []

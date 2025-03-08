@@ -8,6 +8,12 @@ tab_size = 2
 max_width = 6000
 max_height = 6000
 
-# [[plugin.prepend_previewers]]
-# name = "*/"
-# run = "eza-preview"
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*"
+run = "git"
+
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*/"
+run = "git"
