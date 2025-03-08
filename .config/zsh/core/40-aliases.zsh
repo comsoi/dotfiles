@@ -37,6 +37,15 @@ alias dtb='distrobox-enter'
 alias tmux-copy='tmux loadb -'
 alias tmux-paste='tmux saveb -'
 
+alias klock="qdbus org.freedesktop.ScreenSaver /ScreenSaver Lock"
+alias klogout="qdbus org.kde.LogoutPrompt /LogoutPrompt promptLogout"
+alias kreboot="qdbus org.kde.LogoutPrompt /LogoutPrompt promptReboot"
+alias kshutdown="qdbus org.kde.LogoutPrompt /LogoutPrompt promptShutDown"
+alias kklogout="qdbus org.kde.Shutdown /Shutdown logout"
+alias kkreboot="qdbus org.kde.Shutdown /Shutdown logoutAndReboot"
+alias kkshutdown="qdbus org.kde.Shutdown /Shutdown logoutAndShutdown"
+
+
 if (( HAS_WIN32YANK )); then
 	alias pbcopy='win32yank.exe -i --crlf'
 	alias pbpaste='win32yank.exe -o --lf'
