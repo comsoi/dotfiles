@@ -24,6 +24,7 @@ alias gr="git rebase"
 alias gt='cd "$(git rev-parse --show-toplevel)"'
 alias lg=lazygit
 
+alias ppwd="pwd | cbcopy"
 alias wget='wget --hsts-file="${XDG_CACHE_HOME:-$HOME/.cache}/wget-hsts"'
 
 alias ipa='ip -br a'
