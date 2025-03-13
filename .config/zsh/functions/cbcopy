@@ -11,3 +11,4 @@ if [[ $OS == "Linux" ]] {
 } elif [[ $OS == "WSL"* ]] {
 	win32yank.exe -i --format text
 }
+
