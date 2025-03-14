@@ -10,24 +10,33 @@ PARENT_DIR="$(dirname "${SCRIPT_DIR}")"
 file_names=(
 	".bash_profile"
 	".bashrc"
-	".clang-format"
-	".vimrc"
 	".zshenv"
-	".config/bat"
 	".config/bash"
-	".config/completions"
 	".config/fish"
-	".config/fontconfig"
+	".config/zsh"
+	# cli
+	".config/tmux"
+	".config/bat"
+	".config/yazi"
+	".config/completions"
+	# Terminals
 	".config/foot"
+	".config/kitty"
+	".config/wezterm"
+	# Desktops
+	".config/fontconfig"
 	".config/gtk-2.0"
 	".config/gtk-3.0"
 	".config/gtk-4.0"
-	".config/init_profile"
-	".config/kitty"
-	".config/tmux"
-	".config/wezterm"
-	".config/yazi"
-	".config/zsh"
+	# KDE Plasma
+	".config/plasma-workspace/env"
+	# WM
+	".config/hypr"
+	".config/waybar"
+	".config/waypaper"
+	".config/wlogout"
+	".config/nwg-dock-hyprland"
+
 )
 
 create_symlink() {
@@ -40,24 +49,23 @@ create_symlink() {
 	fi
 
 	echo "Creating link: ln -s ${source_path} ${target_path}"
-	read -p "Are you sure you want to create this symbolic link? (y/n) " -n 1 -r
+	read -p "Are you sure you want to create this symbolic link? (Y/n) " -n 1 -r
 	echo
 
-	if [[ $REPLY =~ ^[nN]$ ]]; then
+	if [[ ! ($REPLY == "" || $REPLY =~ ^[Yy]$) ]]; then
 		echo "Operation cancelled by user"
 		return 0
 	fi
 
-	# 检查目标文件是否已存在
 	if [[ -e "${target_path}" ]]; then
 		echo "Warning: Target '${target_path}' already exists"
-		read -p "Do you want to overwrite it? (y/n) " -n 1 -r
+		read -p "Do you want to overwrite it? (y/N) " -n 1 -r
 		echo
 		if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 			echo "Skipping..."
 			return 0
 		fi
-		rm -f "${target_path}"
+		rm -rf "${target_path}"
 	fi
 
 	# 创建目标目录（如果不存在）
