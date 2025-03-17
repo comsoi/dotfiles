@@ -1,6 +1,4 @@
-#
 # ~/.bash_profile
-#
 
 declare -A commands_vars=(
 	["fzf"]="HAS_FZF"

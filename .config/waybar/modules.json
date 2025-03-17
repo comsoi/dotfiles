@@ -126,7 +126,8 @@
 	},
 	"clock": {
 		"format": "{:%H:%M %a}",
-		"on-click": "gnome-calendar",
+		"on-click": "swaync-client -t -sw",
+		"on-click-right": "gnome-calendar",
 		"timezone": "",
 		"tooltip": false
 	},
@@ -233,6 +234,17 @@
 			" ",
 			" "
 		]
+	},
+	"power-profiles-daemon": {
+		"format": "{icon}",
+		"tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+		"tooltip": true,
+		"format-icons": {
+			"default": "",
+			"performance": "",
+			"balanced": "",
+			"power-saver": ""
+		}
 	},
 	"pulseaudio": {
 		"scroll-step": 1,

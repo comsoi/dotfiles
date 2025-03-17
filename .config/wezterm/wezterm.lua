@@ -124,12 +124,13 @@ end
 -- 	end),
 -- }
 
-for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
-	if gpu.backend == "Vulkan" and gpu.device_type == "IntegratedGpu" then
-		config.webgpu_preferred_adapter = gpu
-		config.front_end = "WebGpu"
-		break
-	end
-end
+-- broken on wayland
+-- for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
+-- 	if gpu.backend == "Vulkan" and gpu.device_type == "IntegratedGpu" then
+-- 		config.webgpu_preferred_adapter = gpu
+-- 		config.front_end = "WebGpu"
+-- 		break
+-- 	end
+-- end
 
 return config
