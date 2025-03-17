@@ -20,12 +20,11 @@
 		"custom/empty"
 	],
 	"modules-right": [
-		"custom/updates",
 		"pulseaudio",
-		"backlight",
+		// "backlight",
 		"bluetooth",
-		"battery",
 		"network",
+		"battery",
 		"group/hardware",
 		"group/tools",
 		"group/settings",
