@@ -32,9 +32,9 @@ export GRIMBLAST_EDITOR="pinta"
 # bind = SUPER CTRL, p, exec, grimblast save screen
 
 # Options
-option_capture_1="Capture Everything"
+option_capture_1="Capture Selection"
 option_capture_2="Capture Active Display"
-option_capture_3="Capture Selection"
+option_capture_3="Capture Output"
 
 copy='Copy'
 save='Save'
@@ -62,13 +62,13 @@ type_screenshot_exit() {
 type_screenshot_run() {
 	selected_type_screenshot="$(type_screenshot_exit)"
 	if [[ "$selected_type_screenshot" == "$option_capture_1" ]]; then
-		option_type_screenshot=screen
+		option_type_screenshot=area
 		${1}
 	elif [[ "$selected_type_screenshot" == "$option_capture_2" ]]; then
 		option_type_screenshot=output
 		${1}
 	elif [[ "$selected_type_screenshot" == "$option_capture_3" ]]; then
-		option_type_screenshot=area
+		option_type_screenshot=screen
 		${1}
 	else
 		exit
@@ -111,8 +111,8 @@ copy_save_editor_run() {
 
 # take shots
 takescreenshot() {
-	sleep 1
-	grimblast --notify "$option_chosen" "$option_type_screenshot" $NAME
+	sleep 0.8
+	grimblast --freeze --notify "$option_chosen" "$option_type_screenshot" $NAME
 	if [ -f $HOME/$NAME ]; then
 		if [ -d $SCREENSHOT_FOLDER ]; then
 			mv $HOME/$NAME $SCREENSHOT_FOLDER/

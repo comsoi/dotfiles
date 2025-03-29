@@ -98,9 +98,9 @@ if [ -z "$theme_path" ]; then
 	exit 1
 fi
 
-[ -f "$theme_path"/gtk.css ] && create_symlink "$theme_path/gtk.css" "$gtk4_dir/gtk.css"
-[ -f "$theme_path/gtk-dark.css" ] && create_symlink "$theme_path/gtk-dark.css" "$gtk4_dir/gtk-dark.css"
-[ -d "$theme_path/assets" ] && create_symlink "$theme_path/assets" "$gtk4_dir/assets"
+# [ -f "$theme_path"/gtk.css ] && create_symlink "$theme_path/gtk.css" "$gtk4_dir/gtk.css"
+# [ -f "$theme_path/gtk-dark.css" ] && create_symlink "$theme_path/gtk-dark.css" "$gtk4_dir/gtk-dark.css"
+# [ -d "$theme_path/assets" ] && create_symlink "$theme_path/assets" "$gtk4_dir/assets"
 
 # if [[ -f ~/.config/hypr/conf/cursor.conf ]]; then
 # 	sed -i "s|^exec-once = hyprctl setcursor.*|exec-once = hyprctl setcursor $cursor_theme $cursor_size|" ~/.config/hypr/conf/cursor.conf
