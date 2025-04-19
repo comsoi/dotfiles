@@ -19,6 +19,16 @@
 function mkcd {
 	mkdir -p -- "$1" && cd -- "$1"
 }
+function packages-by-date {
+	env LC_ALL=C pacman -Qi |
+		grep '^\(Name\|Install Date\)\s*:' |
+		cut -d ':' -f 2- |
+		paste - - |
+		while read pkg_name install_date; do
+			install_date=$(date --date="$install_date" -Iseconds)
+			echo "$install_date   $pkg_name"
+		done | sort | tail -n 100
+}
 
 function quote {
 	declare -a params
@@ -218,35 +228,34 @@ function noproxy {
 }
 
 function setproxy {
-	# local IP=$(grep "nameserver" /etc/resolv.conf | cut -f 2 -d ' ')
 	local IP="127.0.0.1"
 	local PORT="7897"
-	if [[ ${OS} == "WSL2" ]]; then
-		IP=172.22.48.1
-	else
-		__get_model
-		if [[ ${model} == *"VMware"* ]]; then
-			local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
-			IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
-			PORT="7891"
-		fi
+	__get_model
+	if [[ ${model} == *"VMware"* ]]; then
+		local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
+		IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
+		PORT="7897"
 	fi
 	local PROT="http"
 
+	local ip_set=0
 	for arg in "$@"; do
 		case "$arg" in
-		"-socks" | "-socks5") # set socks proxy (local DNS)
+		"-socks" | "-socks5") # set socks proxy
 			PROT="socks5"
-			;;
-		"-socks5h") # set socks proxy (remote DNS)
-			PROT="socks5h"
 			;;
 		"-http" | "-https") # set HTTP proxy
 			PROT="http"
 			;;
 		*)
 			if [[ "$arg" != -* ]]; then
-				PORT="$arg"
+				if [[ "$arg" =~ ^[0-9]+$ ]]; then
+					# If argument is numeric, treat as port
+					PORT="$arg"
+				elif [[ "$arg" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+					# If argument matches IP format, treat as IP
+					IP="$arg"
+				fi
 			fi
 			;;
 		esac
