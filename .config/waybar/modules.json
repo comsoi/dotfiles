@@ -36,6 +36,8 @@
 		}
 	},
 	"hyprland/window": {
+		"on-scroll-up": "hyprctl dispatch workspace r-1",
+		"on-scroll-down": "hyprctl dispatch workspace r+1",
 		"rewrite": {
 			"(.*) - Brave": "$1",
 			"(.*) - Chromium": "$1",
@@ -69,6 +71,8 @@
 	"custom/appmenu": {
 		"format": "Apps",
 		"on-click": "sleep 0.2;pkill rofi || rofi -show drun -replace",
+		"on-scroll-up": "hyprctl dispatch workspace r-1",
+		"on-scroll-down": "hyprctl dispatch workspace r+1",
 		"tooltip-format": "Left: Open the application launcher"
 	},
 	"custom/exit": {
