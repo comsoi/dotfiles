@@ -220,10 +220,10 @@ function __get_model {
 }
 
 function noproxy {
-	unset ALL_PROXY
-	unset HTTP_PROXY
-	unset HTTPS_PROXY
-	unset NO_PROXY
+	unset all_proxy
+	unset http_proxy
+	unset https_proxy
+	unset no_proxy
 	echo "Proxy settings removed."
 }
 
@@ -263,9 +263,9 @@ function setproxy {
 
 	local PROXY="$PROT://$IP:$PORT"
 
-	export HTTP_PROXY="$PROXY"
-	export HTTPS_PROXY="$PROXY"
-	export ALL_PROXY="$PROXY"
-	export NO_PROXY="localhost,127.0.0.1"
+	export http_proxy="$PROXY"
+	export https_proxy="$PROXY"
+	export all_proxy="$PROXY"
+	export no_proxy="172.31.*,172.30.*,172.29.*,172.28.*,172.27.*,172.26.*,172.25.*,172.24.*,172.23.*,172.22.*,172.21.*,172.20.*,172.19.*,172.18.*,172.17.*,172.16.*,10.*,192.168.*,127.*,localhost,<local>"
 	echo "Proxy set to: $PROXY"
 }

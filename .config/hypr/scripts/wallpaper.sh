@@ -104,34 +104,13 @@ fi
 
 echo ":: Execute pywal with $used_wallpaper"
 wal -q -s -i "$used_wallpaper"
-source "$HOME/.cache/wal/colors.sh"
 
-# -----------------------------------------------------
-# Walcord
-# -----------------------------------------------------
-
-if type walcord >/dev/null 2>&1; then
-	walcord
+if systemctl --user is-active --quiet waybar.service; then
+	systemctl --user restart waybar.service
 fi
 
-# -----------------------------------------------------
-# Reload Waybar
-# -----------------------------------------------------
+pywalfox update
 
-$HOME/.config/waybar/launch.sh &
-
-# -----------------------------------------------------
-# Update Pywalfox
-# -----------------------------------------------------
-
-if type pywalfox >/dev/null 2>&1; then
-	pywalfox update
-fi
-
-# -----------------------------------------------------
-# Update SwayNC
-# -----------------------------------------------------
-sleep 0.1
 swaync-client -rs
 
 # -----------------------------------------------------
