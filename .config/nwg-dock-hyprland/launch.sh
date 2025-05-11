@@ -1,18 +1,14 @@
-#    ___           __
-#   / _ \___  ____/ /__
-#  / // / _ \/ __/  '_/
-# /____/\___/\__/_/\_\
-#
+#!/bin/sh
 
 killall nwg-dock-hyprland
 pkill nwg-dock-hyprla
 
-config="$HOME/.config/gtk-3.0/settings.ini"
-prefer_dark_theme="$(grep 'gtk-application-prefer-dark-theme' "$config" | sed 's/.*\s*=\s*//')"
-if [ $prefer_dark_theme == 0 ]; then
+prefer_theme=$(qdbus org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Settings.Read "org.freedesktop.appearance" "color-scheme" 2>/dev/null || echo "0")
+
+if [ $prefer_theme = 2 ]; then
 	style="style-light.css"
 else
 	style="style-dark.css"
 fi
 
-uwsm app -- nwg-dock-hyprland -d -i 32 -w 5 -mb 10 -ml 10 -mr 10 -s $style -c "rofi -show drun" &
+(uwsm app -- nwg-dock-hyprland -d -i 48 -w 5 -mb 10 -ml 10 -mr 10 -s $style -c "rofi -show drun") &

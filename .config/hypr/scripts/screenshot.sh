@@ -1,12 +1,4 @@
 #!/bin/bash
-#  ____                               _           _
-# / ___|  ___ _ __ ___  ___ _ __  ___| |__   ___ | |_
-# \___ \ / __| '__/ _ \/ _ \ '_ \/ __| '_ \ / _ \| __|
-#  ___) | (__| | |  __/  __/ | | \__ \ | | | (_) | |_
-# |____/ \___|_|  \___|\___|_| |_|___/_| |_|\___/ \__|
-#
-# Based on https://github.com/hyprwm/contrib/blob/main/grimblast/screenshot.sh
-# -----------------------------------------------------
 
 # Screenshots will be stored in $HOME by default.
 # The screenshot will be moved into the screenshot directory
@@ -112,7 +104,8 @@ copy_save_editor_run() {
 # take shots
 takescreenshot() {
 	sleep 0.8
-	grimblast --freeze --notify "$option_chosen" "$option_type_screenshot" $NAME
+	# https://github.com/hyprwm/contrib/issues/143
+	GRIMBLAST_HIDE_CURSOR=0 grimblast --freeze --notify "$option_chosen" "$option_type_screenshot" $NAME
 	if [ -f $HOME/$NAME ]; then
 		if [ -d $SCREENSHOT_FOLDER ]; then
 			mv $HOME/$NAME $SCREENSHOT_FOLDER/

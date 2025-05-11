@@ -1,10 +1,9 @@
 #!/bin/bash
 
-if [ -f $HOME/.local/state/hyprland/waybar-disabled ]; then
-	rm $HOME/.local/state/hyprland/waybar-disabled
-	uwsm app -- /usr/bin/xembedsniproxy
-else
-	touch $HOME/.local/state/hyprland/waybar-disabled
+if systemctl --user is-active --quiet waybar.service; then
 	pkill xembedsniproxy
+	systemctl --user stop waybar.service
+else
+	systemctl --user start waybar.service
+	exec uwsm app -- /usr/bin/xembedsniproxy
 fi
-$HOME/.config/waybar/launch.sh &

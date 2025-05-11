@@ -44,11 +44,11 @@ input=$listNames2
 read -ra array <<<"$input"
 
 # -----------------------------------------------------
-# Set new theme by writing the theme information to ~/.local/state/hyprland/waybar-theme
+# Set new theme by writing the theme information to ~/.local/state/waybar/waybar-theme
 # -----------------------------------------------------
 if [ "$choice" ]; then
 	echo "Loading waybar theme..."
-	echo "${listThemes[$choice + 1]}" >~/.local/state/hyprland/waybar-theme
-	~/.config/waybar/launch.sh
+	echo "${listThemes[$choice + 1]}" >~/.local/state/waybar/waybar-theme
+	systemctl --user restart waybar.service
 	notify-send "Waybar Theme changed" "to ${array[$choice]}"
 fi

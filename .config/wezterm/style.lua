@@ -261,13 +261,18 @@ config.color_scheme = auto_theme
 
 config.window_decorations = "RESIZE" -- | INTEGRATED_BUTTONS
 config.window_background_opacity = 0.80
+config.kde_window_background_blur = true
 config.text_background_opacity = text_opacity
 config.adjust_window_size_when_changing_font_size = false
 config.window_padding = {
-	left = "0.9cell",
-	right = "0.6cell",
+	left = "0.3cell",
+	right = "0.3cell",
 	top = "5px",
 	bottom = "0px",
+}
+config.window_content_alignment = {
+	horizontal = "Center",
+	vertical = "Center",
 }
 
 -- 配色
