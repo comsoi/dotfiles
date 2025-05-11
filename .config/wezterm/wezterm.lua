@@ -5,9 +5,7 @@ local config = wezterm.config_builder()
 local function merge_config(module)
 	local mod_config = require(module)
 	for key, value in pairs(mod_config) do
-		if config[key] ~= nil
-				and type(config[key]) == "table"
-				and type(value) == "table" then
+		if config[key] ~= nil and type(config[key]) == "table" and type(value) == "table" then
 			for _, v in ipairs(value) do
 				table.insert(config[key], v)
 			end
@@ -62,7 +60,7 @@ config.ssh_domains = {}
 -- platform specific settings
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.launch_menu = {
-		{ label = "zsh",  args = { "zsh" } },
+		{ label = "zsh", args = { "zsh" } },
 		{ label = "fish", args = { "fish" } },
 		{ label = "bash", args = { "bash" } },
 	}
