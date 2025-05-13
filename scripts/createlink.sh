@@ -15,6 +15,8 @@ file_names=(
 	".config/fish"
 	".config/zsh"
 	# cli
+	".config/vim"
+	".config/nvim"
 	".config/tmux"
 	".config/bat"
 	".config/yazi"
