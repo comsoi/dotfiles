@@ -7,6 +7,7 @@ wrap = "yes"
 tab_size = 2
 max_width = 6000
 max_height = 6000
+image_delay = 0
 
 [[plugin.prepend_fetchers]]
 id = "git"

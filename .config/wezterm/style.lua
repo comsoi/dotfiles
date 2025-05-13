@@ -274,6 +274,11 @@ config.window_content_alignment = {
 	horizontal = "Center",
 	vertical = "Center",
 }
+config.inactive_pane_hsb = {
+	hue = 1.0,
+	saturation = 0.95,
+	brightness = 0.80,
+}
 
 -- 配色
 config.colors = {
