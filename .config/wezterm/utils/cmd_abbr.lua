@@ -1,5 +1,8 @@
--- tab_title.lua
+-- cmd_abbr.lua
 local M = {}
+
+-- 最大长度默认值
+M.max_length = 25
 
 -- 判断字符串是否为路径
 local function is_path(str)
@@ -50,37 +53,35 @@ local function split_args(str)
 		if char == "\\" and not escaped then
 			escaped = true
 			i = i + 1
-			goto continue
-		end
-
-		-- 处理引号
-		if (char == '"' or char == "'") and not escaped then
-			if not in_quotes then
-				in_quotes = true
-				quote_char = char
-			elseif char == quote_char then
-				in_quotes = false
-				quote_char = nil
+		else
+			-- 处理引号
+			if (char == '"' or char == "'") and not escaped then
+				if not in_quotes then
+					in_quotes = true
+					quote_char = char
+				elseif char == quote_char then
+					in_quotes = false
+					quote_char = nil
+				else
+					current_arg = current_arg .. char
+				end
+			-- 处理空格
+			elseif char == " " and not in_quotes then
+				if #current_arg > 0 then
+					table.insert(args, current_arg)
+					current_arg = ""
+				end
+			-- 处理其他字符
 			else
+				if escaped and char ~= quote_char then
+					current_arg = current_arg .. "\\"
+				end
 				current_arg = current_arg .. char
 			end
-			-- 处理空格
-		elseif char == " " and not in_quotes then
-			if #current_arg > 0 then
-				table.insert(args, current_arg)
-				current_arg = ""
-			end
-			-- 处理其他字符
-		else
-			if escaped and char ~= quote_char then
-				current_arg = current_arg .. "\\"
-			end
-			current_arg = current_arg .. char
-		end
 
-		escaped = false
-		i = i + 1
-		::continue::
+			escaped = false
+			i = i + 1
+		end
 	end
 
 	-- 处理未闭合的引号
@@ -108,9 +109,9 @@ local function abbreviate_path(path, max_length)
 	local MIN_LENGTH = 2 -- 路径段的最小保留长度
 
 	-- 预处理路径
-	path = path:gsub('^"(.+)"$', '%1') -- 移除包围的引号
-	path = path:gsub([[\]], "/")       -- 统一路径分隔符
-	path = path:gsub([[\ ]], " ")      -- 处理转义空格
+	path = path:gsub('^"(.+)"$', "%1") -- 移除包围的引号
+	path = path:gsub([[\]], "/") -- 统一路径分隔符
+	path = path:gsub([[\ ]], " ") -- 处理转义空格
 
 	-- 快速路径：如果路径已经足够短，直接返回
 	if #path <= max_length then
@@ -229,9 +230,8 @@ local function process_argument(arg, max_length)
 end
 
 -- 缩写标题的函数
--- lua
 function M.abbreviate_title(title)
-	local max_length = 25
+	local max_length = M.max_length
 	if #title <= max_length then
 		return title
 	end
