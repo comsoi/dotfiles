@@ -4,7 +4,7 @@ local M = {}
 local light_theme = nil
 local dark_theme = nil
 
-function M.scheme_for_appearance(appearance, force)
+function M.scheme_for_appearance(appearance, config, force)
 	force = force or false
 	-- force = true
 	-- color_scheme
@@ -24,6 +24,7 @@ function M.scheme_for_appearance(appearance, force)
 
 	if appearance:find("Light") then
 		light_theme = "Tokyo Night Day"
+		config.text_min_contrast_ratio = 1.7
 		return light_theme
 	end
 
@@ -33,7 +34,7 @@ end
 
 function M.apply(config)
 	local appearance = wezterm.gui.get_appearance()
-	config.color_scheme = M.scheme_for_appearance(appearance)
+	config.color_scheme = M.scheme_for_appearance(appearance, config)
 end
 
 return M
