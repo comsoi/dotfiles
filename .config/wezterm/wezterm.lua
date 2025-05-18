@@ -32,6 +32,7 @@ end
 if os.getenv("HYPRLAND_INSTANCE_SIGNATURE") then
 	config.enable_wayland = false
 	config.front_end = "WebGpu"
+	config.font_size = 13
 end
 
 return config
