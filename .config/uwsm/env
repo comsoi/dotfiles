@@ -2,6 +2,11 @@
 export LANG=zh_CN.UTF-8
 export XDG_SESSION_TYPE=wayland
 	
+# WLR
+export WLR_RENDERER_ALLOW_SOFTWARE=1
+# export WLR_NO_HARDWARE_CURSORS=1
+# export WLR_DRM_DEVICES="/dev/dri/card0:/dev/dri/card1"
+
 # QT
 export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
@@ -12,10 +17,10 @@ export QT_QPA_PLATFORMTHEME=qt5ct
 export GDK_SCALE=1
 
 # Toolkit Backend
-export QT_QPA_PLATFORM=wayland;xcb
-export GDK_BACKEND=wayland,x11,*
-export CLUTTER_BACKEND=wayland
-export SDL_VIDEODRIVER=wayland,x11
+export QT_QPA_PLATFORM="wayland;xcb"
+export GDK_BACKEND="wayland,x11,*"
+export CLUTTER_BACKEND="wayland"
+export SDL_VIDEODRIVER="wayland,x11"
 
 # Mozilla
 export MOZ_ENABLE_WAYLAND=1
@@ -25,4 +30,15 @@ export APPIMAGELAUNCHER_DISABLE=1
 
 # CHROMIUM
 export ELECTRON_OZONE_PLATFORM_HINT=auto
+
+
+if [ -f /etc/systemd/system/display-manager.service ]; then
+	DM_NAME=$(basename "$(readlink -f /etc/systemd/system/display-manager.service)")
+	case "$DM_NAME" in
+	*gdm*)
+		[ -f "/etc/profile" ] && . "/etc/profile"
+		[ -f "$HOME/.profile" ] && . "$HOME/.profile"
+		;;
+	esac
+fi
 
