@@ -48,6 +48,7 @@ read -ra array <<<"$input"
 # -----------------------------------------------------
 if [ "$choice" ]; then
 	echo "Loading waybar theme..."
+	mkdir -p ~/.local/state/waybar
 	echo "${listThemes[$choice + 1]}" >~/.local/state/waybar/waybar-theme
 	systemctl --user restart waybar.service
 	notify-send "Waybar Theme changed" "to ${array[$choice]}"
