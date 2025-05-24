@@ -34,6 +34,8 @@ file_names=(
 	".config/plasma-workspace/env"
 	# WM
 	".config/hypr"
+	".config/rofi"
+	".config/wal"
 	".config/waybar"
 	".config/waypaper"
 	".config/wlogout"
