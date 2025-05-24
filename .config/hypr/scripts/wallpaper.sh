@@ -7,6 +7,8 @@
 # -----------------------------------------------------
 # Check to use wallpaper cache
 # -----------------------------------------------------
+#
+mkdir -p ~/.local/state/wallpaper
 
 if [ -f ~/.local/state/wallpaper/wallpaper_cache ]; then
 	use_cache=1
