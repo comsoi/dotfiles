@@ -27,9 +27,9 @@ file_names=(
 	".config/wezterm"
 	# Desktops
 	".config/fontconfig"
-	".config/gtk2"
-	".config/gtk-3.0"
-	".config/gtk-4.0"
+	# ".config/gtk2"
+	# ".config/gtk-3.0"
+	# ".config/gtk-4.0"
 	# KDE Plasma
 	".config/plasma-workspace/env"
 	# WM
