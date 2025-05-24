@@ -5,16 +5,19 @@
 export EDITOR='nvim'
 export LESS="-R"
 
+export GSK_RENDERER=ngl
+
 if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
 	if [ "$(cat class/drm/card1/*HDMI*/status)" = "disconnected" ]; then
 		export __EGL_VENDOR_LIBRARY_FILENAMES="/usr/share/glvnd/egl_vendor.d/50_mesa.json"
+		export VK_DRIVER_FILES="/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
 	fi
 	export QT_QPA_PLATFORMTHEME=qt5ct
 fi
 
 {
-	unameOut=$(uname -a)
-	case "${unameOut}" in
+	_unameOut=$(uname -a)
+	case "${_unameOut}" in
 	*Microsoft*) OS="WSL1" ;;
 	*microsoft*) OS="WSL2" ;;
 	Linux*) OS="Linux" ;;
@@ -22,13 +25,13 @@ fi
 	CYGWIN*) OS="Cygwin" ;;
 	MINGW*) OS="Windows" ;;
 	*Msys) OS="Windows" ;;
-	*) OS="UNKNOWN:${unameOut}" ;;
+	*) OS="UNKNOWN:${_unameOut}" ;;
 	esac
 
 	if [ "${OS}" = "Mac" ] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
 		OS="MacArm"
 	fi
-	unset unameOut
+	unset _unameOut
 	export OS
 }
 
