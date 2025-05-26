@@ -17,7 +17,7 @@ HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-xterm-color | *-256color | xterm-kitty | alacritty | foot | wezterm) color_prompt=yes ;;
+xterm-color | *256color | *kitty | *alacritty | *foot | *ghostty | *wezterm) color_prompt=yes ;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
