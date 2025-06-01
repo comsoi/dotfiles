@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+export launchTarget="env $1"
+
+export bwBindPath="$HOME/Desktop:$HOME/Documents:$HOME/Downloads:$HOME/workspaces"
+
+exec wps-portable -- ${@:2}

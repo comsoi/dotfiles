@@ -1,51 +1,51 @@
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = ["g", "w"]
 run = "cd ~/workspaces/"
 desc = "Goto workspaces"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = ["g", "s"]
 run = "cd ~/.local/share/"
 desc = "Goto ~/.local/share/"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = ["g", "u", "s"]
 run = "cd /usr/share/"
 desc = "Goto /usr/share/"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = ["g", "u", "c"]
 run = "cd /etc/"
 desc = "Goto /etc/"
 
 # smart-enter.yazi
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "l"
 run = "plugin smart-enter"
 desc = "Enter the child directory, or open the file"
 # open-with-cmd
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "o"
 run = "plugin open-with-cmd block"
 desc = "Open with command in the terminal"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "O"
 run = "plugin open-with-cmd"
 desc = "Open with command"
 
 # toggle-pane.yazi
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "t"
 run = "plugin toggle-pane min-preview"
 desc = "Show or hide the preview pane"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "T"
 run = "plugin toggle-pane max-preview"
 desc = "Maximize or restore the preview pane"
 
-[[manager.prepend_keymap]]
+[[mgr.prepend_keymap]]
 on = "<C-t>"
 run = "tab_create --current"
 description = "Create a new tab with CWD"

@@ -5,10 +5,24 @@
 export EDITOR='nvim'
 export LESS="-R"
 
+export QT_IM_MODULES="wayland;fcitx;ibus"
 export GSK_RENDERER=ngl
 
+if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
+	export IDEA_JDK=/usr/lib/jvm/jre-jetbrains
+	export PHPSTORM_JDK=/usr/lib/jvm/jre-jetbrains
+	export WEBIDE_JDK=/usr/lib/jvm/jre-jetbrains
+	export PYCHARM_JDK=/usr/lib/jvm/jre-jetbrains
+	export RUBYMINE_JDK=/usr/lib/jvm/jre-jetbrains
+	export CL_JDK=/usr/lib/jvm/jre-jetbrains
+	export DATAGRIP_JDK=/usr/lib/jvm/jre-jetbrains
+	export GOLAND_JDK=/usr/lib/jvm/jre-jetbrains
+	export STUDIO_JDK=/usr/lib/jvm/jre-jetbrains
+	export RUSTROVER_JDK=/usr/lib/jvm/jre-jetbrains
+fi
+
 if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
-	if [ "$(cat class/drm/card1/*HDMI*/status)" = "disconnected" ]; then
+	if [ "$(cat /sys/class/drm/card1/*HDMI*/status)" = "disconnected" ]; then
 		export __EGL_VENDOR_LIBRARY_FILENAMES="/usr/share/glvnd/egl_vendor.d/50_mesa.json"
 		export VK_DRIVER_FILES="/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
 	fi

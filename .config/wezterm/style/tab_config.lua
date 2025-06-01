@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local cmd_abbr = require("utils.cmd_abbr")
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 local M = {}
 
 local function tab_title(tab_info)
@@ -48,7 +49,6 @@ function M.apply(config)
 		}
 	end
 
-	local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 	tabline.setup({
 		sections = {
 			tabline_c = { leader },
