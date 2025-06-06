@@ -29,10 +29,4 @@ elseif wezterm.target_triple == "x86_64-pc-windows-msvc" then
 	require("msvc").apply(config)
 end
 
-if os.getenv("HYPRLAND_INSTANCE_SIGNATURE") then
-	config.enable_wayland = false
-	config.front_end = "WebGpu"
-	config.font_size = 13
-end
-
 return config
