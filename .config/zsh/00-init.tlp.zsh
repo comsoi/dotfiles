@@ -1,6 +1,6 @@
 setopt AUTO_CD INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY NOFLOWCONTROL
 unsetopt AUTO_REMOVE_SLASH HIST_EXPIRE_DUPS_FIRST EXTENDED_HISTORY FLOWCONTROL
-KEYTIMEOUT=20
+KEYTIMEOUT=10
 DIRSTACKSIZE=20
 
 # p10k
@@ -21,7 +21,10 @@ HAS_BAT=$+commands[bat]
 HAS_DIRCOLORS=$+commands[dircolors]
 
 function zvm_config {
-	ZVM_VI_INSERT_ESCAPE_BINDKEY='jj'; ZVM_INIT_MODE='sourcing'
+	ZVM_KEYTIMEOUT=0.10
+	ZVM_ESCAPE_KEYTIMEOUT=0.10
+	ZVM_VI_INSERT_ESCAPE_BINDKEY="jj"
+	ZVM_INIT_MODE='sourcing'
 }
 
 if [[ $USE_OMZ == true ]] {
@@ -79,31 +82,9 @@ if (( HAS_FZF )); then
 	fi
 	unset _fzf_ver
 fi
-# fzf --zsh > ${ZDOTDIR}/cache/fzf.zsh
-# source ${ZDOTDIR}/cache/fzf.zsh
 FZF_DEFAULT_OPTS='--bind "tab:down,shift-tab:up,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
 
 # zoxide
 if (( HAS_ZOXIDE )); then
 	eval "$(zoxide init zsh --cmd j)"
 fi
-# zoxide init zsh --cmd j > ${ZDOTDIR}/cache/zoxide.zsh
-# source ${ZDOTDIR}/cache/zoxide.zsh
-
-# thefuck -- define fuck() in functions
-# eval $(thefuck --alias)
-
-# already defined in /etc/profile.d/cuda.sh
-# export CUDA_PATH=/opt/cuda
-# export NVCC_CCBIN=/usr/bin/g++-13
-# path=(
-#   "$CUDA_PATH/bin"
-#   "$CUDA_PATH/nsight_compute"
-#   "$CUDA_PATH/nsight_systems/bin"
-#   $path
-# )
-# export CUDA_HOME="$CUDA_PATH"
-# export CUDACXX="$CUDA_PATH"/bin/nvcc
-# export CUDAHOSTCXX=/usr/bin/g++-13
-# export HOST_COMPILER=/usr/bin/g++-13
-# export NVCC_PREPEND_FLAGS='-ccbin /usr/bin/g++-13'

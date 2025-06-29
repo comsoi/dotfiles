@@ -5,20 +5,11 @@
 export EDITOR='nvim'
 export LESS="-R"
 
-export QT_IM_MODULES="wayland;fcitx;ibus"
 export GSK_RENDERER=ngl
 
-if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
-	export IDEA_JDK=/usr/lib/jvm/jre-jetbrains
-	export PHPSTORM_JDK=/usr/lib/jvm/jre-jetbrains
-	export WEBIDE_JDK=/usr/lib/jvm/jre-jetbrains
-	export PYCHARM_JDK=/usr/lib/jvm/jre-jetbrains
-	export RUBYMINE_JDK=/usr/lib/jvm/jre-jetbrains
-	export CL_JDK=/usr/lib/jvm/jre-jetbrains
-	export DATAGRIP_JDK=/usr/lib/jvm/jre-jetbrains
-	export GOLAND_JDK=/usr/lib/jvm/jre-jetbrains
-	export STUDIO_JDK=/usr/lib/jvm/jre-jetbrains
-	export RUSTROVER_JDK=/usr/lib/jvm/jre-jetbrains
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+	# export _JAVA_AWT_WM_NONREPARENTING=1
+	export ELECTRON_OZONE_PLATFORM_HINT=auto
 fi
 
 if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
@@ -27,6 +18,19 @@ if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
 		export VK_DRIVER_FILES="/usr/share/vulkan/icd.d/intel_icd.x86_64.json"
 	fi
 	export QT_QPA_PLATFORMTHEME=qt5ct
+fi
+
+if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
+	export IDEA_JDK=/usr/lib/jvm/jre-jetbrains
+	export PHPSTORM_JDK=/usr/lib/jvm/jre-jetbrains
+	export WEBIDE_JDK=/usr/lib/jvm/jre-jetbrains
+	export PYCHARM_JDK=/usr/lib/jvm/jre-jetbrains
+	export RUBYMINE_JDK=/usr/lib/jvm/jre-jetbrains
+	export CLION_JDK=/usr/lib/jvm/jre-jetbrains
+	export DATAGRIP_JDK=/usr/lib/jvm/jre-jetbrains
+	export GOLAND_JDK=/usr/lib/jvm/jre-jetbrains
+	export STUDIO_JDK=/usr/lib/jvm/jre-jetbrains
+	export RUSTROVER_JDK=/usr/lib/jvm/jre-jetbrains
 fi
 
 {
@@ -252,4 +256,5 @@ else
 fi
 
 add_env PATH "$HOME/.local/bin"
+add_env PATH "$HOME/.local/share/cargo/bin"
 export PATH
