@@ -65,7 +65,6 @@ function M.apply(config)
 	})
 
 	-- 标签栏基础配置
-	config.enable_tab_bar = true
 	config.show_new_tab_button_in_tab_bar = false
 	config.use_fancy_tab_bar = false
 	config.show_close_tab_button_in_tabs = false

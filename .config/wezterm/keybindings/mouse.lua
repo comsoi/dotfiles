@@ -52,6 +52,11 @@ M.mouse_bindings = {
 		mods = "CTRL",
 		action = act.DecreaseFontSize,
 	},
+	{
+		event = { Down = { streak = 4, button = "Left" } },
+		action = wezterm.action.SelectTextAtMouseCursor("SemanticZone"),
+		mods = "NONE",
+	},
 }
 
 function M.apply(config)
