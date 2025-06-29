@@ -1,4 +1,0 @@
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-
-export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
-export GOMODCACHE="$XDG_CACHE_HOME"/go/mod

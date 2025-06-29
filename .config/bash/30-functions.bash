@@ -67,7 +67,24 @@ function tmux {
 	fi
 
 	if [[ $# -eq 0 ]]; then
-		command tmux attach-session || command tmux new-session
+		local target_path="$(pwd -P)"
+		local found_pane=false
+		local _window _pane _path _cmd
+		while read -r _window _pane _path _cmd; do
+			if [[ "$_path" == "$target_path" ]] && [[ " bash zsh fish pwsh nu " == *" $_cmd "* ]]; then
+				if command tmux select-pane -t "$_pane" && command tmux select-window -t "$_window"; then
+					found_pane=true
+					break
+				fi
+			fi
+		done < <(command tmux list-panes -s -F '#{window_id} #{pane_id} #{pane_current_path} #{pane_current_command}' 2> /dev/null)
+
+		if $found_pane; then
+			command tmux attach-session
+		else
+			command tmux new-window > /dev/null 2>&1
+			command tmux new-session -A
+		fi
 	else
 		command tmux "$@"
 	fi

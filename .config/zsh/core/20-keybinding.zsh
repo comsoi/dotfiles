@@ -19,9 +19,7 @@ zle       -N   backward-delete-word-vscode
 # autoload  -Uz  select-word-style
 # select-word-style bash
 
-
-# remove esc seq for avoid alt key enter vicmd mode
-bindkey -rM viins '^['
+# bindkey -rM viins '^['
 bindkey -M  viins '^X^[' vi-cmd-mode
 
 # https://www.reddit.com/r/zsh/comments/eblqvq/comment/fb7337q/
