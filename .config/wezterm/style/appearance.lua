@@ -2,6 +2,7 @@ local M = {}
 
 function M.apply(config)
 	config.default_cursor_style = "BlinkingBar"
+	config.enable_scroll_bar = true
 	config.min_scroll_bar_height = "1cell"
 	config.window_decorations = "RESIZE"
 	config.window_background_opacity = 0.80

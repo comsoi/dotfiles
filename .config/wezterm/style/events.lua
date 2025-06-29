@@ -21,6 +21,29 @@ function M.apply(config)
 		window:set_config_overrides(overrides)
 	end)
 
+	wezterm.on("save-output", function(window, pane)
+		--https://github.com/wezterm/wezterm/discussions/2343
+		local zones = pane:get_semantic_zones()
+		local i = #zones
+		local last_index = nil
+		while i > 0 and not last_index do
+			if zones[i].semantic_type == "Output" then
+				last_index = i
+			end
+			i = i - 1
+		end
+
+		if not last_index then
+			return nil
+		end
+		local latest_output_zone = zones[last_index]
+		local text = pane:get_text_from_semantic_zone(latest_output_zone)
+		if text == nil then
+			return nil
+		end
+		io.popen("wl-copy", "w"):write(text):close()
+	end)
+
 	-- Scrollbar hidden
 	-- https://github.com/wez/wezterm/issues/4330
 	wezterm.on("update-status", function(window, pane)

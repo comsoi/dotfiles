@@ -346,15 +346,40 @@ M.keys = {
 	{ key = "DownArrow", mods = "SHIFT|CTRL", action = act.ScrollByLine(1) },
 	{ key = "k", mods = "SUPER", action = act.ClearScrollback("ScrollbackAndViewport") },
 	{ key = "Delete", mods = "CTRL|SHIFT", action = act.ClearScrollback("ScrollbackAndViewport") },
+
+	-- Copy mode
+	{ key = "Escape", mods = "LEADER", action = act.ActivateCopyMode },
+	{ key = "[", mods = "CTRL|LEADER", action = act.ActivateCopyMode },
+	{ key = "/", mods = "LEADER", action = act.ActivateCopyMode },
+	{
+		key = "v",
+		mods = "LEADER",
+		action = wezterm.action_callback(function(window, pane)
+			window:perform_action(act.ActivateCopyMode, pane)
+			window:perform_action(act.CopyMode({ SetSelectionMode = "Cell" }), pane)
+		end),
+	},
+	{ key = "V",
+		mods = "SHIFT|LEADER",
+		action = wezterm.action_callback(function(window, pane)
+			window:perform_action(act.ActivateCopyMode, pane)
+			window:perform_action(act.CopyMode({ SetSelectionMode = "Line" }), pane)
+		end),
+	},
+	{ key = "v",
+		mods = "CTRL|LEADER",
+		action = wezterm.action_callback(function(window, pane)
+			window:perform_action(act.ActivateCopyMode, pane)
+			window:perform_action(act.CopyMode({ SetSelectionMode = "Block" }), pane)
+		end),
+	},
+
 	-- OSC 133
 	{ key = "UpArrow", mods = "SHIFT", action = act.ScrollToPrompt(-1) },
 	{ key = "DownArrow", mods = "SHIFT", action = act.ScrollToPrompt(1) },
 
 	-- other
 	{ key = "Space", mods = "LEADER", action = act.ShowLauncher },
-	{ key = "Escape", mods = "LEADER", action = act.ActivateCopyMode },
-	{ key = "[", mods = "CTRL|LEADER", action = act.ActivateCopyMode },
-	{ key = "v", mods = "LEADER", action = act.ActivateCopyMode },
 	{ key = "Space", mods = "SHIFT|CTRL", action = act.QuickSelect },
 	{ key = "F1", mods = "NONE", action = act.ShowTabNavigator },
 	{ key = "F12", mods = "LEADER", action = act.ShowDebugOverlay },
@@ -495,6 +520,8 @@ M.keys = {
 			flags = "DOMAINS|WORKSPACES|TABS",
 		}),
 	},
+
+	{ key = "C", mods = "SHIFT|ALT|CTRL", action = wezterm.action({ EmitEvent = "save-output" }) },
 }
 
 function M.apply(config)
