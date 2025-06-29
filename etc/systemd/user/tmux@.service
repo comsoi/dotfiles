@@ -1,11 +1,12 @@
 [Unit]
 Description=tmux session for user %u
+After=graphical-session.target
 
 [Service]
 Type=forking
 WorkingDirectory=~
 Restart=always
-RestartSec=5
+ExecStartPre=/usr/bin/sleep 5
 ExecStart=/usr/bin/tmux new-session -s %i -d
 ExecStop=/usr/bin/tmux kill-session -t %i
 
