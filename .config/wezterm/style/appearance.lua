@@ -6,6 +6,7 @@ function M.apply(config)
 	config.min_scroll_bar_height = "1cell"
 	config.window_decorations = "RESIZE"
 	config.window_background_opacity = 0.80
+	config.use_resize_increments = true
 	config.kde_window_background_blur = true
 	config.text_background_opacity = 0.85
 	config.adjust_window_size_when_changing_font_size = false

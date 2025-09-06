@@ -193,16 +193,8 @@ end
 
 M.keys = {
 	-- Normal
-	create_keybind("SpawnTab", "ALT", "t", "CurrentPaneDomain"),
-	create_keybind("SpawnTab", "ALT", "T", "CurrentPaneDomain"),
-	create_keybind("smart_split", "ALT", "n"),
-	create_keybind("smart_split", "ALT", "N"),
-	create_keybind("CloseCurrentTab", "ALT", "q"),
-	create_keybind("CloseCurrentTab", "ALT", "Q"),
-	create_keybind("CloseCurrentPane", "ALT", "x"),
-	create_keybind("CloseCurrentPane", "ALT", "X"),
-
 	{ key = "V", mods = "SHIFT|CTRL", action = act({ PasteFrom = "Clipboard" }) },
+	{ key = "S", mods = "SHIFT|CTRL", action = act({ PasteFrom = "PrimarySelection" }) },
 	{ key = "C", mods = "SHIFT|CTRL", action = act({ CopyTo = "Clipboard" }) },
 	{ key = "F", mods = "SHIFT|CTRL", action = act.Search({ CaseSensitiveString = "" }) },
 	{ key = "P", mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
@@ -299,6 +291,7 @@ M.keys = {
 	{ key = "L", mods = "SHIFT|ALT|CTRL", action = act.AdjustPaneSize({ "Right", 10 }) },
 
 	-- Pane splitting
+	create_keybind("smart_split", "ALT", "n"),
 	{ key = "Enter", mods = "LEADER", action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter", mods = "ALT|CTRL", action = wezterm.action_callback(smart_split_callback) },
 	{ key = "Enter", mods = "SHIFT|CTRL", action = wezterm.action_callback(smart_split_callback) },
