@@ -1,7 +1,7 @@
 # ~/.bashrc
-
-# If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+BASH_COMPLETION_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/bash:${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion:${BASH_COMPLETION_USER_DIR}"
 
 # Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
@@ -9,8 +9,8 @@ if [[ $(tty) == /dev/pts/* ]]; then
 	export LANGUAGE=zh_CN:en_US:en
 fi
 
-for file in ~/.config/bash/*; do
-	[[ -r "$file" ]] && . "$file"
+for file in ~/.config/bash/*.bash; do
+	[[ -f "$file" ]] && . "$file"
 done
 
 unset file

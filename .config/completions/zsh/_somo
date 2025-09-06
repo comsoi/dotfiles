@@ -1,0 +1,129 @@
+#compdef somo
+
+autoload -U is-at-least
+
+_somo() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" : \
+'--proto=[Deprecated. Use '\''--tcp'\'' and '\''--udp'\'' instead]:PROTO:_default' \
+'--ip=[Filter connections by remote IP address]:IP:_default' \
+'--remote-port=[Filter connections by remote port]:REMOTE_PORT:_default' \
+'-p+[Filter connections by local port]:PORT:_default' \
+'--port=[Filter connections by local port]:PORT:_default' \
+'--program=[Filter connections by program name]:PROGRAM:_default' \
+'--pid=[Filter connections by PID]:PID:_default' \
+'--format=[Format the output in a certain way, e.g., \`somo --format "PID\: {{pid}}, Protocol\: {{proto}}, Remote Address\: {{remote_address}}"\`]:FORMAT:_default' \
+'-s+[Sort by column name]:SORT:(proto local_port remote_address remote_port program pid state)' \
+'--sort=[Sort by column name]:SORT:(proto local_port remote_address remote_port program pid state)' \
+'-k[Display an interactive selection option after inspecting connections]' \
+'--kill[Display an interactive selection option after inspecting connections]' \
+'-t[Include TCP connections]' \
+'--tcp[Include TCP connections]' \
+'-u[Include UDP connections]' \
+'--udp[Include UDP connections]' \
+'--json[Output in JSON]' \
+'-o[Filter by open connections]' \
+'--open[Filter by open connections]' \
+'-l[Filter by listening connections]' \
+'--listen[Filter by listening connections]' \
+'--exclude-ipv6[Exclude IPv6 connections]' \
+'-c[]' \
+'--compact[]' \
+'-r[Reverse order of the table]' \
+'--reverse[Reverse order of the table]' \
+'-h[Print help]' \
+'--help[Print help]' \
+'-V[Print version]' \
+'--version[Print version]' \
+":: :_somo_commands" \
+"*::: :->somo" \
+&& ret=0
+    case $state in
+    (somo)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:somo-command-$line[1]:"
+        case $line[1] in
+            (generate-completions)
+_arguments "${_arguments_options[@]}" : \
+'-h[Print help]' \
+'--help[Print help]' \
+':shell -- The shell to generate completions for:(bash elvish fish powershell zsh)' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+":: :_somo__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:somo-help-command-$line[1]:"
+        case $line[1] in
+            (generate-completions)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_somo_commands] )) ||
+_somo_commands() {
+    local commands; commands=(
+'generate-completions:Generate shell completions' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'somo commands' commands "$@"
+}
+(( $+functions[_somo__generate-completions_commands] )) ||
+_somo__generate-completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'somo generate-completions commands' commands "$@"
+}
+(( $+functions[_somo__help_commands] )) ||
+_somo__help_commands() {
+    local commands; commands=(
+'generate-completions:Generate shell completions' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'somo help commands' commands "$@"
+}
+(( $+functions[_somo__help__generate-completions_commands] )) ||
+_somo__help__generate-completions_commands() {
+    local commands; commands=()
+    _describe -t commands 'somo help generate-completions commands' commands "$@"
+}
+(( $+functions[_somo__help__help_commands] )) ||
+_somo__help__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'somo help help commands' commands "$@"
+}
+
+if [ "$funcstack[1]" = "_somo" ]; then
+    _somo "$@"
+else
+    compdef _somo somo
+fi

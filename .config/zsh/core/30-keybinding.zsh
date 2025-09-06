@@ -1,4 +1,4 @@
-## 20-keybinding.zsh
+## 30-keybinding.zsh
 
 # matching everything up to current cursor position
 # man zshzle. Search for "History Control".
@@ -9,10 +9,13 @@ autoload  -Uz  edit-command-line
 zle       -N   up-line-or-beginning-search
 zle       -N   down-line-or-beginning-search
 zle       -N   edit-command-line
+
 # load from $ZDOTDIR funtions
 autoload  -Uz  bind2maps
+autoload  -Uz  system-clipboard-put
 autoload  -Uz  backward-delete-word-shell
 autoload  -Uz  backward-delete-word-vscode
+zle       -N   system-clipboard-put
 zle       -N   backward-delete-word-shell
 zle       -N   backward-delete-word-vscode
 
@@ -103,6 +106,8 @@ bindkey '^[^J'    self-insert-unmeta                   # alt + ctrl + j
 
 bindkey '^x^e'    edit-command-line
 bindkey '^[.'     insert-last-word                     # alt+. (bash !$)
+
+bindkey '^V'      system-clipboard-put
 
 return
 

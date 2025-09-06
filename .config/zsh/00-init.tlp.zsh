@@ -1,18 +1,14 @@
-setopt AUTO_CD INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY NOFLOWCONTROL
+setopt INTERACTIVE_COMMENTS HIST_FCNTL_LOCK HIST_IGNORE_ALL_DUPS SHARE_HISTORY NOFLOWCONTROL
 unsetopt AUTO_REMOVE_SLASH HIST_EXPIRE_DUPS_FIRST EXTENDED_HISTORY FLOWCONTROL
 KEYTIMEOUT=10
-DIRSTACKSIZE=20
 
 # p10k
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
 	source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-fpath=(${ZDOTDIR}/functions $fpath)
-
 HAS_FZF=$+commands[fzf]
 HAS_ZOXIDE=$+commands[zoxide]
-HAS_WIN32YANK=$+commands[win32yank.exe]
 HAS_NALA=$+commands[nala]
 HAS_LSD=$+commands[lsd]
 HAS_EZA=$+commands[eza]
@@ -40,24 +36,6 @@ if [[ $USE_OMZ == true ]] {
 	)
 	source $ZSH/oh-my-zsh.sh
 	return
-}
-
-typeset -a PLUGIN_PATHS=(
-	"${ZDOTDIR}/plugins/custom"
-	"/usr/share/zsh/plugins"
-	"/usr/share"
-)
-typeset -a PLUGINS=(
-	zsh-autosuggestions
-	zsh-syntax-highlighting
-	zsh-vi-mode
-	zsh-no-ps2
-)
-for plugin (${PLUGINS[@]}) {
-	for plugin_file (${^PLUGIN_PATHS}/$plugin/$plugin.plugin.zsh(N)) {
-		source $plugin_file
-		break
-	}
 }
 
 source ${ZDOTDIR}/p10k-classic.zsh
