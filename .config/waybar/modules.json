@@ -115,6 +115,16 @@
 		"exec": "~/.config/hypr/scripts/hypridle.sh status",
 		"on-click": "~/.config/hypr/scripts/hypridle.sh toggle"
 	},
+	"custom/brightness": {
+		"exec": "ddcutil -b 18 getvcp 10 -t | perl -nE 'if (/ C (\\d+) /) { say $1; }'",
+		"format": "{}% {icon}",
+		"format-icons": [
+			""
+		],
+		"interval": "once",
+		"on-scroll-up": "ddcutil -b 18 setvcp 10 + 10",
+		"on-scroll-down": "ddcutil -b 18 setvcp 10 - 10"
+	},
 	"keyboard-state": {
 		"numlock": true,
 		"capslock": true,
@@ -136,7 +146,7 @@
 		"tooltip": false
 	},
 	"custom/system": {
-		"format": "",
+		"format": "",
 		"tooltip": false
 	},
 	"custom/settings": {
