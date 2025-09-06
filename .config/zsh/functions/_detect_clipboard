@@ -1,0 +1,105 @@
+emulate -L zsh
+
+if [[ "${OSTYPE}" == darwin* ]] && (( ${+commands[pbcopy]} )); then
+	_cp_backend_copy() { pbcopy; }
+	_cp_backend_paste() { pbpaste; }
+elif (( ${+commands[win32yank]} )); then
+	_cp_backend_copy() { win32yank -i --lf; }
+	_cp_backend_paste() { win32yank -o --lf; }
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && (( ${+commands[wl-copy]} )); then
+	_cp_backend_copy() { wl-copy &>/dev/null &|; }
+	_cp_backend_paste() { wl-paste --no-newline; }
+elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xsel]} )); then
+	_cp_backend_copy() { xsel --clipboard --input; }
+	_cp_backend_paste() { xsel --clipboard --output; }
+elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xclip]} )); then
+	_cp_backend_copy() { xclip -selection clipboard -in &>/dev/null &|; }
+	_cp_backend_paste() { xclip -selection clipboard -out; }
+elif [ -n "${TMUX:-}" ] && (( ${+commands[tmux]} )); then
+	_cp_backend_copy() { tmux load-buffer "${1:--}"; }
+	_cp_backend_paste() { tmux save-buffer -; }
+else
+	function _retry_clipboard_detection_or_fail() {
+		local clipcmd="${1}"; shift
+		if _detect_clipboard; then
+			"${clipcmd}" "$@"
+		else
+			print "${clipcmd}: Platform $OSTYPE not supported or xclip/xsel not installed" >&2
+			return 1
+		fi
+	}
+	function cpcopy() { _retry_clipboard_detection_or_fail cpcopy "$@"; }
+	function cpaste() { _retry_clipboard_detection_or_fail cpaste "$@"; }
+	return 1
+fi
+
+unfunction _detect_clipboard
+
+function cpaste() {
+	_cp_backend_paste "$@"
+}
+
+if [[ -n "$TMUX" && -n "$SSH_CLIENT$SSH_TTY$SSH_CONNECTION" ]]; then
+	function cpcopy() {
+		local threshold=1048576 # 1MB
+		if [[ -f "$1" ]]; then
+			_cp_backend_copy "$1"
+			tmux load-buffer - < "$1"
+			printf "\033]52;c;%s\a" "$(head -c 74994 -- "$1" | base64 | tr -d '\r\n')"
+		else
+			local chunk="$(head -c $((threshold + 1)))"
+			if (( ${#chunk} <= threshold )); then
+				[[ -z "$chunk" ]] && return 0
+				print -rn -- "$chunk" | _cp_backend_copy
+				print -rn -- "$chunk" | tmux load-buffer -
+				printf "\033]52;c;%s\a" "$(print -rn -- "$chunk" | base64 | tr -d '\r\n')"
+			else
+				local tmpfile="$(mktemp 2>/dev/null || mktemp -t "c.XXXXXX")" || return 1
+				trap "rm -f -- \"\$tmpfile\"" EXIT INT TERM HUP
+				(print -rn -- "$chunk"; cat) > "$tmpfile"
+				_cp_backend_copy "$tmpfile"
+				tmux load-buffer - < "$tmpfile"
+				printf "\033]52;c;%s\a" "$(head -c 74994 -- "$tmpfile" | base64 | tr -d '\r\n')"
+			fi
+		fi
+		}
+	return 0
+fi
+
+if [[ -n "$SSH_CLIENT$SSH_TTY$SSH_CONNECTION" ]]; then
+	function cpcopy() {
+		local threshold=1048576
+		if [[ -f "$1" ]]; then
+			_cp_backend_copy "$1"
+			printf "\033]52;c;%s\a" "$(head -c 74994 -- "$1" | base64 | tr -d '\r\n')"
+		else
+			local chunk="$(head -c $((threshold + 1)))"
+			if (( ${#chunk} <= threshold )); then
+				[[ -z "$chunk" ]] && return 0
+				print -rn -- "$chunk" | _cp_backend_copy
+				printf "\033]52;c;%s\a" "$(print -rn -- "$chunk" | base64 | tr -d '\r\n')"
+			else
+				local tmpfile="$(mktemp 2>/dev/null || mktemp -t "c.XXXXXX")" || return 1
+				trap "rm -f -- \"\$tmpfile\"" EXIT INT TERM HUP
+				(print -rn -- "$chunk"; cat) > "$tmpfile"
+				_cp_backend_copy "$tmpfile"
+				printf "\033]52;c;%s\a" "$(head -c 74994 -- "$tmpfile" | base64 | tr -d '\r\n')"
+			fi
+		fi
+	}
+	return 0
+fi
+
+if [[ -n "$TMUX" ]]; then
+	function cpcopy() {
+		cat -- "${1:-/dev/stdin}" | _cp_backend_copy
+		tmux load-buffer "${1:--}"
+	}
+	return 0
+fi
+
+function cpcopy() {
+	cat -- "${1:-/dev/stdin}" | _cp_backend_copy
+}
+
+return 0

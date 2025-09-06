@@ -1,10 +1,5 @@
 ## 40-aliases.zsh
 
-alias ..="cd .."
-alias ...="cd ../.."
-alias ~="cd ~"
-alias -- -="cd -"
-
 alias c='clear'
 alias ff='fastfetch'
 alias shutdown='systemctl poweroff'
@@ -47,11 +42,6 @@ alias kkreboot="qdbus org.kde.Shutdown /Shutdown logoutAndReboot"
 alias kkshutdown="qdbus org.kde.Shutdown /Shutdown logoutAndShutdown"
 
 
-if (( HAS_WIN32YANK )); then
-	alias pbcopy='win32yank.exe -i --crlf'
-	alias pbpaste='win32yank.exe -o --lf'
-fi
-
 # enable aliases in sudo
 alias sudo='sudo '
 # let sudo inherit the PATH
@@ -60,13 +50,11 @@ alias sudop='command sudo env PATH="$PATH"'
 alias proxychains='proxychains '
 alias proxychains4='proxychains4 '
 
-# 优化 nala 别名
 if (( HAS_NALA )); then
 	alias apt="nala"
 	alias nala="sudo nala"
 fi
 
-# 先检测并设置 dircolors，为所有支持的命令设置颜色输出
 if (( HAS_DIRCOLORS )); then
 	# builtin test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 	alias grep='grep --color=auto'
@@ -76,34 +64,32 @@ if (( HAS_DIRCOLORS )); then
 	alias dir='dir --color=auto'
 	alias vdir='vdir --color=auto'
 	alias ip='ip --color=auto'
-	alias ls='ls --color=auto'
-	alias l='ls -CF --color=auto'
-	alias ll='ls -alF --color=auto'
-	alias la='ls -A --color=auto'
+	alias ls='ls --color=auto --hyperlink=auto'
+	alias l='ls -Fh --color=auto --hyperlink=auto'
+	alias ll='ls -lAFh --color=auto --hyperlink=auto'
+	alias la='ls -AFh --color=auto --hyperlink=auto'
 fi
 
 if (( HAS_LSD )); then
 	alias ls="lsd --date +%Y%m%d' '%H:%M"
-	alias l="lsd -AF"
-	alias ll="lsd -alF"
-	alias la="lsd -A"
+	alias l="lsd --date +%Y%m%d' '%H:%M"
+	alias ll="lsd -Al --date +%Y%m%d' '%H:%M"
+	alias la="lsd -A --date +%Y%m%d' '%H:%M"
 	alias tree="lsd --tree"
 fi
 
 if (( HAS_EZA )); then
-	alias l="eza -a --icons --group-directories-first"
-	alias ll="eza -al --icons --group-directories-first"
-	alias tree="eza --tree --icons --group-directories-first"
-	alias ld="eza -lD"                                         # lists only directories
-	alias lf="eza -lF --color=always | grep -v /"              # lists only files (no directories)
+	alias l="eza -a --icons --group-directories-first --hyperlink"
+	alias ll="eza -al --icons --group-directories-first --hyperlink"
+	alias tree="eza --tree --icons --group-directories-first --hyperlink"
+	alias ld="eza -lD --icons --hyperlink"                                         # lists only directories
+	alias lf="eza -lf --icons --hyperlink"              # lists only files (no directories)
 	alias gs=eza_gs
 fi
 
 if (( HAS_TRASH_PUT )); then
-	alias rm='echo "You should not use rm directly, use trash-put instead." && rm -I'
+	alias rm='echo "You should not use rm directly, use trash-put instead."'
 	alias trm="trash-put"
-	alias tls="trash-list"
-	alias trs="trash-restore"
 fi
 
 if (( HAS_BAT )); then
@@ -112,4 +98,3 @@ if (( HAS_BAT )); then
 fi
 
 alias update-grub='grub-mkconfig -o /boot/grub/grub.cfg'
-alias startlp='sudo systemctl start tlp.service'

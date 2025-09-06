@@ -114,7 +114,11 @@ if [ -n "$BASH_VERSION" ] || [ -n "ZSH_VERSION" ]; then
 		shift # Remaining arguments are values to add
 
 		# Get current value of the environment variable using indirect expansion
-		current_val="${!env_name}"
+		if [ -n "$ZSH_VERSION" ]; then
+			current_val="${(P)env_name}"
+		else
+			current_val="${!env_name}"
+		fi
 
 		# Process all values to be added
 		for value_to_add in "$@"; do
@@ -250,7 +254,6 @@ else
 		printf 'export %s="%s"\n' "$_add_env_name" "$_add_env_current" >"$_add_env_tmpfile"
 		. "$_add_env_tmpfile"
 		rm -f "$_add_env_tmpfile"
-		# 清理变量
 		unset _add_env_mode _add_env_sep _add_env_name _add_env_current _add_env_value _add_env_temp _add_env_tmpfile
 	}
 fi

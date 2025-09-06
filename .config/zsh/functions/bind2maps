@@ -14,6 +14,7 @@ widget="$2"
 
 [[ -z "$sequence" && "$1" == '^'* ]] && sequence="$1"
 # [[ -z "$sequence" ]] && { printf "bind2maps: unknown key: %s\n" "$1"; return 1; }
+[[ -z "$sequence" ]] && return
 
 for i ( ${maps[@]} ) {
 	bindkey -M "$i" "$sequence" "$widget"

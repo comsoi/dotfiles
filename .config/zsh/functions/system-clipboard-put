@@ -1,0 +1,32 @@
+emulate -L zsh
+
+local CLIPBOARD
+# Get clipboard content, handling potential trailing newlines
+CLIPBOARD="$(cpaste; printf '%s' x)"
+CLIPBOARD="${CLIPBOARD%x}"
+
+local RBUFFER_UNTIL_LINE_END="${RBUFFER%%$'\n'*}"
+
+# Handle line-wise paste if the clipboard ends with a newline
+if [[ "${CLIPBOARD[${#CLIPBOARD}]}" == $'\n' ]]; then
+	# If the cursor is on the last line of the buffer, add a leading newline to the paste
+	if [[ "${RBUFFER_UNTIL_LINE_END}" == "${RBUFFER}" ]]; then
+		CLIPBOARD=$'\n'"${CLIPBOARD%%$'\n'}"
+	fi
+	# Move the cursor to the beginning of the next line for the paste
+	CURSOR="$(( ${CURSOR} + ${#RBUFFER_UNTIL_LINE_END} ))"
+fi
+
+# Modify the buffer. This logic correctly handles pasting after a character
+# when mid-line, or at the end of the line.
+if [[ ${#RBUFFER_UNTIL_LINE_END} != "0" ]]; then
+	# Paste after the character under the cursor (mid-line)
+	BUFFER="${BUFFER:0:$(( ${CURSOR} + 1 ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} + 1 ))}"
+else
+	# Paste at the cursor position (end of line)
+	BUFFER="${BUFFER:0:$(( ${CURSOR} ))}${CLIPBOARD}${BUFFER:$(( ${CURSOR} ))}"
+fi
+
+# Update the cursor position. $#LBUFFER is the cursor's position before
+# the modification. This places the cursor after the pasted text.
+CURSOR=$(( $#LBUFFER + $#CLIPBOARD ))
