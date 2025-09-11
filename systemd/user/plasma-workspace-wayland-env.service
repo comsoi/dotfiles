@@ -1,0 +1,7 @@
+[Unit]
+Description=Unset Qt variables for Plasma Wayland
+Before=plasma-workspace-wayland.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user unset-environment QT_QPA_PLATFORMTHEME QT_IM_MODULE
