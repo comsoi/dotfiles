@@ -76,7 +76,7 @@
 				},
 				{
 					"label": "",
-					"command": "bash -c $HOME/.config/hypr/scripts/wlogout.sh"
+					"command": "$HOME/.config/wlogout/start.sh"
 				}
 			]
 		}

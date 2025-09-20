@@ -1,6 +1,7 @@
 {
 	"layer": "top",
-	"margin-top": 10,
+	// "margin-top": 10,
+	"margin-top": 6,
 	"margin-bottom": 0,
 	"margin-left": 14,
 	"margin-right": 14,

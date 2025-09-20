@@ -1,11 +1,10 @@
 #!/bin/bash
 
-if systemctl --user is-active --quiet waybar.service; then
-	pkill xembedsniproxy
-	# systemctl --user stop waybar.service
-	kill -SIGUSR1 $(pidof waybar)
+kill -SIGUSR1 $(pidof waybar)
+
+# XEMBED support
+if systemctl --user is-active --quiet plasma-xembedsniproxy.service; then
+	systemctl --user stop plasma-xembedsniproxy.service
 else
-	# systemctl --user start waybar.service
-	kill -SIGUSR1 $(pidof waybar)
-	exec uwsm app -- /usr/bin/xembedsniproxy
+	systemctl --user start plasma-xembedsniproxy.service
 fi

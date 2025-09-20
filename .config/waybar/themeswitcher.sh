@@ -50,6 +50,11 @@ if [ "$choice" ]; then
 	echo "Loading waybar theme..."
 	mkdir -p ~/.local/state/waybar
 	echo "${listThemes[$choice + 1]}" >~/.local/state/waybar/waybar-theme
-	systemctl --user restart waybar.service
+
+	if systemctl --user is-active --quiet waybar.service; then
+		echo "Restarting waybar..."
+		systemctl --user reload-or-restart waybar.service
+	fi
 	notify-send "Waybar Theme changed" "to ${array[$choice]}"
+
 fi

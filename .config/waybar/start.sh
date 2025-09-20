@@ -37,10 +37,7 @@ style_path="$HOME/.config/waybar/themes${style_theme}/$style_file"
 
 # Check if waybar-disabled file exists
 echo ":: Starting Waybar with config $config_path and style $style_path"
-# Use 'exec' to replace the current script process with the waybar process.
-# This is important for systemd to correctly track waybar as the main process
-# uwsm app -- likely handles setting up the Wayland environment correctly and
-# should also exec the command, keeping it in the foreground relative to systemd.
+
 exec /usr/bin/waybar -c "$config_path" -s "$style_path"
-# If exec fails (e.g., command not found)
+
 exit 1
