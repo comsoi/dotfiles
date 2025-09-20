@@ -107,13 +107,10 @@ fi
 echo ":: Execute pywal with $used_wallpaper"
 wal -q -s -i "$used_wallpaper"
 
-if systemctl --user is-active --quiet waybar.service; then
-	systemctl --user restart waybar.service
-fi
+systemctl --user reload waybar.service swaync.service
 
 pywalfox update
 
-swaync-client -rs
 
 # -----------------------------------------------------
 # Created blurred wallpaper

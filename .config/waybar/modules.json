@@ -59,7 +59,7 @@
 	},
 	"custom/wallpaper": {
 		"format": "",
-		"on-click": "bash -c waypaper &",
+		"on-click": "waypaper",
 		"on-click-right": "~/.config/hypr/scripts/wallpaper-effects.sh",
 		"tooltip-format": "Left: Select a wallpaper\nRight: Select wallpaper effect"
 	},
@@ -70,15 +70,15 @@
 	},
 	"custom/appmenu": {
 		"format": "Apps",
-		"on-click": "sleep 0.2;pkill rofi || rofi -show drun -replace",
+		"on-click": "pkill rofi || rofi -show drun -replace -i -run-command \"uwsm-app -- {cmd}\"",
 		"on-scroll-up": "hyprctl dispatch workspace r-1",
 		"on-scroll-down": "hyprctl dispatch workspace r+1",
 		"tooltip-format": "Left: Open the application launcher"
 	},
 	"custom/exit": {
 		"format": "",
-		"on-click": "~/.config/hypr/scripts/wlogout.sh",
-		"on-click-right": "hyprlock",
+		"on-click": "~/.config/wlogout/start.sh",
+		"on-click-right": "runapp hyprlock || hyprlock",
 		"tooltip-format": "Left: Power menu\nRight: Lock screen"
 	},
 	"custom/notification": {
@@ -113,7 +113,8 @@
 		"exec-on-event": true,
 		"interval": 60,
 		"exec": "~/.config/hypr/scripts/hypridle.sh status",
-		"on-click": "~/.config/hypr/scripts/hypridle.sh toggle"
+		"on-click": "~/.config/hypr/scripts/hypridle.sh toggle",
+		"on-click-right": "runapp hyprlock || hyprlock"
 	},
 	"custom/brightness": {
 		"exec": "ddcutil -b 18 getvcp 10 -t | perl -nE 'if (/ C (\\d+) /) { say $1; }'",
@@ -141,7 +142,7 @@
 	"clock": {
 		"format": "{:%H:%M %a}",
 		"on-click": "swaync-client -t -sw",
-		"on-click-right": "gnome-calendar",
+		"on-click-right": "flatpak run org.gnome.Calendar",
 		"timezone": "",
 		"tooltip": false
 	},
@@ -168,7 +169,7 @@
 		"on-click": "missioncenter"
 	},
 	"hyprland/language": {
-		"format": "/ K {short}"
+		"format": "/ KB {short}"
 	},
 	"group/hardware": {
 		"orientation": "inherit",
@@ -201,7 +202,8 @@
 		},
 		"modules": [
 			"custom/tools",
-			"custom/hyprshade"
+			"custom/hyprshade",
+			"custom/hypridle"
 		]
 	},
 	"group/settings": {
@@ -227,8 +229,7 @@
 		"tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
 		"tooltip-format-disconnected": "Disconnected",
 		"max-length": 50,
-		"on-click": "nm-connection-editor",
-		"on-click-right": "~/.config/hypr/scripts/nm-applet.sh toggle"
+		"on-click": "nm-connection-editor"
 	},
 	"battery": {
 		"states": {
