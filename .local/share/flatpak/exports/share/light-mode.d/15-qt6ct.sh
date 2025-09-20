@@ -8,9 +8,10 @@ NEW_WIDGET_STYLE="Darkly"
 NEW_COLOR_SCHEME="GraphiteNordLight"
 NEW_ICON_THEME="Tela-light"
 NEW_WIDGET_STYLE="kvantum"
+NEW_KVANTUM_THEME="ColloidNord"
 
 apply_theme_configuration \
-	"$(check_color_scheme "$NEW_COLOR_SCHEME")" \
-	"$(check_icon_theme "$NEW_ICON_THEME")" \
-	"$(check_widget_style "$NEW_WIDGET_STYLE")"
-
+	--color "$NEW_COLOR_SCHEME" \
+	--icon "$NEW_ICON_THEME" \
+	--style "$NEW_WIDGET_STYLE"
+kvantummanager --set "$NEW_KVANTUM_THEME"
