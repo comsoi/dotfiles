@@ -22,7 +22,6 @@ zle       -N   backward-delete-word-vscode
 # autoload  -Uz  select-word-style
 # select-word-style bash
 
-# bindkey -rM viins '^['
 bindkey -M  viins '^X^[' vi-cmd-mode
 
 # https://www.reddit.com/r/zsh/comments/eblqvq/comment/fb7337q/
@@ -91,7 +90,7 @@ bindkey '^P'      up-line-or-beginning-search          # ctrl + p
 bindkey '^N'      down-line-or-beginning-search        # ctrl + n
 # search
 bindkey '^R'      history-incremental-search-backward  # ctrl + r
-bindkey '^S'      history-incremental-search-forward   # ctrl + s
+# bindkey '^S'      history-incremental-search-forward   # ctrl + s
 bindkey '^Q'      push-line-or-edit                    # ctrl + q
 # delete
 bindkey '^U'      kill-whole-line                      # ctrl + u (bash ^A^K)
