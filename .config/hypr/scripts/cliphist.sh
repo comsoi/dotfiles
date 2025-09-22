@@ -19,6 +19,7 @@ w)
 	;;
 
 *)
-	cliphist list | rofi -dmenu -replace -config ~/.config/rofi/config-cliphist.rasi | cliphist decode | wl-copy
+	# cliphist list | rofi -dmenu -replace -config ~/.config/rofi/config-cliphist.rasi | cliphist decode | wl-copy
+	~/.config/hypr/scripts/cliphist-rofi-img.sh | rofi -dmenu -replace -display-columns 2 -config ~/.config/rofi/config-cliphist.rasi | cliphist decode | wl-copy
 	;;
 esac
