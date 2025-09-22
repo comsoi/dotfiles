@@ -102,6 +102,8 @@ sudo-command-line() {
 
 zle -N sudo-command-line
 
+# remove the default binding of [Esc] for zsh-vi-mode
+bindkey -rM viins '\e'
 # Defined shortcut keys: [Esc] [Esc]
 bindkey -M emacs '\e\e' sudo-command-line
 bindkey -M vicmd '\e\e' sudo-command-line

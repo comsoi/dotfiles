@@ -21,6 +21,7 @@ function zvm_config {
 	ZVM_ESCAPE_KEYTIMEOUT=0.10
 	ZVM_VI_INSERT_ESCAPE_BINDKEY="jj"
 	ZVM_INIT_MODE='sourcing'
+	ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 }
 
 if [[ $USE_OMZ == true ]] {
