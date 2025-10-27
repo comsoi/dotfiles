@@ -38,7 +38,7 @@ file_names=(
 	".config/wal"
 	".config/waybar"
 	".config/waypaper"
-	".config/wlogout"
+	".config/wleave"
 	".config/nwg-dock-hyprland"
 
 )

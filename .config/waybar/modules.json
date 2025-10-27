@@ -77,7 +77,7 @@
 	},
 	"custom/exit": {
 		"format": "",
-		"on-click": "~/.config/wlogout/start.sh",
+		"on-click": "wleave",
 		"on-click-right": "runapp hyprlock || hyprlock",
 		"tooltip-format": "Left: Power menu\nRight: Lock screen"
 	},
