@@ -1,7 +1,16 @@
 [Unit]
 Description=Unset Qt variables for Plasma Wayland
-Before=plasma-workspace-wayland.target
+Before=graphical-session-pre.target
+# we can use `systemctl --user --reverse list-dependencies` to analyze dependencies
+Before=plasma-ksmserver.service
+Before=plasma-kcminit.service
+Before=plasma-kwin_wayland.service
+Before=plasma-core.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/systemctl --user unset-environment QT_QPA_PLATFORMTHEME QT_IM_MODULE
+ExecStart=/usr/bin/kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle --delete
+ExecStart=/usr/bin/systemctl --user unset-environment QT_QPA_PLATFORMTHEME QT_IM_MODULE QT_WAYLAND_DISABLE_WINDOWDECORATION
+
+[Install]
+WantedBy=plasma-workspace-wayland.target
