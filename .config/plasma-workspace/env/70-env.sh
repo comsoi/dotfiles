@@ -1,6 +1,4 @@
-# 70-env.sh
-
-# export QT_ENABLE_HIGHDPI_SCALING=1
+#!/bin/sh
 
 if [ -f /etc/systemd/system/display-manager.service ]; then
 	DM_NAME=$(basename "$(readlink -f /etc/systemd/system/display-manager.service)")
