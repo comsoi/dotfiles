@@ -15,7 +15,7 @@ NAME="screenshot_$(date +%Y%m%d_%H%M%S).jpg"
 SCREENSHOT_FOLDER="$(xdg-user-dir PICTURES)/Screenshots"
 
 # Screenshot Editor
-export GRIMBLAST_EDITOR="pinta"
+export GRIMBLAST_EDITOR="satty -f"
 
 # Example for keybindings
 # bind = SUPER, p, exec, grimblast save active
