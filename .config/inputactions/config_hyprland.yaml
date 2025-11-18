@@ -1,0 +1,63 @@
+touchpad:
+  gestures:
+    - type: swipe
+      gestures:
+        - fingers: 2
+          gestures:
+            # 音量控制（右侧边缘）
+            - direction: up_down
+              conditions:
+                - $finger_1_initial_position_percentage_x >= 0.9
+                - $finger_2_initial_position_percentage_x >= 0.85
+              actions:
+                - on: update
+                  interval: 15
+                  input:
+                    - keyboard: [volumedown]
+                - on: update
+                  interval: -15
+                  input:
+                    - keyboard: [volumeup]
+            # 亮度控制（左侧边缘）
+            - direction: up_down
+              conditions:
+                - $finger_1_initial_position_percentage_x <= 0.1
+                - $finger_2_initial_position_percentage_x <= 0.15
+              actions:
+                - on: update
+                  interval: 15
+                  input:
+                    - keyboard: [brightnessdown]
+                - on: update
+                  interval: -15
+                  input:
+                    - keyboard: [brightnessup]
+    - type: stroke
+      gestures:
+      - fingers: 3
+        # conditions:
+        #   - any:
+        #     - $keyboard_modifiers != [meta]
+        #     - $keyboard_modifiers != [alt]
+        #     - $keyboard_modifiers != [meta,alt]
+        gestures:
+          - strokes: 'BQAAMQVgNAFeZGQA'
+            actions:
+              - command: hyprctl dispatch killactive
+          - strokes: 'MQoAMTFkL88yAGQA'
+            actions:
+              - command: runapp dolphin || dolphin
+
+mouse:
+  gestures:
+    - type: stroke
+      mouse_buttons: [right]
+      conditions:
+        - $keyboard_modifiers == alt
+      gestures:
+        - strokes: 'MQoAMTFkL88yAGQA'
+          actions:
+            - command: runapp dolphin || dolphin
+        - strokes: 'BQAAMQVgNAFeZGQA'
+          actions:
+            - command: hyprctl dispatch killactive
