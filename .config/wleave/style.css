@@ -17,6 +17,7 @@
 window {
 	background: url("../../.local/state/wallpaper/blurred_wallpaper.png");
 	background-size: cover;
+	background-position: center;
 	font-size: 16pt;
 	color: #cdd6f4;
 }
