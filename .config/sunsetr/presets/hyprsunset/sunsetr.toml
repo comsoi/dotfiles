@@ -1,0 +1,8 @@
+backend = "hyprsunset"
+transition_mode = "geo"
+
+night_temp =4000
+day_temp = 6500
+night_gamma = 90
+day_gamma = 100
+update_interval = 60
