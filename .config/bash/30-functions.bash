@@ -2,23 +2,15 @@
 # ~/.bash_functions
 #
 
-# Some example functions:
-#
-# a) function settitle
-# settitle ()
-# {
-#   echo -ne "\e]2;$@\a\e]1;$@\a";
-# }
-#
-# b) function cd_func
-# This function defines a 'cd' replacement function capable of keeping,
-# displaying and accessing history of visited directories, up to 10 entries.
-# To use it, uncomment it, source this file and try 'cd --'.
-# acd_func 1.0.5, 10-nov-2004
-# Petar Marinov, http:/geocities.com/h2428, this is public domain
+if [[ -n "$BASH_VERSION" ]]; then
+	EXTGLOB_WAS_ON=$(shopt -q extglob)
+	shopt -s extglob
+fi
+
 function mkcd {
 	mkdir -p -- "$1" && cd -- "$1"
 }
+
 function packages-by-date {
 	env LC_ALL=C pacman -Qi |
 		grep '^\(Name\|Install Date\)\s*:' |
@@ -77,12 +69,12 @@ function tmux {
 					break
 				fi
 			fi
-		done < <(command tmux list-panes -s -F '#{window_id} #{pane_id} #{pane_current_path} #{pane_current_command}' 2> /dev/null)
+		done < <(command tmux list-panes -s -F '#{window_id} #{pane_id} #{pane_current_path} #{pane_current_command}' 2>/dev/null)
 
 		if $found_pane; then
 			command tmux attach-session
 		else
-			command tmux new-window > /dev/null 2>&1
+			command tmux new-window >/dev/null 2>&1
 			command tmux new-session -A
 		fi
 	else
@@ -178,6 +170,45 @@ function gpr {
 	fi
 
 	git checkout -b "pr-$(openssl rand -hex 4)"
+}
+
+extract() {
+	local c e i
+
+	(($#)) || return
+
+	for i; do
+		c=''
+		e=1
+
+		if [[ ! -r $i ]]; then
+			echo "$0: file is unreadable: \`$i'" >&2
+			continue
+		fi
+
+		case $i in
+		*.t@(gz|lz|xz|b@(2|z?(2))|a@(z|r?(.@(Z|bz?(2)|gz|lzma|xz|zst)))))
+			c=(bsdtar xvf)
+			;;
+		*.7z) c=(7z x) ;;
+		*.Z) c=(uncompress) ;;
+		*.bz2) c=(bunzip2) ;;
+		*.exe) c=(cabextract) ;;
+		*.gz) c=(gunzip) ;;
+		*.rar) c=(unrar x) ;;
+		*.xz) c=(unxz) ;;
+		*.zip) c=(unzip) ;;
+		*.zst) c=(unzstd) ;;
+		*)
+			echo "$0: unrecognized file extension: \`$i'" >&2
+			continue
+			;;
+		esac
+
+		command "${c[@]}" "$i"
+		((e = e || $?))
+	done
+	return "$e"
 }
 
 function __get_model {
@@ -286,3 +317,7 @@ function setproxy {
 	export no_proxy="172.31.*,172.30.*,172.29.*,172.28.*,172.27.*,172.26.*,172.25.*,172.24.*,172.23.*,172.22.*,172.21.*,172.20.*,172.19.*,172.18.*,172.17.*,172.16.*,10.*,192.168.*,127.*,localhost,<local>"
 	echo "Proxy set to: $PROXY"
 }
+
+if [[ $EXTGLOB_WAS_ON -ne 0 && -n "$BASH_VERSION" ]]; then
+	shopt -u extglob
+fi
