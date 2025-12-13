@@ -3,6 +3,10 @@
 alias c='clear'
 alias ff='fastfetch'
 alias shutdown='systemctl poweroff'
+alias sdenv='systemctl show-environment'
+alias sc='systemctl'
+alias scu='systemctl --user'
+alias logintu="loginctl terminate-user $UID"
 alias v='$EDITOR'
 
 alias gs="git status"

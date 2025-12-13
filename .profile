@@ -19,6 +19,7 @@ if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
 	fi
 	export QT_QPA_PLATFORMTHEME=qt5ct
 	export QT_WAYLAND_DECORATION=adwaita
+	crudini --set ~/.config/qt6ct/qt6ct.conf Appearance standard_dialogs xdgdesktopportal
 fi
 
 if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
