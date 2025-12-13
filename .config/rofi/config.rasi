@@ -14,7 +14,6 @@ configuration {
     me-select-entry:            "";
     me-accept-entry:            "MousePrimary";
     window-format:              "{w} · {c} · {t}";
-    
 }
 
 /* ---- Load font ---- */
