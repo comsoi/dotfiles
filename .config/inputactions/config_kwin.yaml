@@ -165,6 +165,17 @@ mouse:
     - type: wheel
       direction: up_down
       conditions:
+        - $keyboard_modifiers == [meta,shift]
+      actions:
+        - on: update
+          interval: '+'
+          plasma_shortcut: kwin,Window to Next Desktop
+        - on: update
+          interval: '-'
+          plasma_shortcut: kwin,Window to Previous Desktop
+    - type: wheel
+      direction: up_down
+      conditions:
         - $keyboard_modifiers == [meta,alt]
       actions:
         - on: update
