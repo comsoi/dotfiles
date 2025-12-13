@@ -15,6 +15,10 @@ if [[ "$1" == "exit" ]]; then
 		hyprctl dispatch exit
 		exit
 	fi
+	if [[ $LABWC_VER ]]; then
+		labwc -e
+		exit
+	fi
 	uwsm stop
 	exit
 fi

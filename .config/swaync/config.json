@@ -21,8 +21,8 @@
 	"timeout-critical": 5,
 	"fit-to-screen": true,
 	"relative-timestamps": true,
-	"control-center-width": 400,
-	"control-center-height": 600,
+	"control-center-width": 420,
+	"control-center-height": 680,
 	"notification-window-width": 370,
 	"keyboard-shortcuts": true,
 	"notification-grouping": true,
@@ -65,10 +65,6 @@
 		},
 		"dnd": {
 			"text": "Do Not Disturb"
-		},
-		"label": {
-			"max-lines": 5,
-			"text": "Label Text"
 		},
 		"mpris": {
 			"blacklist": [],
@@ -116,13 +112,13 @@
 					"label": "",
 					"type": "toggle",
 					"command": "if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then systemctl --user start sunsetr.service ; else systemctl --user stop sunsetr.service ; fi",
-					"update-command": "pgrep -x hyprsunset >/dev/null && echo true || echo false"
+					"update-command": "systemctl --user --quiet is-active sunsetr.service && echo true || echo false"
 				},
 				{
 					"label": "",
 					"type": "toggle",
-					"command": "if [ \"$SWAYNC_TOGGLE_STATE\" = \"true\" ]; then systemctl --user start hypridle.service; else systemctl --user stop hypridle.service; fi",
-					"update-command": "pgrep -x hypridle >/dev/null && echo true || echo false"
+					"command": "if [ \"$SWAYNC_TOGGLE_STATE\" = \"false\" ]; then systemctl --user start hypridle.service; else systemctl --user stop hypridle.service; fi",
+					"update-command": "systemctl --user --quiet is-active hypridle.service && echo false || echo true"
 				}
 			]
 		}
