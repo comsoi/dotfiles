@@ -4,9 +4,7 @@ local M = {}
 local light_theme = nil
 local dark_theme = nil
 
-function M.scheme_for_appearance(appearance, config, force)
-	force = force or false
-	-- force = true
+function M.scheme_for_appearance(appearance, config)
 	-- color_scheme
 	-- t = "Catppuccin Frappe"
 	-- t = "Catppuccin Latte"
@@ -16,19 +14,13 @@ function M.scheme_for_appearance(appearance, config, force)
 	-- t = "Tokyo Night Light (Gogh)"
 	-- t = "Horizon Bright (Gogh)"
 	-- t = "Brush Trees (base16)"
-
-	if force then
-		local t = ""
-		return t
-	end
-
 	if appearance:find("Light") then
-		light_theme = "Tokyo Night Day"
-		config.text_min_contrast_ratio = 1.7
+		light_theme = "Catppuccin Frappe"
+		config.text_min_contrast_ratio = 1.25
 		return light_theme
 	end
 
-	dark_theme = "Catppuccin Macchiato"
+	dark_theme = "Catppuccin Mocha"
 	return dark_theme
 end
 

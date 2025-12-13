@@ -52,7 +52,7 @@ program = "/usr/bin/zsh"
 decorations = "none"
 dynamic_padding = true
 opacity = 0.85
-blur = true
+# blur = true
 # startup_mode = "Maximized"
 
 [window.dimensions]

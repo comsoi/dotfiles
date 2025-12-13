@@ -11,6 +11,7 @@
 	],
 	"modules-left": [
 		"custom/appmenu",
+		"sway/workspaces",
 		"hyprland/workspaces",
 		"group/links",
 		"wlr/taskbar",
