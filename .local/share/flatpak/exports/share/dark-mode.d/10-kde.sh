@@ -7,7 +7,10 @@
 # Since Plasma 5.26 the lookandfeeltool does not work anymore without "faking" the screen.
 # Reference: https://bugs.kde.org/show_bug.cgi?id=460643
 
-systemctl --user --quiet is-active plasma-plasmashell.service || [[ "$XDG_CURRENT_DESKTOP" == "KDE" ]] || exit 0
+if ! systemctl --user --quiet is-active plasma-workspace.target; then
+  kwriteconfig6 --file kdeglobals --group General --key accentColorFromWallpaper false
+  exit 0
+fi
 
 source "$(dirname "$(realpath "$0")")/../theme_functions.sh"
 
@@ -15,6 +18,7 @@ DESKTOP_THEME="Colloid-dark-nord"
 
 # COLOR_SCHEME="FlatRemixBlueDark"
 COLOR_SCHEME="ColloidDarkNord"
+COLOR_SCHEME="MaterialYouDark_darker_titlebar"
 
 WIDGET_STYLE="Darkly"
 

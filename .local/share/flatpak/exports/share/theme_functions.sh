@@ -22,11 +22,6 @@ get_color_scheme_path() {
 
 check_icon_theme() {
 	local theme="$1"
-	if [[ -z "$theme" ]]; then
-		echo "breeze"
-		return 1
-	fi
-
 	if [ -d "${XDG_DATA_HOME:-$HOME/.local/share}/icons/$theme" ] || [ -d "/usr/share/icons/$theme" ]; then
 		echo "$theme"
 		return 0
@@ -95,8 +90,7 @@ apply_theme_configuration() {
 	fi
 
 	local can_use_kwriteconfig=false
-	local platform_theme=$(systemctl --user show-environment 2>/dev/null | grep -oP '(?<=^QT_QPA_PLATFORMTHEME=).*' || echo "")
-	if [[ "$platform_theme" =~ ^qt[56]ct$ ]] && command -v kwriteconfig6 >/dev/null; then
+	if ! systemctl --user --quiet is-active plasma-workspace.target; then
 		can_use_kwriteconfig=true
 		echo "KDE Globals update enabled."
 	fi
