@@ -15,3 +15,4 @@ apply_theme_configuration \
 	--icon "$NEW_ICON_THEME" \
 	--style "$NEW_WIDGET_STYLE"
 kvantummanager --set "$NEW_KVANTUM_THEME"
+crudini --set ~/.config/qt6ct/qt6ct.conf Appearance custom_palette true
