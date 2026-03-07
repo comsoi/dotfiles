@@ -18,6 +18,6 @@ if ! systemctl --user --quiet is-enabled darkman.service; then
 	fi
 fi
 
-# inputactions reset
+# inputactions
 ln -srf "${XDG_CONFIG_HOME:-$HOME/.config}/inputactions/config_kwin.yaml" "${XDG_CONFIG_HOME:-$HOME/.config}/inputactions/config.yaml"
 

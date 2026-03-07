@@ -212,6 +212,21 @@ extract() {
 }
 
 function __get_model {
+	_unameOut=$(uname -a)
+	case "${_unameOut}" in
+	*Microsoft*) OS="WSL1" ;;
+	*microsoft*) OS="WSL2" ;;
+	Linux*) OS="Linux" ;;
+	Darwin*) OS="Mac" ;;
+	CYGWIN*) OS="Cygwin" ;;
+	MINGW*) OS="Windows" ;;
+	*Msys) OS="Windows" ;;
+	*) OS="UNKNOWN:${_unameOut}" ;;
+	esac
+
+	if [ "${OS}" = "Mac" ] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
+		OS="MacArm"
+	fi
 	case $OS in
 	Linux)
 		if [[ -d /system/app/ && -d /system/priv-app ]]; then

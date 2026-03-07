@@ -1,3 +1,5 @@
+export LANG=zh_CN.UTF-8
+export LANGUAGE=zh_CN:en_US:en
 
 trim_path() {
 	# PATH
@@ -18,11 +20,23 @@ cdw() {
 		echo "Failed to convert Windows path to WSL path"
 		return 1
 	fi
-	cd "$wsl_path" || { echo "Failed to change directory to $wsl_path"; return 1; }
+	cd "$wsl_path" || {
+		echo "Failed to change directory to $wsl_path"
+		return 1
+	}
 }
 
+case "$(uname -a)" in
+*Microsoft*)
+	export DISPLAY=:0
 
-if [[ ${OS} == "WSL2" ]] ; then
+	# start sshd
+	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
+	if [ -z "$is_sshd_running" ]; then
+		(sudo service ssh start >/dev/null)
+	fi
+	;;
+*microsoft*)
 	alias kg='env -u WAYLAND_DISPLAY DISPLAY=:1 LC_ALL=zh_CN.UTF-8 PWD=/home/wsl LIBGL_ALWAYS_SOFTWARE=1 /usr/sbin/dbus-launch startplasma-x11'
 	alias kde='env -u LIBGL_ALWAYS_SOFTWARE -u WAYLAND_DISPLAY DISPLAY=172.22.48.1:1 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib:/usr/local/lib LIBVA_DRIVER_NAME=d3d12 $(dbus-launch) startplasma-x11'
 	# vainfo mesa-va-drivers
@@ -31,20 +45,9 @@ if [[ ${OS} == "WSL2" ]] ; then
 	# export LIBGL_ALWAYS_SOFTWARE=1
 	export LIBVA_DRIVER_NAME=d3d12
 	# INTER: sudo ln -sf /usr/lib/libedit.so /usr/lib/libedit.so.2
-	fcitx5 --disable=wayland -d  --verbose '*'=0
-fi
-
-if [[ ${OS} == "WSL1" ]] ; then
-	export LANG=zh_CN.UTF-8
-	export LANGUAGE=zh_CN:en_US:en
-	export DISPLAY=:0
-
-	# ssh cannot be started until wsl has started
-	is_sshd_running=$(ps aux | grep sshd | grep -v grep)
-	if [ -z "$is_sshd_running" ]; then
-		(sudo service ssh start > /dev/null)
-	fi
-fi
+	fcitx5 --disable=wayland -d --verbose '*'=0
+	;;
+esac
 
 alias cmd='cmd.exe'
 alias powershell='powershell.exe'

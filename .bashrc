@@ -3,15 +3,9 @@
 
 BASH_COMPLETION_USER_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/bash:${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion:${BASH_COMPLETION_USER_DIR}"
 
-# Set language environment
 if [[ $(tty) == /dev/pts/* ]]; then
 	export LANG=zh_CN.UTF-8
 	export LANGUAGE=zh_CN:en_US:en
-elif [[ $(tty) == /dev/tty9 ]]; then
-	export LANG=zh_CN.UTF-8
-	export XDG_CURRENT_DESKTOP=GNOME
-	export QT_QPA_PLATFORMTHEME=qt5ct
-	export QT_WAYLAND_DECORATION=adwaita
 fi
 
 for file in ~/.config/bash/*.bash; do
