@@ -20,8 +20,8 @@ configuration {
 /* ---- Load font ---- */
 @import "./rofi-font.rasi"
 
-/* ---- Load pywal colors (custom wal template) ---- */
-@theme "~/.cache/wal/colors-rofi-pywal"
+/* ---- Load colors ---- */
+@theme "~/.config/rofi/colors.rasi"
 
 /* ---- Load wallpaper ---- */
 @import "~/.local/state/wallpaper/current_wallpaper.rasi"
@@ -42,7 +42,7 @@ window {
     margin:                       0px; 
     color:                        #FFFFFF;
     border:                       @border-width;
-    border-color:                 @color11;
+    border-color:                 @primary;
     cursor:                       "default";
     transparency:                 "real";
     location:                     northeast;
@@ -86,7 +86,7 @@ textbox-prompt-colon {
     expand:                      false;
     str:                         "  ";
     padding:                     1em 0.2em 0em 0em;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
     border-radius:               2em 0em 0em 2em;
     background-color:            @background;
 }
@@ -97,7 +97,7 @@ entry {
     spacing:                     1em;
     padding:                     1em;
     background-color:            @background;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
     cursor:                      text;
     placeholder:                 "Search";
     placeholder-color:           inherit;
@@ -128,7 +128,7 @@ listview {
     fixed-columns:               true;
     cursor:                      "default";
     background-color:            transparent;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 
@@ -146,12 +146,12 @@ button {
     cursor:                      pointer;
     border-radius:               2em;
     background-color:            @background;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 button selected {
-    background-color:            @color5;
-    text-color:                  @background;
+    background-color:            @surface;
+    text-color:                  @on-surface;
 }
 
 // Elements //
@@ -161,54 +161,54 @@ element {
     margin:                      0em;
     cursor:                      pointer;
     background-color:            transparent;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
     border-radius:               1.1em;
 }
 
 element selected.normal {
-    background-color:            @color11;
-    text-color:                  @foreground;
+    background-color:            @surface;
+    text-color:                  @on-surface;
     border-radius:               1.5em;
 }
 
 element normal.normal {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element normal.urgent {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element normal.active {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element selected.urgent {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element selected.active {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element alternate.normal {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element alternate.urgent {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element alternate.active {
     background-color:            inherit;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
 
 element-icon {
@@ -242,7 +242,7 @@ textbox {
     margin:                      0em;
     border-radius:               0em;
     background-color:            @background;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
     vertical-align:              0.5;
     horizontal-align:            0.0;
 }
@@ -251,5 +251,5 @@ error-message {
     padding:                     2em;
     border-radius:               2.1em;
     background-color:            @background;
-    text-color:                  @foreground;
+    text-color:                  @on-surface;
 }
