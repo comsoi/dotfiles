@@ -13,9 +13,8 @@
 		"custom/appmenu",
 		"sway/workspaces",
 		"hyprland/workspaces",
-		"group/links",
 		"wlr/taskbar",
-		"custom/empty"
+    "custom/nowplaying"
 	],
 	"modules-center": [
 		"hyprland/window",

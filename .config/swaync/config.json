@@ -40,13 +40,13 @@
 		}
 	},
 	"widgets": [
-		"dnd",
+		"title",
 		"buttons-grid",
 		"mpris",
 		"volume",
 		"backlight",
 		"inhibitors",
-		"title",
+		"dnd",
 		"notifications"
 	],
 	"widget-config": {

@@ -53,7 +53,7 @@ if [ "$choice" ]; then
 
 	if systemctl --user is-active --quiet waybar.service; then
 		echo "Restarting waybar..."
-		systemctl --user reload-or-restart waybar.service
+		systemctl --user restart waybar.service
 	fi
 	notify-send "Waybar Theme changed" "to ${array[$choice]}"
 

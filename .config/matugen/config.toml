@@ -1,0 +1,59 @@
+[config]
+version_check = false
+
+# end-4 illogical-impulse
+[templates.iiM3colors]
+input_path = '~/.config/matugen/templates/ii/colors.json'
+output_path = '~/.local/state/quickshell/user/generated/colors.json'
+
+[templates.iihyprland]
+input_path = '~/.config/matugen/templates/ii/colors.conf'
+output_path = '~/.config/end-4/hypr/hyprland/colors.conf'
+
+[templates.iifuzzel]
+input_path = '~/.config/matugen/templates/ii/fuzzel_theme.ini'
+output_path = '~/.config/fuzzel/fuzzel_theme.ini'
+
+[templates.iiWallpaper]
+input_path = '~/.config/matugen/templates/ii/wallpaper.txt'
+output_path = '~/.local/state/quickshell/user/generated/wallpaper/path.txt'
+
+[templates.iiMaterialAdw]
+input_path = '~/.config/matugen/templates/ii/_material.scss'
+output_path = '~/.local/state/quickshell/user/generated/material_colors.scss'
+
+# dot
+[templates.gtk3]
+input_path = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-3.0/gtk.css'
+
+[templates.gtk4]
+input_path = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-4.0/gtk.css'
+
+[templates.hyprland]
+input_path = '~/.config/matugen/templates/hyprland-colors.conf'
+output_path = '~/.config/hypr/colors.conf'
+post_hook = 'hyprctl reload'
+
+[templates.waybar]
+input_path = '~/.config/matugen/templates/colors.css'
+output_path = '~/.config/waybar/colors.css'
+post_hook = 'systemctl --user reload waybar.service'
+
+[templates.swaync]
+input_path = '~/.config/matugen/templates/colors.css'
+output_path = '~/.config/swaync/colors.css'
+post_hook = 'systemctl --user reload swaync.service'
+
+# [templates.rofi]
+# input_path = '~/.config/matugen/templates/rofi-colors.rasi'
+# output_path = '~/.config/rofi/colors.rasi'
+
+[templates.kcolorschemelight]
+input_path = '~/.config/matugen/templates/kcolorscheme-light.colors'
+output_path = '~/.local/share/color-schemes/MatugenLight.colors'
+
+[templates.kcolorschemedark]
+input_path = '~/.config/matugen/templates/kcolorscheme-dark.colors'
+output_path = '~/.local/share/color-schemes/MatugenDark.colors'
