@@ -114,10 +114,10 @@
 		"on-click-right": "swaync-client -d -sw",
 		"escape": true
 	},
-	"custom/hyprshade": {
+	"custom/sunsetr": {
 		"format": "",
-		"tooltip-format": "Toggle Screen Shader",
-		"on-click": "hyprshade toggle"
+		"tooltip-format": "Toggle Night Light",
+		"on-click": "bash -c 'systemctl --user is-active --quiet sunsetr.service && systemctl --user stop sunsetr.service || systemctl --user start sunsetr.service'"
 	},
 	"custom/hypridle": {
 		"format": "",
@@ -209,7 +209,7 @@
 		},
 		"modules": [
 			"custom/tools",
-			"custom/hyprshade",
+			"custom/sunsetr",
 			"custom/hypridle"
 		]
 	},
