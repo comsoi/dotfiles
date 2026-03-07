@@ -1,7 +1,10 @@
 
-@import '../../.cache/wal/colors-waybar.css';
+/* @import '../../.cache/wal/colors-waybar.css'; */
 
-@define-color bordercolor @color11;
+/* @define-color bordercolor @color11; */
+@import 'colors.css';
+
+@define-color bordercolor @primary;
 
 :root {
   --cc-bg: rgba(46, 46, 46, 0.7);
