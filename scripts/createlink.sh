@@ -40,7 +40,7 @@ file_names=(
 	".config/waypaper"
 	".config/wleave"
 	".config/nwg-dock-hyprland"
-
+	".config/gnome-mimelist.lists"
 )
 
 create_symlink() {
