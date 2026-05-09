@@ -2,9 +2,6 @@
 
 [ -z "$HOME" ] && exit
 
-export EDITOR='nvim'
-export LESS="-R"
-
 add_env() {
 	local env_name current_val value_to_add mode="insert" sep=":"
 
@@ -21,6 +18,9 @@ add_env() {
 		current_val="${(P)env_name}"
 	elif [[ -n "$BASH_VERSION" ]]; then
 		current_val="${!env_name}"
+	else
+		echo "Unsupported shell. Only Bash and Zsh are supported." >&2
+		return 1
 	fi
 
 	for value_to_add in "$@"; do
@@ -42,13 +42,8 @@ add_env() {
 
 add_env PATH "$HOME/.local/bin"
 add_env PATH "$HOME/.local/share/cargo/bin"
+add_env PATH "$HOME/.cache/.bun/bin"
 export PATH
-
-# graphics
-if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-	# export _JAVA_AWT_WM_NONREPARENTING=1
-	export ELECTRON_OZONE_PLATFORM_HINT=auto
-fi
 
 if [[ $(tty) == /dev/tty9 ]]; then
 	export LANG=zh_CN.UTF-8
@@ -62,6 +57,7 @@ if [ "$XDG_CURRENT_DESKTOP" = "GNOME" ]; then
 	fi
 	export QT_WAYLAND_DECORATION=adwaita
 	export QT_QPA_PLATFORMTHEME=qt5ct
+	crudini --set ~/.config/qt6ct/qt6ct.conf Appearance standard_dialogs xdgdesktopportal
 fi
 
 if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
@@ -77,7 +73,12 @@ if [ -d "/usr/lib/jvm/jre-jetbrains" ]; then
 	export RUSTROVER_JDK=/usr/lib/jvm/jre-jetbrains
 fi
 
+export EDITOR='nvim'
+export LESS="-R"
 export GSK_RENDERER=ngl
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+export JDK_JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 
-crudini --set ~/.config/qt6ct/qt6ct.conf Appearance standard_dialogs xdgdesktopportal
+export WINEPREFIX="$XDG_DATA_HOME/wineprefixes/wine"
+export CODEX_HOME="$HOME"/.local/apps/codex
 
