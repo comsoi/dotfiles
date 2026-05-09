@@ -1,4 +1,22 @@
 # Key Bindings
+
+# Set the prefix (leader) key to Ctrl+S
+unbind C-b
+unbind '"'
+unbind %
+
+set -g prefix 'C-s'
+bind 'C-s' send-prefix
+
+setw -g  mode-keys         vi
+
+set  -g  status-keys       emacs
+
+bind    c        new-window -c "#{pane_current_path}"
+bind    \\       split-window -h -c "#{pane_current_path}"
+bind    -        split-window -v -c "#{pane_current_path}"
+bind    Enter    split-window -c "#{pane_current_path}"  \; select-layout -n \; select-layout -p
+
 # RTF # https://github.com/tmux/tmux/issues/4162
 # since 3.5a
 # C-S-Tab -> c-BTAB
@@ -6,36 +24,22 @@
 # Tab     -> C-i
 # C-Space -> C-@
 # C-[     -> Escape
-# Set the prefix (leader) key to Ctrl+S
-unbind C-b
-unbind '"'
-unbind %
-set -g prefix 'C-s'
-bind 'C-s' send-prefix
+if-shell -b '[ "$(echo "$(echo "$TERM_PROGRAM_VERSION" | sed "s/[^0-9.]//g") < 3.5" | bc)" = 1 ]' " \
+	bind -n C-Tab    select-window -n; \
+	bind -n C-S-Tab  select-window -p; \
+	bind -n C-M-]    select-window -n; \
+	bind -n C-M-[    select-window -p" " \
+	bind -n C-Tab    select-window -n; \
+	bind -n C-BTab   select-window -p; \
+	bind -n C-M-]    select-window -n; \
+	bind -n M-Escape select-window -p"
 
-
-if-shell -b '[ "$(echo "$TMUX_VERSION < 3.5" | bc)" = 1 ]' " \
-    bind -n C-S-Tab   select-window -p; \
-    bind -n C-M-[     select-window -p"
-
-# https://github.com/tmux/tmux/issues/2705
-# tmux will trans csi-u to xterm modifykey
-# set -s user-keys[0] '\033[9;5u'
-# set -s user-keys[1] '\033[9;6u'
-# bind -n User0 select-window -n
-# bind -n User1 select-window -p
-
-bind -n M-t      new-window -c "#{pane_current_path}"
-bind -n C-S-T    new-window -c "#{pane_current_path}"
-bind    c        new-window -c "#{pane_current_path}"
-
+# CTRL SHIFT bindings
+bind -n C-S-T    new-window   -c "#{pane_current_path}"
 bind -n C-S-W    kill-window
 
-# Split panes using \ and - (defalut is % and ")
-# Open new tmux splits in the same directory
-bind    \\       split-window -h -c "#{pane_current_path}"
-bind    -        split-window -v -c "#{pane_current_path}"
-bind    Enter    split-window -c "#{pane_current_path}"  \; select-layout -n \; select-layout -p
+# ALT bindings
+bind -n M-t      new-window   -c "#{pane_current_path}"
 bind -n M-n      split-window -c "#{pane_current_path}"  \; select-layout -n \; select-layout -p
 
 # Navigate between windows (tabs)
@@ -48,11 +52,13 @@ bind -n M-6      select-window -t 6
 bind -n M-7      select-window -t 7
 bind -n M-8      select-window -t 8
 bind -n M-9      select-window -t 9
-bind -n C-Tab    select-window -n
-bind -n C-BTab   select-window -p
 
-bind -n C-M-]    select-window -n
-bind -n M-Escape select-window -p
+# https://github.com/tmux/tmux/issues/2705
+# tmux will trans csi-u to xterm modifykey
+# set -s user-keys[0] '\033[9;5u'
+# set -s user-keys[1] '\033[9;6u'
+# bind -n User0 select-window -n
+# bind -n User1 select-window -p
 
 bind -n S-left prev
 bind -n S-right next
@@ -90,8 +96,6 @@ bind    E        switch-client -l
 
 # Close current window (tab) and pane ()
 bind    q        kill-window
-bind -n M-q      kill-window
-bind -n M-x      kill-pane
 
 # Toggle fullscreen
 bind -n F11      resize-pane -Z
@@ -115,16 +119,10 @@ bind -T off F12 \
 # the plugin is loaded
 
 # Smart pane switching with awareness of Neovim splits.
-bind -n M-j if -F "#{@pane-is-vim}" 'send-keys M-j'  'select-pane -D'
-bind -n M-h if -F "#{@pane-is-vim}" 'send-keys M-h'  'select-pane -L'
-bind -n M-k if -F "#{@pane-is-vim}" 'send-keys M-k'  'select-pane -U'
-bind -n M-l if -F "#{@pane-is-vim}" 'send-keys M-l'  'select-pane -R'
-
-# Alternatively, if you want to disable wrapping when moving in non-neovim panes, use these bindings
-# bind -n C-h if -F '#{@pane-is-vim}' { send-keys C-h } { if -F '#{pane_at_left}'   '' 'select-pane -L' }
-# bind -n C-j if -F '#{@pane-is-vim}' { send-keys C-j } { if -F '#{pane_at_bottom}' '' 'select-pane -D' }
-# bind -n C-k if -F '#{@pane-is-vim}' { send-keys C-k } { if -F '#{pane_at_top}'    '' 'select-pane -U' }
-# bind -n C-l if -F '#{@pane-is-vim}' { send-keys C-l } { if -F '#{pane_at_right}'  '' 'select-pane -R' }
+bind -n M-j if -F "#{@pane-is-vim}" 'send-keys M-j' 'select-pane -D'
+bind -n M-h if -F "#{@pane-is-vim}" 'send-keys M-h' 'select-pane -L'
+bind -n M-k if -F "#{@pane-is-vim}" 'send-keys M-k' 'select-pane -U'
+bind -n M-l if -F "#{@pane-is-vim}" 'send-keys M-l' 'select-pane -R'
 
 # Smart pane resizing with awareness of Neovim splits.
 bind -n M-Left  if -F "#{@pane-is-vim}" 'send-keys M-Left ' 'resize-pane -L 5'
@@ -132,28 +130,40 @@ bind -n M-Right if -F "#{@pane-is-vim}" 'send-keys M-Right' 'resize-pane -R 5'
 bind -n M-Up    if -F "#{@pane-is-vim}" 'send-keys M-Up   ' 'resize-pane -U 5'
 bind -n M-Down  if -F "#{@pane-is-vim}" 'send-keys M-Down ' 'resize-pane -D 5'
 
-tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-    "bind -n 'C-\\' if -F \"#{@pane-is-vim}\" 'send-keys C-\\'  'select-pane -l'"
-if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-    "bind -n 'C-\\' if -F \"#{@pane-is-vim}\" 'send-keys C-\\\\'  'select-pane -l'"
+if-shell -b '[ "$(echo "$(echo "$TERM_PROGRAM_VERSION" | sed "s/[^0-9.]//g") >= 3.0" | bc)" = 1 ]' \
+	"bind -n 'C-\\' if -F \"#{@pane-is-vim}\" 'send-keys C-\\\\' 'select-pane -L'" \
+	"bind -n 'C-\\' if -F \"#{@pane-is-vim}\" 'send-keys C-\\'   'select-pane -L'"
 
-bind -T copy-mode-vi 'M-j' select-pane -D
-bind -T copy-mode-vi 'M-h' select-pane -L
-bind -T copy-mode-vi 'M-k' select-pane -U
-bind -T copy-mode-vi 'M-l' select-pane -R
-bind -T copy-mode-vi 'M-\' select-pane -l
+bind-key -n C-Up   send-keys -X previous-prompt
+bind-key -n C-Down send-keys -X next-prompt
 
-bind -n C-Up send-keys -X previous-prompt
-bind -n C-Down send-keys -X next-prompt
+bind-key -T copy-mode-vi 'C-j' select-pane -D
+bind-key -T copy-mode-vi 'C-h' select-pane -L
+bind-key -T copy-mode-vi 'C-k' select-pane -U
+bind-key -T copy-mode-vi 'C-l' select-pane -R
+bind-key -T copy-mode-vi 'C-\' select-pane -l
 
-bind -n C-Up copy-mode \; send-keys -X previous-prompt \; send-keys -X cancel
-bind -n C-Down copy-mode \; send-keys -X next-prompt \; send-keys -X cancel
+bind-key -n C-Up   copy-mode \; send-keys -X previous-prompt \; send-keys -X cancel
+bind-key -n C-Down copy-mode \; send-keys -X next-prompt \; send-keys -X cancel
 
-bind -T copy-mode-vi J send-keys -X next-prompt
-bind -T copy-mode-vi K send-keys -X previous-prompt
+bind-key -T copy-mode-vi J send-keys -X next-prompt
+bind-key -T copy-mode-vi K send-keys -X previous-prompt
 
-bind -T copy-mode-vi n send-keys -X next-prompt
-bind -T copy-mode-vi p send-keys -X previous-prompt
+bind-key -T copy-mode-vi C-n send-keys -X next-prompt
+bind-key -T copy-mode-vi C-p send-keys -X previous-prompt
 
+# # Setup 'v' to begin selection as in Vim
+unbind -T copy-mode-vi 'v'
+unbind -T copy-mode-vi 'y'
+unbind -T copy-mode-vi MouseDragEnd1Pane
+unbind -T copy-mode-vi Enter   #this is the default binding for copy (but not to system clipboard)
 
+# since tmux 3.2
+set -s copy-command 'wl-copy'
+
+bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel
+bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel
+
+bind-key -T copy-mode-vi 'p' run "wl-paste --no-newline | tmux load-buffer - ; tmux paste-buffer"
