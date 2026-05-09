@@ -29,10 +29,40 @@ end
 
 function M.apply(config)
 	cmd_abbr.set_max_length(20)
+	COLORS = wezterm.color.get_builtin_schemes()[config.color_scheme]
 
-	local tab_active = {}
-	if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
-		tab_active = {
+	if tabline == nil then
+		SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+		SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+		-- TODO: color alias
+		config.tab_bar_style = {
+			new_tab = wezterm.format({
+				{ Background = { Color = COLORS.new_tab_bg } },
+				{ Foreground = { Color = COLORS.leading_bg } },
+				{ Text = SOLID_RIGHT_ARROW },
+				{ Background = { Color = COLORS.new_tab_bg } },
+				{ Foreground = { Color = COLORS.new_tab_fg } },
+				{ Text = " + " },
+				{ Background = { Color = COLORS.leading_bg } },
+				{ Foreground = { Color = COLORS.new_tab_bg } },
+				{ Text = SOLID_RIGHT_ARROW },
+			}),
+			new_tab_hover = wezterm.format({
+				{ Attribute = { Italic = false } },
+				{ Attribute = { Intensity = "Bold" } },
+				{ Background = { Color = COLORS.leading_bg } },
+				{ Foreground = { Color = COLORS.leading_bg } },
+				{ Text = SOLID_RIGHT_ARROW },
+				{ Background = { Color = COLORS.leading_bg } },
+				{ Foreground = { Color = COLORS.foreground_inactive } },
+				{ Text = " + " },
+				{ Background = { Color = COLORS.leading_bg } },
+				{ Foreground = { Color = COLORS.leading_bg } },
+				{ Text = SOLID_RIGHT_ARROW },
+			}),
+		}
+	else
+		local tab_active = {
 			"index",
 			"⌘ ",
 			{ "cwd", padding = 0, max_length = 6 },
@@ -40,30 +70,25 @@ function M.apply(config)
 			tab_title,
 			{ "zoomed", padding = 0 },
 		}
-	elseif wezterm.target_triple == "x86_64-pc-windows-msvc" then
-		tab_active = {
-			"index",
-			"⌘ ",
-			tab_title,
-			{ "zoomed", padding = 0 },
-		}
-	end
+		if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+			tab_active = { "index", "⌘ ", tab_title, { "zoomed", padding = 0 } }
+		end
 
-	tabline.setup({
-		sections = {
-			tabline_c = { leader },
-			tab_active = tab_active,
-			tab_inactive = {
-				{ "index", padding = 0 },
-				". ",
-				tab_title,
-				{ "process", padding = { left = 0, right = 1 } },
+		tabline.setup({
+			sections = {
+				tabline_c = { leader },
+				tab_active = tab_active,
+				tab_inactive = {
+					{ "index", padding = 0 },
+					". ",
+					tab_title,
+					{ "process", padding = { left = 0, right = 1 } },
+				},
+				tabline_x = { { "cpu", throttle = 5 } },
 			},
-			tabline_x = { { "cpu", throttle = 5 } },
-		},
-		extensions = { "smart_workspace_switcher" },
-	})
-
+			extensions = { "smart_workspace_switcher" },
+		})
+	end
 	-- 标签栏基础配置
 	config.show_new_tab_button_in_tab_bar = false
 	config.use_fancy_tab_bar = false
@@ -72,32 +97,6 @@ function M.apply(config)
 	config.show_tab_index_in_tab_bar = false
 	config.tab_max_width = 50
 	config.tab_bar_at_bottom = true
-	-- config.tab_bar_style = {
-	-- 	new_tab = wezterm.format({
-	-- 		{ Background = { Color = COLORS.new_tab_bg } },
-	-- 		{ Foreground = { Color = COLORS.leading_bg } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 		{ Background = { Color = COLORS.new_tab_bg } },
-	-- 		{ Foreground = { Color = COLORS.new_tab_fg } },
-	-- 		{ Text = " + " },
-	-- 		{ Background = { Color = COLORS.leading_bg } },
-	-- 		{ Foreground = { Color = COLORS.new_tab_bg } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 	}),
-	-- 	new_tab_hover = wezterm.format({
-	-- 		{ Attribute = { Italic = false } },
-	-- 		{ Attribute = { Intensity = "Bold" } },
-	-- 		{ Background = { Color = COLORS.leading_bg } },
-	-- 		{ Foreground = { Color = COLORS.leading_bg } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 		{ Background = { Color = COLORS.leading_bg } },
-	-- 		{ Foreground = { Color = COLORS.foreground_inactive } },
-	-- 		{ Text = " + " },
-	-- 		{ Background = { Color = COLORS.leading_bg } },
-	-- 		{ Foreground = { Color = COLORS.leading_bg } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 	}),
-	-- }
 end
 
 return M
