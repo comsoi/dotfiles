@@ -23,9 +23,9 @@ pcmanfm-qt -w "$wallpaper"
 
 # gsettings get org.gnome.desktop.interface color-scheme for matugen
 if [ "$(gsettings get org.gnome.desktop.interface color-scheme)" == "'prefer-light'" ]; then
-	matugen -t scheme-content -m light image "$wallpaper"
+	matugen --source-color-index 0 -t scheme-content -m light image "$wallpaper"
 else
-	matugen -t scheme-content -m dark image "$wallpaper"
+	matugen --source-color-index 0 -t scheme-content -m dark image "$wallpaper"
 fi
 
 # Created blurred wallpaper
