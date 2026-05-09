@@ -14,15 +14,12 @@ fi
 
 source "$(dirname "$(realpath "$0")")/../theme_functions.sh"
 
-DESKTOP_THEME="Colloid-dark-nord"
+DESKTOP_THEME="darkly"
 
-# COLOR_SCHEME="FlatRemixBlueDark"
-COLOR_SCHEME="ColloidDarkNord"
-COLOR_SCHEME="MaterialYouDark_darker_titlebar"
+COLOR_SCHEME="MaterialYouDark"
 
 WIDGET_STYLE="Darkly"
 
-# ICON_THEME="WhiteSur-dark"
 ICON_THEME="Colloid-Catppuccin-Dark"
 
 # Plasma Style
