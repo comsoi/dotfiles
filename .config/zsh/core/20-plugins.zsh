@@ -11,14 +11,30 @@ typeset -a PLUGINS=(
 	zsh-syntax-highlighting
 	zsh-vi-mode
 	zsh-no-ps2
+	kimi-cli
+	autoswitch_virtualenv
 )
 
-for plugin (${PLUGINS[@]}) {
-	for plugin_file (${^PLUGIN_PATHS}/$plugin/$plugin.plugin.zsh(N)) {
-		source $plugin_file
-		break
-	}
+is_plugin() {
+	local base_dir=$1
+	local name=$2
+	builtin test -f $base_dir/$name/$name.plugin.zsh \
+		|| builtin test -f $base_dir/$name/_$name
 }
+
+for plugin ($PLUGINS); do
+	local found=0
+	for base_dir ($PLUGIN_PATHS); do
+		if is_plugin "$base_dir" "$plugin"; then
+			fpath=("$base_dir/$plugin" $fpath)
+			[[ -f "$base_dir/$plugin/$plugin.plugin.zsh" ]] \
+				&& source "$base_dir/$plugin/$plugin.plugin.zsh"
+			found=1
+			break
+		fi
+	done
+	(( found )) || echo "[zsh] plugin '$plugin' not found"
+done
 
 source ${ZDOTDIR}/plugins/completion.plugin.zsh
 
