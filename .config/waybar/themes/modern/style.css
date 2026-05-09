@@ -459,7 +459,7 @@ window#waybar.empty #window {
 }
 
 #pulseaudio.muted {
-    background-color: @on_primary_fixed;
+    background-color: @on_secondary_container;
     color: @on_surface;
 }
 

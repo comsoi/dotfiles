@@ -12,7 +12,8 @@ if [[ "$1" == "exit" ]]; then
 		exit
 	fi
 	if [[ $HYPRLAND_INSTANCE_SIGNATURE ]] && ! uwsm check is-active; then
-		hyprctl dispatch exit
+		hyprshutdown
+		# hyprctl dispatch exit
 		exit
 	fi
 	if [[ $LABWC_VER ]]; then
