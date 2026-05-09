@@ -10,7 +10,7 @@ max_height = 6000
 image_delay = 0
 
 [tasks]
- image_bound      = [ 10000, 10000 ]
+image_bound      = [ 10000, 10000 ]
 
 [[plugin.prepend_fetchers]]
 id = "git"
@@ -21,3 +21,12 @@ run = "git"
 id = "git"
 name = "*/"
 run = "git"
+
+[opener]
+edit = [
+	{ run = "$EDITOR %s", block = true, for = "unix" },
+	{ run = "%EDITOR% %s", block = true, for = "windows" },
+]
+open = [
+	{ run = "xdg-open %s", desc = "Open" },
+]
