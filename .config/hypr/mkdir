@@ -1,0 +1,3 @@
+/bin/xdg-user-dirs-update
+"$(xdg-user-dir PICTURES)/Screenshots"
+"${XDG_DATA_HOME:-$HOME/.local}/bin"
