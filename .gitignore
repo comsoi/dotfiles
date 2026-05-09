@@ -1,35 +1,46 @@
+# 历史与缓存
 .history
 .z
 .zsh_history
 .bash_history
 .zcompdump*
 *.zwc
+
+# 编辑器 / IDE
+.vscode/
+
+# Shell
 .config/starship.toml
 .config/bash/custom/
 .config/bash/50-custom.bash
 .config/fish/fish_variables
-.config/hypr/cache/
-.config/hypr/hypridle.conf
-.config/hypr/colors.conf
-.config/rofi/colors.rasi
-.config/waybar/colors.css
-.config/swaync/colors.css
-.config/yazi/plugins/
 .config/zsh/.p10k.zsh
+.config/zsh/.custom
+.config/zsh/cache/
+.config/zsh/.powerlevel10k/
 .config/zsh/core/00-init.zsh
 .config/zsh/core/00-init-omz.zsh
 .config/zsh/core/50-custom.zsh
-.config/zsh/cache/
-.config/zsh/.powerlevel10k/
-.config/zsh/.custom
 .config/zsh/plugins/custom/
+
+# 生成文件 / 本地配置
+.config/hypr/cache/
+.config/hypr/colors.conf
+.config/hypr/conf/etc/animation.conf
+.config/hypr/hypridle.conf
+.config/hypr/monitors.conf
+.config/rofi/colors.rasi
+.config/waybar/colors.css
+.config/swaync/colors.css
+.config/sunsetr/geo.toml
+dank-theme.toml
+
+# 应用
 .config/scoop/
+.config/yazi/plugins/
+
+# Flatpak 导出
 .local/share/flatpak/exports/share/applications/
 .local/share/flatpak/exports/share/dbus-1/
 .local/share/flatpak/exports/share/icons/
 .local/share/flatpak/exports/share/metainfo/
-.vscode/
-.config/hypr/conf/etc/animation.conf
-.config/sunsetr/geo.toml
-dank-theme.toml
-.config/hypr/monitors.conf
