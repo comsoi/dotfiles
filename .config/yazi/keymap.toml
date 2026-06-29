@@ -1,10 +1,20 @@
 [[mgr.prepend_keymap]]
+on   = "!"
+for  = "unix"
+run  = 'shell "$SHELL" --block'
+desc = "Open $SHELL here"
+
+[[mgr.prepend_keymap]]
 on = "<F3>"
+for  = "unix"
 run = '''shell 'ripdrag "$@" -x 2>/dev/null &' --confirm'''
+desc = "Open file selector"
 
 [[mgr.prepend_keymap]]
 on  = "<F4>"
+for  = "unix"
 run = [ 'shell --orphan -- dolphin .' ]
+desc = "Open Dolphin here"
 
 [[mgr.prepend_keymap]]
 on  = "y"
@@ -66,3 +76,8 @@ desc = "Maximize or restore the preview pane"
 on = "<C-t>"
 run = "tab_create --current"
 description = "Create a new tab with CWD"
+
+[[mgr.prepend_keymap]]                                                                                                                                                                          
+on = ["<C-\\>"]                                                                                                                                                                                 
+run = "plugin fcitx5"                                                                                                                                                                           
+desc = "Toggle fcitx5 IM"
