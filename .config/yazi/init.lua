@@ -1,9 +1,17 @@
 require("session"):setup({
 	sync_yanked = true,
 })
+
 require("yaziline"):setup()
+
 require("git"):setup()
+
 require("full-border"):setup()
+
+require("fcitx5"):setup({
+	input_im = "pinyin",
+	normal_im = "keyboard-us",
+})
 
 Status:children_add(function(self)
 	local h = self._current.hovered
@@ -20,10 +28,11 @@ Status:children_add(function()
 		return ""
 	end
 
-	return ui.Line {
+	return ui.Line({
 		ui.Span(ya.user_name(h.cha.uid) or tostring(h.cha.uid)):fg("magenta"),
 		":",
 		ui.Span(ya.group_name(h.cha.gid) or tostring(h.cha.gid)):fg("magenta"),
 		" ",
-	}
+	})
 end, 500, Status.RIGHT)
+
