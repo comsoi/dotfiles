@@ -1,11 +1,156 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: None
+
 [Default Applications]
+
+# Misc
+application/x-krita=org.kde.krita.desktop;org.kde.gwenview.desktop
+image/x-xcf=org.gimp.GIMP.desktop;org.kde.gwenview.desktop
+
+# Discover
+# usr: x-scheme-handler/appstream=org.kde.discover.urlhandler.desktop  [本机未安装，未写入]
+
+# Archive Manager
+application/x-tar=org.kde.ark.desktop
+application/x-compressed-tar=org.kde.ark.desktop
+application/x-bzip-compressed-tar=org.kde.ark.desktop
+application/x-tarz=org.kde.ark.desktop
+application/x-xz-compressed-tar=org.kde.ark.desktop
+application/x-lzma-compressed-tar=org.kde.ark.desktop
+application/x-lzip-compressed-tar=org.kde.ark.desktop
+application/x-tzo=org.kde.ark.desktop
+application/x-lrzip-compressed-tar=org.kde.ark.desktop
+application/x-lz4-compressed-tar=org.kde.ark.desktop
+application/x-zstd-compressed-tar=org.kde.ark.desktop
+application/x-cd-image=org.kde.ark.desktop
+application/x-bcpio=org.kde.ark.desktop
+application/x-cpio=org.kde.ark.desktop
+application/x-cpio-compressed=org.kde.ark.desktop
+application/x-sv4cpio=org.kde.ark.desktop
+application/x-sv4crc=org.kde.ark.desktop
+application/x-source-rpm=org.kde.ark.desktop
+application/vnd.ms-cab-compressed=org.kde.ark.desktop
+application/x-xar=org.kde.ark.desktop
+application/x-iso9660-appimage=org.kde.ark.desktop
+application/x-archive=org.kde.ark.desktop
+application/vnd.rar=org.kde.ark.desktop
+application/x-rar=org.kde.ark.desktop
+application/x-7z-compressed=org.kde.ark.desktop
+application/zip=org.kde.ark.desktop
+application/x-compress=org.kde.ark.desktop
+application/gzip=org.kde.ark.desktop
+application/x-bzip=org.kde.ark.desktop
+application/x-lzma=org.kde.ark.desktop
+application/x-xz=org.kde.ark.desktop
+application/zstd=org.kde.ark.desktop
+application/x-lha=org.kde.ark.desktop
+
+# Browser
+# usr: x-scheme-handler/http=org.kde.falkon.desktop  [本机未安装，未写入]
+# usr: x-scheme-handler/https=org.kde.falkon.desktop  [本机未安装，未写入]
+
+# Email
+# usr: x-scheme-handler/mailto=org.kde.kmail2.desktop  [本机未安装，未写入]
+
+# File Manager
 inode/directory=org.kde.dolphin.desktop
-x-scheme-handler/trash=org.kde.dolphin.desktop
+
+# Geo
+# usr: x-scheme-handler/geo=marble_geo.desktop  [本机未安装，未写入]
+
+# Image Viewer
 image/avif=org.kde.gwenview.desktop
-image/bmp=org.kde.gwenview.desktop
+image/gif=org.kde.gwenview.desktop
 image/heif=org.kde.gwenview.desktop
 image/jpeg=org.kde.gwenview.desktop
+image/jxl=org.kde.gwenview.desktop
 image/png=org.kde.gwenview.desktop
-image/webp=org.kde.gwenview.desktop
+image/svg+xml=org.kde.gwenview.desktop
+image/svg+xml-compressed=org.kde.gwenview.desktop
+image/bmp=org.kde.gwenview.desktop
+image/x-eps=org.kde.gwenview.desktop
 image/x-icns=org.kde.gwenview.desktop
+image/x-ico=org.kde.gwenview.desktop
+image/x-portable-bitmap=org.kde.gwenview.desktop
+image/x-portable-graymap=org.kde.gwenview.desktop
+image/x-portable-pixmap=org.kde.gwenview.desktop
+image/x-xbitmap=org.kde.gwenview.desktop
+image/x-xpixmap=org.kde.gwenview.desktop
+image/tiff=org.kde.gwenview.desktop
+image/x-psd=org.kde.gwenview.desktop
+image/x-webp=org.kde.gwenview.desktop
+image/webp=org.kde.gwenview.desktop
+image/x-tga=org.kde.gwenview.desktop
+
+# Music Player
+# usr: audio/aac=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/mp4=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/mpeg=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/mpegurl=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/ogg=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/vnd.rn-realaudio=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/vorbis=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-flac=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-mp3=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-mpegurl=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-ms-wma=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-musepack=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-oggflac=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-pn-realaudio=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-scpls=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-speex=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-vorbis=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-vorbis+ogg=org.kde.elisa.desktop  [本机未安装，未写入]
+# usr: audio/x-wav=org.kde.elisa.desktop  [本机未安装，未写入]
+
+# PDF Viewer
 application/pdf=org.kde.okular.desktop
+
+# Tel
+x-scheme-handler/tel=org.kde.kdeconnect.handler.desktop
+
+# Text Editor
+# usr: text/plain=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+# usr: text/x-cmake=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+# usr: text/markdown=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+# usr: application/x-docbook+xml=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+# usr: application/json=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+# usr: application/x-yaml=org.kde.kate.desktop;org.kde.kwrite.desktop  [本机未安装，未写入]
+
+# Video Player
+# usr: video/3gp=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/3gpp=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/3gpp2=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/avi=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/divx=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/dv=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/fli=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/flv=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/mp2t=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/mp4=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/mp4v-es=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/mpeg=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/msvideo=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/ogg=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/quicktime=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/vnd.divx=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/vnd.mpegurl=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/vnd.rn-realvideo=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/webm=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-avi=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-flv=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-m4v=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-matroska=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-mpeg2=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-ms-asf=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-msvideo=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-ms-wmv=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-ms-wmx=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-ogm=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-ogm+ogg=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-theora=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: video/x-theora+ogg=org.kde.haruna.desktop  [本机未安装，未写入]
+# usr: application/x-matroska=org.kde.haruna.desktop  [本机未安装，未写入]
+
+# --- 本地新增（/usr 里没有这些键，mirror 会保留这一段）---
+x-scheme-handler/trash=org.kde.dolphin.desktop

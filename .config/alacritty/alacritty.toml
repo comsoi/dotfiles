@@ -49,7 +49,7 @@ multiplier = 20
 program = "/usr/bin/zsh"
 
 [window]
-decorations = "none"
+# decorations = "none"
 dynamic_padding = true
 opacity = 0.85
 # blur = true

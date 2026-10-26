@@ -1,0 +1,2 @@
+#!/bin/sh
+export KWIN_SCREENSHOT_NO_PERMISSION_CHECKS=1

@@ -25,9 +25,10 @@ file_names=(
 	".config/foot"
 	".config/kitty"
 	".config/wezterm"
+	".config/zellij"
 	# Desktops
 	".config/fontconfig"
-	# ".config/gtk2"
+	".config/user-dirs.dirs"
 	# ".config/gtk-3.0"
 	# ".config/gtk-4.0"
 	# KDE Plasma
@@ -35,7 +36,6 @@ file_names=(
 	# WM
 	".config/hypr"
 	".config/rofi"
-	".config/wal"
 	".config/waybar"
 	".config/waypaper"
 	".config/wleave"
@@ -87,6 +87,48 @@ create_symlink() {
 	fi
 }
 
+# 清点 .config/user-dirs.dirs 里声明的目录是否真实存在。
+# 为什么需要：登录时跑 xdg-user-dirs-update，任何列在里面却不存在的目录都会被
+# 重置成 $HOME 并重写整个文件（自定义的 SCREENSHOTS/PROJECTS 键会一起丢）。
+check_user_dirs() {
+	local dirs_file="${PARENT_DIR}/.config/user-dirs.dirs"
+
+	if [[ ! -f "${dirs_file}" ]]; then
+		echo "Warning: ${dirs_file} not found, skipping user-dirs check"
+		return 0
+	fi
+
+	echo "Checking XDG user directories declared in .config/user-dirs.dirs..."
+
+	local missing=0 line var value
+	while IFS= read -r line; do
+		[[ "${line}" =~ ^XDG_[A-Z_]+_DIR= ]] || continue
+		var="${line%%=*}"
+		value="${line#*=}"
+		# 去掉两侧双引号
+		value="${value%\"}"
+		value="${value#\"}"
+		# 只做 $HOME / ${HOME} 展开，其余原样（与 xdg-user-dirs 的写法约定一致）
+		value="${value//\$\{HOME\}/${HOME}}"
+		value="${value//\$HOME/${HOME}}"
+
+		if [[ -d "${value}" ]]; then
+			echo "  [ok]      ${var}=${value}"
+		else
+			echo "  [missing] ${var}=${value}"
+			((missing++))
+		fi
+	done < <(grep -v '^[[:space:]]*#' "${dirs_file}")
+
+	if ((missing > 0)); then
+		echo
+		echo "Error: ${missing} XDG user dir(s) missing."
+		echo "先 mkdir -p 建好上面标 [missing] 的目录，否则下次登录时"
+		echo "xdg-user-dirs-update 会把它们重置成 \$HOME 并改写 user-dirs.dirs。"
+		return 1
+	fi
+}
+
 # 主程序
 main() {
 	local errors=0
@@ -98,6 +140,11 @@ main() {
 		fi
 		echo
 	done
+
+	if ! check_user_dirs; then
+		((errors++))
+	fi
+	echo
 
 	if ((errors > 0)); then
 		echo "Completed with ${errors} error(s)"

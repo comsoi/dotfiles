@@ -1,9 +1,26 @@
+# XDG 用户目录定义 —— dotfiles 里的唯一真相
+# 由 scripts/createlink.sh 链接为 ~/.config/user-dirs.dirs
+#
+# 格式就是 xdg-user-dirs 认的 shell 片段：XDG_xxx_DIR="$HOME/yyy" 或绝对路径，
+# 不支持别的写法，所以 $HOME 必须留着、不要展开成绝对路径。
+#
+# ⚠ 三个坑：
+#   1. 这里列出的目录**必须真实存在**。登录时跑的 xdg-user-dirs-update 发现哪个
+#      目录没了，就会把该项重置成 $HOME 并重写整个文件（自定义键会一起丢）。
+#      删目录前先想清楚，createlink.sh 末尾的清点检查会提醒。
+#   2. SCREENSHOTS / PROJECTS 不是 XDG 规范键，只是本实现（xdg-user-dirs 0.20）
+#      会透传任意 XDG_*_DIR。别的机器上 `xdg-user-dir SCREENSHOTS` 可能不认，
+#      脚本里请用规范推导写法："$(xdg-user-dir PICTURES)/Screenshots"。
+#   3. 本文件已存在时不会因 locale 变化迁移目录名；只有 `--force` 才会重新生成
+#      并重命名成 桌面/文档/图片… 那一套，别乱跑。
+
 XDG_DESKTOP_DIR="$HOME/Desktop"
 XDG_DOCUMENTS_DIR="$HOME/Documents"
+XDG_PUBLICSHARE_DIR="$HOME/Documents/Public"
+XDG_TEMPLATES_DIR="$HOME/Documents/Templates"
 XDG_DOWNLOAD_DIR="$HOME/Downloads"
 XDG_MUSIC_DIR="$HOME/Media/Music"
 XDG_PICTURES_DIR="$HOME/Media/Pictures"
-XDG_PUBLICSHARE_DIR="$HOME/"
-XDG_TEMPLATES_DIR="$HOME/"
-XDG_VIDEOS_DIR="$HOME/Media/Videos"
 XDG_SCREENSHOTS_DIR="$HOME/Media/Pictures/Screenshots"
+XDG_VIDEOS_DIR="$HOME/Media/Videos"
+XDG_PROJECTS_DIR="$HOME/workspaces"
