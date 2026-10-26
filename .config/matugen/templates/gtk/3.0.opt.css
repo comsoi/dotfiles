@@ -1,0 +1,102 @@
+/*
+ * GTK3 配色 —— 优化版（matugen 模板）
+ *
+ * 优化原则：
+ *  1. 每个键在 adw-gtk3 里都有真实规则引用（不留"只定义不引用"的死键）
+ *  2. 主题自己能派生的就不重复定义：
+ *     - adw-gtk3 用 mix(accent_bg_color,white,0.4) 派生 accent_color（焦点环）
+ *     - 用 mix(destructive_bg_color,white,0.4) 派生 destructive_color（删除按钮）
+ *     - 用 mix(error_bg_color,white,0.4) 派生 error_color
+ *     - theme_bg/fg/base/text、insensitive_*、borders、text_view_bg 等，
+ *       adw-gtk3 已经全部从 window / view / accent 系列别名派生
+ *  3. 表面只留两级：background（window/view/headerbar/dialog）
+ *     + surface_container（sidebar/card/popover）。扁平，参考 DMS / noctalia
+ *  4. warning_* / success_* 不定义，交给主题的语义色（黄/绿）
+ *  5. 选中 / 失焦 / 二级侧栏 / 总览这几组跟 DMS / noctalia 对齐，显式写出来
+ */
+
+/* 强调 —— accent_color 是 noc 显式定义的（焦点环用它）。
+ * 不写的话 adw-gtk3 会派生成 mix(@accent_bg_color,white,0.4)（比填充色亮一档）；
+ * 写 primary 则跟填充色同色。这里跟 noc 一致。 */
+@define-color accent_color {{colors.primary.default.hex}};
+@define-color accent_bg_color {{colors.primary.default.hex}};
+@define-color accent_fg_color {{colors.on_primary.default.hex}};
+
+/* 危险 / 错误：一律用 error（tone 80 高强调色）。
+ * adw-gtk3 里这个键同时当「错误文字色 / 边框色」用：
+ *     entry.error { color: @error_bg_color; border-color: @error_bg_color; }
+ * 所以必须是亮色。实测把 error_container(tone 30) 塞进去，错误文字对窗口底只有 1.98:1，看不见。 */
+@define-color destructive_bg_color {{colors.error.default.hex}};
+@define-color destructive_fg_color {{colors.on_error.default.hex}};
+@define-color error_bg_color {{colors.error.default.hex}};
+@define-color error_fg_color {{colors.on_error.default.hex}};
+
+/* 状态色 warning_* / success_* 故意不定义 —— 交给主题。
+ * 理由：GTK 里它们是**语义色**（黄=警告、绿=成功），而且同样当文字色用：
+ *     entry.warning { color: @warning_bg_color; }   levelbar block.full { background-color: @success_bg_color; }
+ * 用调色板的 container 色去顶，既丢语义（紫蓝 UI 里的"警告"不变黄）又丢对比度（实测 2.05:1）。
+ * 交给主题 = 沿用 Adwaita 的 #e5a50a / #26a269，符合"状态色就该是正常颜色"。 */
+
+/* 表面 —— 扁平两层（参考 DMS / noctalia 的做法）
+ *
+ *   background 层 ： window / view / headerbar / dialog
+ *   container 层  ： sidebar / card / popover
+ *
+ * 之前按 adw-gtk3 的 6 层默认值逐档对齐（view 更暗、headerbar 更亮、popover 最亮…），
+ * 实测下来层次太碎、观感吵。现在只留两级，等于 DMS/noc 的结构：
+ *   DMS   window=view=headerbar=dialog=surface        sidebar=card=popover=surface_container
+ *   noc   window=view=dialog=surface（gtk3 headerbar=container）  其余 =surface_container
+ * 好处：不用再按明暗分叉（深色 container 更亮、浅色更暗，但只有一级，不会打架），
+ * 模板也短了；代价是弹层/对话框不再"抬起来"。
+ */
+@define-color window_bg_color {{colors.surface.default.hex}};
+@define-color window_fg_color {{colors.on_surface.default.hex}};
+@define-color view_bg_color {{colors.surface.default.hex}};
+@define-color view_fg_color {{colors.on_surface.default.hex}};
+/* 标题栏：DMS 用 surface（平）= noc 的 gtk4 版也是 surface；
+ * 只有 noc 的 gtk3 版给 container。2:1，取平的。 */
+@define-color headerbar_bg_color {{colors.surface.default.hex}};
+@define-color headerbar_fg_color {{colors.on_surface.default.hex}};
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color sidebar_bg_color {{colors.surface_container.default.hex}};
+@define-color sidebar_fg_color {{colors.on_surface.default.hex}};
+/* 失焦直接退到窗口色（noc 的做法；DMS 写成 @sidebar_bg_color 等于没变化） */
+@define-color sidebar_backdrop_color @window_bg_color;
+/* 侧栏描边 noc 用的是实色窗口色（不写就继承主题的半透明发丝线 rgba(0,0,6,.36)） */
+@define-color sidebar_border_color @window_bg_color;
+@define-color card_bg_color {{colors.surface_container.default.hex}};
+@define-color card_fg_color {{colors.on_surface.default.hex}};
+@define-color popover_bg_color {{colors.surface_container.default.hex}};
+@define-color popover_fg_color {{colors.on_surface.default.hex}};
+@define-color dialog_bg_color {{colors.surface.default.hex}};
+@define-color dialog_fg_color {{colors.on_surface.default.hex}};
+
+/* 二级侧栏 / 总览：GTK3 的 adw-gtk3 里引用数确实是 0，写上属于"防御性对齐"——
+ * 一是跟 DMS/noc 保持一致（他们俩都定义，值 = surface / surface_container）；
+ * 二是 adw-gtk3 自己把这个键定义成绝对灰（dark #28282c），万一有应用或主题按名字查询，
+ *    拿到的是跟调色板无关的颜色。写上 = 保证调色板完整。 */
+@define-color secondary_sidebar_bg_color {{colors.surface.default.hex}};
+@define-color secondary_sidebar_fg_color {{colors.on_surface.default.hex}};
+@define-color overview_bg_color {{colors.surface_container.default.hex}};
+@define-color overview_fg_color {{colors.on_surface.default.hex}};
+
+/* 选中 / 失焦 —— 跟 DMS / noctalia 完全一样的 8 行（他们两家写法一字不差）
+ *
+ * 值本身跟 adw-gtk3 自己的派生结果基本重合（theme_selected_bg = @accent_bg_color 等），
+ * 唯一的实质差别是 theme_unfocused_fg_color：
+ *     主题默认 = mix(@window_fg_color,@window_bg_color,0.5)   → 失焦时文字变暗一半
+ *     这里/DMS/noc = @window_fg_color                          → 失焦不压暗（DMS 注释说是"防止失焦白闪"）
+ * 所以失焦时文字会比之前亮一点，这是有意的。 */
+@define-color theme_selected_bg_color @accent_bg_color;
+@define-color theme_selected_fg_color @accent_fg_color;
+@define-color theme_unfocused_bg_color @window_bg_color;
+@define-color theme_unfocused_fg_color @window_fg_color;
+@define-color theme_unfocused_base_color @window_bg_color;
+@define-color theme_unfocused_text_color @view_fg_color;
+@define-color theme_unfocused_selected_bg_color @accent_bg_color;
+@define-color theme_unfocused_selected_fg_color @accent_fg_color;
+
+/* 已删除（实测 GTK3 里 0 处引用的死键）：
+ *   thumbnail_bg_color / thumbnail_fg_color    —— adw-gtk3 只定义不引用（GTK4 才用，见 4.0 版）
+ *   error_color / success_color                —— 主题从 *_bg_color 派生
+ */

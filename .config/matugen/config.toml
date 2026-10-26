@@ -22,26 +22,68 @@ output_path = '~/.local/state/quickshell/user/generated/wallpaper/path.txt'
 input_path = '~/.config/matugen/templates/ii/_material.scss'
 output_path = '~/.local/state/quickshell/user/generated/material_colors.scss'
 
-# dot
-# [templates.gtk3]
-# input_path = '~/.config/matugen/templates/gtk-colors.css'
-# output_path = '~/.config/gtk-3.0/gtk.css'
-#
-# [templates.gtk4]
-# input_path = '~/.config/matugen/templates/gtk-colors.css'
-# output_path = '~/.config/gtk-4.0/gtk.css'
-
 [templates.gtk3]
-input_path = '~/.config/matugen/templates/gtk-3.0/gtk.css'
-output_path = '~/.config/gtk-3.0/gtk.css'
+input_path = '~/.config/matugen/templates/gtk/3.0.css'
+output_path = '~/.config/gtk-3.0/matugen.css'
 
 [templates.gtk4]
-input_path = '~/.config/matugen/templates/gtk-4.0/gtk.css'
-output_path = '~/.config/gtk-4.0/gtk.css'
+input_path = '~/.config/matugen/templates/gtk/4.0.css'
+output_path = '~/.config/gtk-4.0/matugen.css'
+
+[templates.fcitx5lighttheme]
+input_path = '~/.config/matugen/templates/fcitx5/theme-light.conf'
+output_path = '~/.local/share/fcitx5/themes/autogen-light/theme.conf'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.fcitx5lightpanel]
+input_path = '~/.config/matugen/templates/fcitx5/panel-light.svg'
+output_path = '~/.local/share/fcitx5/themes/autogen-light/panel.svg'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.fcitx5lighthighlight]
+input_path = '~/.config/matugen/templates/fcitx5/highlight-light.svg'
+output_path = '~/.local/share/fcitx5/themes/autogen-light/highlight.svg'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.fcitx5darktheme]
+input_path = '~/.config/matugen/templates/fcitx5/theme-dark.conf'
+output_path = '~/.local/share/fcitx5/themes/autogen-dark/theme.conf'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.fcitx5darkpanel]
+input_path = '~/.config/matugen/templates/fcitx5/panel-dark.svg'
+output_path = '~/.local/share/fcitx5/themes/autogen-dark/panel.svg'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.fcitx5darkhighlight]
+input_path = '~/.config/matugen/templates/fcitx5/highlight-dark.svg'
+output_path = '~/.local/share/fcitx5/themes/autogen-dark/highlight.svg'
+post_hook = 'dbus-send --session --print-reply --dest=org.fcitx.Fcitx5 /controller org.fcitx.Fcitx.Controller1.ReloadAddonConfig string:classicui'
+
+[templates.qt6ct]
+input_path = '~/.config/matugen/templates/qt6ct-colors.conf'
+output_path = '~/.config/qt6ct/colors/autogen.conf'
+
+[templates.niri]
+input_path = '~/.config/matugen/templates/niri-colors.kdl'
+output_path = '~/.config/niri/colors.kdl'
+post_hook = 'niri msg action load-config-file'
+
+[templates.kcolorschemelight]
+input_path = '~/.config/matugen/templates/kcolor/light.colors'
+output_path = '~/.local/share/color-schemes/AutogenLight.colors'
+
+[templates.kcolorschemedark]
+input_path = '~/.config/matugen/templates/kcolor/dark.colors'
+output_path = '~/.local/share/color-schemes/AutogenDark.colors'
+
+[templates.kcolorschemedefault]
+input_path = '~/.config/matugen/templates/kcolor/default.colors'
+output_path = '~/.local/share/color-schemes/Autogen.colors'
 
 [templates.hyprland]
-input_path = '~/.config/matugen/templates/hyprland-colors.conf'
-output_path = '~/.config/hypr/colors.conf'
+input_path = '~/.config/matugen/templates/hyprland-colors.lua'
+output_path = '~/.config/hypr/colors.lua'
 post_hook = 'hyprctl reload'
 
 [templates.waybar]
@@ -58,10 +100,6 @@ post_hook = 'systemctl --user reload swaync.service'
 input_path = '~/.config/matugen/templates/rofi-colors.rasi'
 output_path = '~/.config/rofi/colors.rasi'
 
-[templates.kcolorschemelight]
-input_path = '~/.config/matugen/templates/kcolorscheme-light.colors'
-output_path = '~/.local/share/color-schemes/MatugenLight.colors'
-
-[templates.kcolorschemedark]
-input_path = '~/.config/matugen/templates/kcolorscheme-dark.colors'
-output_path = '~/.local/share/color-schemes/MatugenDark.colors'
+[templates.wleave]
+input_path = '~/.config/matugen/templates/colors.css'
+output_path = '~/.config/wleave/colors.css'

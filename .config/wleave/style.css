@@ -1,7 +1,7 @@
 /* -----------------------------------------------------
- * Import Pywal colors
+ * Import Matugen colors
  * ----------------------------------------------------- */
-@import '../../.cache/wal/colors-wlogout.css';
+@import 'colors.css';
 
 /* -----------------------------------------------------
  * General
@@ -19,7 +19,7 @@ window {
 	background-size: cover;
 	background-position: center;
 	font-size: 16pt;
-	color: #cdd6f4;
+	color: @on_surface;
 }
 
 button {
@@ -30,7 +30,7 @@ button {
     	animation: gradient_f 20s ease-in infinite;
     	border-radius: 80px; /* Increased border radius for a more rounded look */
 	border:0px;
-	transition: all 0.3s cubic-bezier(.55, 0.0, .28, 1.682), box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+	transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-size 0.3s cubic-bezier(.55, 0.0, .28, 1.682);
 }
 
 button:focus {
@@ -39,13 +39,12 @@ button:focus {
 }
 
 button:hover {
-    background-color: @color11;
+    background-color: @primary;
 	opacity: 0.8;
-    color: #cdd6f4;
+    color: @on_primary;
     background-size: 30%;
-    margin: 30px;
     border-radius: 80px;
-    box-shadow: 0 0 50px @color7;
+    box-shadow: 0 0 50px @primary;
 }
 
 /* Adjust the size of the icon or content inside the button */

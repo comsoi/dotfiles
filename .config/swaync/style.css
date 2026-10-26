@@ -1,7 +1,3 @@
-
-/* @import '../../.cache/wal/colors-waybar.css'; */
-
-/* @define-color bordercolor @color11; */
 @import 'colors.css';
 
 @define-color bordercolor @primary;

@@ -35,8 +35,8 @@ configuration {
 // Main //
 window {
     width:                        30em;
-    x-offset:                     -2em;
-    y-offset:                     2em;
+    x-offset:                     -15px;
+    y-offset:                     13px;
     spacing:                      0px;
     padding:                      0px;
     margin:                       0px; 
@@ -157,7 +157,7 @@ button selected {
 // Elements //
 element {
     enabled:                     true;
-    padding:                     1em;
+    padding:                     0.5em 1em;
     margin:                      0em;
     cursor:                      pointer;
     background-color:            transparent;
@@ -212,7 +212,7 @@ element alternate.active {
 }
 
 element-icon {
-    size:                        0em;
+    size:                        2.2em;
     cursor:                      inherit;
     background-color:            transparent;
     text-color:                  inherit;

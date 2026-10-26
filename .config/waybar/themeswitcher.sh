@@ -15,20 +15,18 @@ listNames2=""
 sleep 0.2
 options=$(find $themes_path -maxdepth 2 -type d)
 for value in $options; do
-	if [ ! $value == "$HOME/.config/waybar/themes/assets" ]; then
-		if [ ! $value == "$themes_path" ]; then
-			if [ $(find $value -maxdepth 1 -type d | wc -l) = 1 ]; then
-				result=$(echo $value | sed "s#$HOME/.config/waybar/themes/#/#g")
-				IFS='/' read -ra arrThemes <<<"$result"
-				listThemes[${#listThemes[@]}]="/${arrThemes[1]};$result"
-				if [ -f $themes_path$result/config.sh ]; then
-					source $themes_path$result/config.sh
-					listNames+="$theme_name\n"
-					listNames2+="$theme_name~"
-				else
-					listNames+="/${arrThemes[1]};$result\n"
-					listNames2+="/${arrThemes[1]};$result~"
-				fi
+	if [ ! $value == "$themes_path" ]; then
+		if [ $(find $value -maxdepth 1 -type d | wc -l) = 1 ]; then
+			result=$(echo $value | sed "s#$HOME/.config/waybar/themes/#/#g")
+			IFS='/' read -ra arrThemes <<<"$result"
+			listThemes[${#listThemes[@]}]="/${arrThemes[1]};$result"
+			if [ -f $themes_path$result/config.sh ]; then
+				source $themes_path$result/config.sh
+				listNames+="$theme_name\n"
+				listNames2+="$theme_name~"
+			else
+				listNames+="/${arrThemes[1]};$result\n"
+				listNames2+="/${arrThemes[1]};$result~"
 			fi
 		fi
 	fi

@@ -1,0 +1,34 @@
+[config]
+version_check = false
+
+[templates.gtk3]
+input_path = '~/.config/matugen/templates/gtk/3.0.css'
+output_path = '~/.config/gtk-3.0/matugen.css'
+
+[templates.gtk4]
+input_path = '~/.config/matugen/templates/gtk/4.0.css'
+output_path = '~/.config/gtk-4.0/matugen.css'
+
+[templates.fcitx5lighttheme]
+input_path = '~/.config/matugen/templates/fcitx5/theme-light.conf'
+output_path = '~/.local/share/fcitx5/themes/materialyou-light/theme.conf'
+
+[templates.fcitx5lightpanel]
+input_path = '~/.config/matugen/templates/fcitx5/panel-light.svg'
+output_path = '~/.local/share/fcitx5/themes/materialyou-light/panel.svg'
+
+[templates.fcitx5lighthighlight]
+input_path = '~/.config/matugen/templates/fcitx5/highlight-light.svg'
+output_path = '~/.local/share/fcitx5/themes/materialyou-light/highlight.svg'
+
+[templates.fcitx5darktheme]
+input_path = '~/.config/matugen/templates/fcitx5/theme-dark.conf'
+output_path = '~/.local/share/fcitx5/themes/materialyou-dark/theme.conf'
+
+[templates.fcitx5darkpanel]
+input_path = '~/.config/matugen/templates/fcitx5/panel-dark.svg'
+output_path = '~/.local/share/fcitx5/themes/materialyou-dark/panel.svg'
+
+[templates.fcitx5darkhighlight]
+input_path = '~/.config/matugen/templates/fcitx5/highlight-dark.svg'
+output_path = '~/.local/share/fcitx5/themes/materialyou-dark/highlight.svg'

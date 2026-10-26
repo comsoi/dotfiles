@@ -6,7 +6,7 @@ require("yaziline"):setup()
 
 require("git"):setup()
 
-require("full-border"):setup()
+-- require("full-border"):setup()
 
 require("fcitx5"):setup({
 	input_im = "pinyin",

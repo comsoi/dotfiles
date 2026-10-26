@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Render the GTK and fcitx5 themes with matugen using the current KDE seed."""
+
+import getpass
+import json
+import subprocess
+import tempfile
+from pathlib import Path
+
+
+STATE_FILE = (
+    Path(tempfile.gettempdir()) / f"kde-material-you-colors-{getpass.getuser()}.json"
+)
+MATUGEN_CONFIG = Path.home() / ".config/matugen/kde-hook.toml"
+THEME_DIR = Path.home() / ".local/share/fcitx5/themes"
+SCHEME_TYPES = {
+    0: "scheme-content",
+    1: "scheme-expressive",
+    2: "scheme-fidelity",
+    3: "scheme-monochrome",
+    4: "scheme-neutral",
+    5: "scheme-tonal-spot",
+    6: "scheme-vibrant",
+    7: "scheme-rainbow",
+    8: "scheme-fruit-salad",
+}
+
+
+def current_seed():
+    try:
+        data = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+        seed = data["seed"]["color"]
+        variant = int(data.get("config", {}).get("scheme_variant", 5))
+        mode = "light" if data.get("light") else "dark"
+        return seed, SCHEME_TYPES.get(variant, "scheme-tonal-spot"), mode
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return "#808080", "scheme-tonal-spot", "dark"
+
+
+def main():
+    for name in ("materialyou-light", "materialyou-dark"):
+        (THEME_DIR / name).mkdir(parents=True, exist_ok=True)
+
+    seed, scheme_type, mode = current_seed()
+    result = subprocess.run(
+        [
+            "matugen",
+            "color",
+            "hex",
+            seed,
+            "--config",
+            str(MATUGEN_CONFIG),
+            "--mode",
+            mode,
+            "--type",
+            scheme_type,
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        print(result.stderr.strip() or result.stdout.strip())
+        return result.returncode
+
+    subprocess.run(
+        [
+            "dbus-send",
+            "--session",
+            "--print-reply",
+            "--dest=org.fcitx.Fcitx5",
+            "/controller",
+            "org.fcitx.Fcitx.Controller1.ReloadAddonConfig",
+            "string:classicui",
+        ],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    print(
+        f"GTK and fcitx5 themes rendered from matugen: "
+        f"seed={seed} type={scheme_type} mode={mode}"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

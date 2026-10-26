@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define default themes
-themestyle_default="/modern;/modern/light"
+themestyle_default="/modern;/modern/mixed"
 themestyle="$themestyle_default"
 
 # Check for theme override file

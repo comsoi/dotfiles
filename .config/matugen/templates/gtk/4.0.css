@@ -1,0 +1,92 @@
+/*
+ * GTK4 配色 —— 优化版（matugen 模板，libadwaita 1.9 / GTK 4.22 实测）
+ *
+ * 与 GTK3 版的区别（都是实测结论）：
+ *  1. libadwaita 把老键桥接成 CSS 变量：--accent-bg-color: @accent_bg_color; …
+ *  2. accent_color / destructive_color / error_color / success_color 在 GTK4 里被 oklab 推导覆盖
+ *     （--x-color: oklab(from var(--x-bg-color) …)），@define-color 写它们无效 → 不写
+ *  3. theme_unfocused_* / theme_selected_* 在 GTK4 里没有桥接变量、0 处使用；DMS 写了，这里跟着写（纯兜底）
+ *  4. thumbnail_* / secondary_sidebar_* 在 GTK4 里确有引用（各 3 处）→ 保留
+ *  5. shade_color / *shade_color 故意不定义：它们在 Adwaita 里本来就是黑色半透明遮罩
+ *  6. warning_* / success_* 不定义 → 交给主题的语义色（黄/绿），理由见 3.0.css
+ *
+ *  7. 【不要用 @media 分浅色/深色】实测：在用户 CSS（~/.config/gtk-4.0/gtk.css 及其 @import）里
+ *     `@media (prefers-color-scheme: dark)` 不生效、只有 `light` 分支被采纳（同一个进程里
+ *     libadwaita 自己的样式表却正常走 dark）。结果是深色模式下 GNOME 应用会拿到浅色配色。
+ *     所以这里用 colors.*.default：由 matugen 按当前模式渲染，切明暗时重跑一次即可。
+ *
+ *  8. 表面只留两级（扁平，参考 DMS / noctalia）：
+ *       background 层 ： window / view / headerbar / dialog / secondary_sidebar
+ *       container 层  ： sidebar / card / popover / thumbnail
+ *     顺带干掉了原来那个 is_dark_mode 分叉 —— 只有一级抬升，深浅两侧都不会打架。
+ */
+
+/* 强调 —— accent_color 是 noc 显式定义的（焦点环用它）。DMS 不写、让 adw-gtk3
+ * 派生成 mix(@accent_bg_color,white,0.4)。这里取 noc 的：跟填充色同色。 */
+@define-color accent_color {{colors.primary.default.hex}};
+@define-color accent_bg_color {{colors.primary.default.hex}};
+@define-color accent_fg_color {{colors.on_primary.default.hex}};
+
+/* 危险 / 错误：必须用 error 亮色（理由见 3.0.css） */
+@define-color destructive_bg_color {{colors.error.default.hex}};
+@define-color destructive_fg_color {{colors.on_error.default.hex}};
+@define-color error_bg_color {{colors.error.default.hex}};
+@define-color error_fg_color {{colors.on_error.default.hex}};
+
+/* warning_* / success_* 交给主题的语义色（黄/绿），理由见 3.0.css */
+
+/* 表面 —— 扁平两层。token 名跟 DMS/noc 对齐：两家 window/view/dialog/secondary_sidebar 都用 surface
+ * （matugen 里 surface 和 background 取值相同，所以这是纯对齐，不影响渲染） */
+@define-color window_bg_color {{colors.surface.default.hex}};
+@define-color window_fg_color {{colors.on_surface.default.hex}};
+@define-color view_bg_color {{colors.surface.default.hex}};
+@define-color view_fg_color {{colors.on_surface.default.hex}};
+/* 标题栏：DMS 和 noc 的 gtk4 版都是平（surface），noc 的 gtk3 版给 container —— 取平的 */
+@define-color headerbar_bg_color {{colors.surface.default.hex}};
+@define-color headerbar_fg_color {{colors.on_surface.default.hex}};
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color sidebar_bg_color {{colors.surface_container.default.hex}};
+@define-color sidebar_fg_color {{colors.on_surface.default.hex}};
+/* 失焦直接退到窗口色（noc 的做法；DMS 写成 @sidebar_bg_color 等于没变化） */
+@define-color sidebar_backdrop_color @window_bg_color;
+/* 侧栏描边 noc 用实色窗口色（DMS 不写、继承主题半透明发丝线）——取 noc 的 */
+@define-color sidebar_border_color @window_bg_color;
+/* 二级侧栏：DMS/noc 都用 surface（=窗口色），跟着走，保持扁平 */
+@define-color secondary_sidebar_bg_color {{colors.surface.default.hex}};
+@define-color secondary_sidebar_fg_color {{colors.on_surface.default.hex}};
+@define-color secondary_sidebar_backdrop_color @window_bg_color;
+@define-color card_bg_color {{colors.surface_container.default.hex}};
+@define-color card_fg_color {{colors.on_surface.default.hex}};
+@define-color thumbnail_bg_color {{colors.surface_container.default.hex}};
+@define-color thumbnail_fg_color {{colors.on_surface.default.hex}};
+@define-color popover_bg_color {{colors.surface_container.default.hex}};
+@define-color popover_fg_color {{colors.on_surface.default.hex}};
+@define-color dialog_bg_color {{colors.surface.default.hex}};
+@define-color dialog_fg_color {{colors.on_surface.default.hex}};
+
+/* 总览：
+ * noc 是 @define-color 和 CSS 变量**两样都写**，DMS 只写 @define-color。
+ * 实测在 GTK4 里 @define-color overview_* 到不了 libadwaita（它的 --overview-bg-color 是硬编码的，
+ * DMS 那份解析出来仍是默认 #28282c），真正生效的是 :root 里的 CSS 变量。
+ * 所以两样都写上：@define-color 跟两家对齐，:root 变量保证真的起作用。 */
+@define-color overview_bg_color {{colors.surface_container.default.hex}};
+@define-color overview_fg_color {{colors.on_surface.default.hex}};
+:root {
+    --overview-bg-color: {{colors.surface_container.default.hex}};
+    --overview-fg-color: {{colors.on_surface.default.hex}};
+}
+
+/* 选中 / 失焦 —— 取值照 DMS（DMS 只写失焦那 6 行，theme_selected_* 是 noc 和 3.0 多写的，
+ * 这里一起写上，保证两个文件键集一致）。
+ * 注意：在 GTK4 里 libadwaita 对这些名字**只有定义、0 处使用、也没有桥接成 --theme-* 变量**
+ * （实测），所以这 8 行是纯兜底——换主题、或个别老应用按名字查询时不塌，不改变任何渲染。
+ * libadwaita 自己的取值跟这里完全一样（theme_unfocused_fg = @window_fg_color，
+ * 也就是 GTK4 默认"失焦不压暗"，不像 GTK3 的 adw-gtk3 要显式覆盖）。 */
+@define-color theme_selected_bg_color @accent_bg_color;
+@define-color theme_selected_fg_color @accent_fg_color;
+@define-color theme_unfocused_bg_color @window_bg_color;
+@define-color theme_unfocused_fg_color @window_fg_color;
+@define-color theme_unfocused_base_color @window_bg_color;
+@define-color theme_unfocused_text_color @view_fg_color;
+@define-color theme_unfocused_selected_bg_color @accent_bg_color;
+@define-color theme_unfocused_selected_fg_color @accent_fg_color;
