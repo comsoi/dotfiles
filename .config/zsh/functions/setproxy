@@ -395,6 +395,14 @@ emulate -L zsh
 					while read -r addr; do
 						cand+=("$addr")
 					done < <(ip -o -4 neigh show | awk '$NF!="FAILED" && $NF!="INCOMPLETE" {print $1}')
+				elif grep -q QEMU /sys/class/dmi/id/sys_vendor 2>/dev/null; then
+					# KVM/QEMU guest: the proxy usually runs on the host OS. With
+					# libvirt's default NAT network the gateway IS the host; with
+					# user-mode networking the gateway (10.0.2.2) reaches it too.
+					route=$(ip route get 223.5.5.5 2>/dev/null | head -n1) || route=""
+					gw=$(awk '{for (i=1;i<=NF;i++) if ($i=="via") {print $(i+1); exit}}' <<<"$route")
+					[[ -n "$gw" ]] && cand+=("$gw")
+					cand+=("127.0.0.1")
 				else
 					cand+=(127.0.0.1)
 				fi
