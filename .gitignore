@@ -8,6 +8,7 @@
 
 # 编辑器 / IDE
 .vscode/
+nvim.log
 
 # Shell
 .config/starship.toml
@@ -26,18 +27,25 @@
 # 生成文件 / 本地配置
 .config/hypr/cache/
 .config/hypr/colors.conf
-.config/hypr/conf/etc/animation.conf
+.config/hypr/colors.lua
+# noctalia 运行时重新生成，但 hyprland.lua 启动即 require，本地必须存在，只是不入库
+.config/hypr/noctalia.lua
 .config/hypr/hypridle.conf
 .config/hypr/monitors.conf
 .config/rofi/colors.rasi
 .config/waybar/colors.css
 .config/swaync/colors.css
+.config/wleave/colors.css
 .config/sunsetr/geo.toml
 dank-theme.toml
 
 # 应用
 .config/scoop/
 .config/yazi/plugins/
+
+# zellij：zellij 每次改写 config.kdl 都会自己滚一份 .bak，
+# 只收录 config.kdl / layouts / scripts，备份不进仓库
+.config/zellij/*.bak*
 
 # Flatpak 导出
 .local/share/flatpak/exports/share/applications/

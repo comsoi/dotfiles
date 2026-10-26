@@ -43,7 +43,7 @@ touchpad:
         gestures:
           - strokes: 'BQAAMQVgNAFeZGQA'
             actions:
-              - command: hyprctl dispatch killactive
+              - command: hyprctl dispatch 'hl.dsp.window.close()'
           - strokes: 'MQoAMTFkL88yAGQA'
             actions:
               - command: runapp dolphin || dolphin
@@ -60,4 +60,4 @@ mouse:
             - command: runapp dolphin || dolphin
         - strokes: 'BQAAMQVgNAFeZGQA'
           actions:
-            - command: hyprctl dispatch killactive
+            - command: hyprctl dispatch 'hl.dsp.window.close()'

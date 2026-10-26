@@ -39,12 +39,13 @@ function hyprun {
 		echo "Usage: hyprun <command>"
 		return 1
 	fi
-	# Use the quote function to properly handle special characters and quoting
-	local quoted_command
-	quoted_command=$(quote "$@")
+	# Hyprland 0.55+ (Lua config): dispatch takes a Lua dispatcher expression
+	local quoted_command="$*"
+	quoted_command="${quoted_command//\\/\\\\}"
+	quoted_command="${quoted_command//\'/\\\'}"
 
-	echo "Executing: hyprctl dispatch -- exec $quoted_command"
-	hyprctl dispatch -- exec "$quoted_command"
+	echo "Executing: hyprctl dispatch hl.dsp.exec_cmd('$quoted_command')"
+	hyprctl dispatch "hl.dsp.exec_cmd('$quoted_command')"
 }
 
 function tmux {

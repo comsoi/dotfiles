@@ -1,8 +1,7 @@
 {
 	"hyprland/workspaces": {
-		"on-scroll-up": "hyprctl dispatch workspace r-1",
-		"on-scroll-down": "hyprctl dispatch workspace r+1",
-		"on-click": "activate",
+		"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m-1\"})'",
+		"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m+1\"})'",
 		"active-only": false,
 		"all-outputs": false,
 		"format": "{icon}",
@@ -50,8 +49,8 @@
 		}
 	},
 	"hyprland/window": {
-		"on-scroll-up": "hyprctl dispatch workspace r-1",
-		"on-scroll-down": "hyprctl dispatch workspace r+1",
+		"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m-1\"})'",
+		"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m+1\"})'",
 		"rewrite": {
 			"(.*) - Brave": "$1",
 			"(.*) - Chromium": "$1",
@@ -84,8 +83,8 @@
 	"custom/appmenu": {
 		"format": "Apps",
 		"on-click": "pkill rofi || rofi -show drun -replace -i -run-command \"uwsm-app -- {cmd}\"",
-		"on-scroll-up": "hyprctl dispatch workspace r-1",
-		"on-scroll-down": "hyprctl dispatch workspace r+1",
+		"on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m-1\"})'",
+		"on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({workspace = \"m+1\"})'",
 		"tooltip-format": "Left: Open the application launcher"
 	},
 	"custom/exit": {

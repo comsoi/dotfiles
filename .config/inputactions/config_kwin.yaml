@@ -133,7 +133,7 @@ touchpad:
         - strokes: 'BQAAMQVgNAFeZGQA'
           actions:
             - plasma_shortcut: kwin,Window Close
-            - command: hyprctl dispatch killactive
+            - command: hyprctl dispatch 'hl.dsp.window.close()'
         - strokes: 'MQoAMTFkL88yAGQA'
           actions:
             - command: runapp -i app.slice dolphin || dolphin
