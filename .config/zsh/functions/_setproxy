@@ -1,0 +1,13 @@
+#compdef setproxy
+
+_setproxy() {
+	_arguments -S \
+		'(-http -https -socks -socks5 -socks5h)-http[use an HTTP proxy]' \
+		'(-http -https -socks -socks5 -socks5h)-https[use an HTTP proxy]' \
+		'(-http -https -socks -socks5 -socks5h)-socks[use a SOCKS5 proxy]' \
+		'(-http -https -socks -socks5 -socks5h)-socks5[use a SOCKS5 proxy]' \
+		'(-http -https -socks -socks5 -socks5h)-socks5h[use a SOCKS5 proxy with remote DNS]' \
+		'--no-check[skip connectivity probing]' \
+		'--user[proxy credentials]:user or user\:password:' \
+		'*:proxy: _message -e proxy "IPv4 address, port or proxy URL"'
+}

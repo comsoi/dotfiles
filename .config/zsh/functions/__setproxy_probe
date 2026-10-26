@@ -1,0 +1,93 @@
+emulate -L zsh
+
+# Probe a single candidate endpoint. Sets probe_result (0 reachable, 2 auth
+# required, 3 auth rejected, 4 forbidden, 1 unreachable) and probe_http_code
+# (last HTTP status; empty for SOCKS). Uses the caller's credential state and
+# updates base64_checked/proxy_auth through dynamic scoping.
+	local host="$1" port="$2" proto="$3"
+	local hex out line lc code req attempt_target attempt_auth attempt
+	probe_result=1
+	probe_http_code=""
+	if [[ "$proto" == socks5 || "$proto" == socks5h ]]; then
+		# No-auth greeting; credentials only go on the wire after the server
+		# itself demands RFC 1929 authentication.
+		hex=$(printf '\005\001\000' |
+			timeout 0.5 nc -w 1 "$host" "$port" 2>/dev/null |
+			head -c 2 | od -An -tx1 | tr -d '[:space:]') || true
+		case "$hex" in
+		0500) probe_result=0 ;;
+		0502)
+			probe_result=2
+			if (( have_credentials )); then
+				hex=$({
+					printf '\005\001\002\001'
+					printf "\\$(printf '%03o' "${#proxy_user}")"
+					printf '%s' "$proxy_user"
+					printf "\\$(printf '%03o' "${#proxy_pass}")"
+					printf '%s' "$proxy_pass"
+				} | timeout 0.5 nc -w 1 "$host" "$port" 2>/dev/null |
+					head -c 4 | od -An -tx1 | tr -d '[:space:]') || true
+				case "$hex" in
+				05020100) probe_result=0 ;;
+				05020101 | 0502) probe_result=3 ;;
+				*) probe_result=1 ;;
+				esac
+			fi
+			;;
+		esac
+		return
+	fi
+	# HTTP: CONNECT loopback first. A 407 retries with Basic auth; a 403
+	# retries against an external target because anti-SSRF proxies reject
+	# loopback CONNECT.
+	attempt_target="127.0.0.1:1"
+	attempt_auth=0
+	for ((attempt = 0; attempt < 4; attempt++)); do
+		req="CONNECT $attempt_target HTTP/1.1"$'\r\n'"Host: $attempt_target"$'\r\n'
+		if (( attempt_auth )); then
+			if (( ! base64_checked )); then
+				if ! command -v base64 >/dev/null 2>&1; then
+					echo "setproxy: base64 is required for HTTP proxy authentication" >&2
+					return
+				fi
+				proxy_auth=$(printf '%s:%s' "$proxy_user" "$proxy_pass" | base64 | tr -d '\n')
+				base64_checked=1
+			fi
+			req+="Proxy-Authorization: Basic $proxy_auth"$'\r\n'
+		fi
+		req+="Connection: close"$'\r\n\r\n'
+		out=$(printf '%s' "$req" |
+			timeout 0.5 nc -w 1 "$host" "$port" 2>/dev/null |
+			head -n 1) || true
+		line="${out%%$'\n'*}"
+		lc=$(printf '%s' "$line" | tr '[:upper:]' '[:lower:]')
+		code=$(printf '%s\n' "$lc" | awk 'NR == 1 && $1 ~ /^http\// {print $2; exit}')
+		case "$code" in
+		[0-9][0-9][0-9]) ;;
+		*) code="" ;;
+		esac
+		probe_http_code="$code"
+		case "$code" in
+		200) probe_result=0; return ;;
+		407)
+			if (( ! have_credentials )); then
+				probe_result=2
+				return
+			fi
+			if (( attempt_auth )); then
+				probe_result=3
+				return
+			fi
+			attempt_auth=1
+			;;
+		403)
+			if [[ "$attempt_target" == "127.0.0.1:1" ]]; then
+				attempt_target="223.5.5.5:443"
+			else
+				probe_result=4
+				return
+			fi
+			;;
+		*) return ;;
+		esac
+	done

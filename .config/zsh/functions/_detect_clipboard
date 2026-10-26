@@ -1,20 +1,42 @@
+# Clipboard backend detection + cpcopy/cpaste definition, merged from:
+#   - the custom _detect_clipboard (backend abstraction, OSC52 over SSH,
+#     tmux buffer sync, stdin staged via temp file)
+#   - oh-my-zsh lib/clipboard.zsh (former _detect_clipboard_1: cygwin,
+#     clip.exe, lemonade, doitclient, termux backends)
+# Backends uniformly read a file argument or stdin. Loaded lazily by the
+# functions/cpcopy and functions/cpaste stubs.
 emulate -L zsh
 
-if [[ "${OSTYPE}" == darwin* ]] && (( ${+commands[pbcopy]} )); then
-	_cp_backend_copy() { pbcopy; }
+if [[ "${OSTYPE}" == darwin* ]] && (( ${+commands[pbcopy]} )) && (( ${+commands[pbpaste]} )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | pbcopy; }
 	_cp_backend_paste() { pbpaste; }
+elif [[ "${OSTYPE}" == (cygwin|msys)* ]]; then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" > /dev/clipboard; }
+	_cp_backend_paste() { cat /dev/clipboard; }
 elif (( ${+commands[win32yank]} )); then
-	_cp_backend_copy() { win32yank -i --lf; }
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | win32yank -i --lf; }
 	_cp_backend_paste() { win32yank -o --lf; }
-elif [ -n "${WAYLAND_DISPLAY:-}" ] && (( ${+commands[wl-copy]} )); then
-	_cp_backend_copy() { wl-copy &>/dev/null &|; }
+elif (( $+commands[clip.exe] )) && (( $+commands[powershell.exe] )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | clip.exe; }
+	_cp_backend_paste() { powershell.exe -noprofile -command Get-Clipboard; }
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && (( ${+commands[wl-copy]} )) && (( ${+commands[wl-paste]} )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" > >(wl-copy &>/dev/null); }
 	_cp_backend_paste() { wl-paste --no-newline; }
 elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xsel]} )); then
-	_cp_backend_copy() { xsel --clipboard --input; }
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | xsel --clipboard --input; }
 	_cp_backend_paste() { xsel --clipboard --output; }
 elif [ -n "${DISPLAY:-}" ] && (( ${+commands[xclip]} )); then
-	_cp_backend_copy() { xclip -selection clipboard -in &>/dev/null &|; }
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" > >(xclip -selection clipboard -in &>/dev/null); }
 	_cp_backend_paste() { xclip -selection clipboard -out; }
+elif (( ${+commands[lemonade]} )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | lemonade copy; }
+	_cp_backend_paste() { lemonade paste; }
+elif (( ${+commands[doitclient]} )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | doitclient wclip; }
+	_cp_backend_paste() { doitclient wclip -r; }
+elif [[ $OSTYPE == linux-android* ]] && (( $+commands[termux-clipboard-set] )); then
+	_cp_backend_copy() { cat -- "${1:-/dev/stdin}" | termux-clipboard-set; }
+	_cp_backend_paste() { termux-clipboard-get; }
 elif [ -n "${TMUX:-}" ] && (( ${+commands[tmux]} )); then
 	_cp_backend_copy() { tmux load-buffer "${1:--}"; }
 	_cp_backend_paste() { tmux save-buffer -; }
@@ -24,7 +46,7 @@ else
 		if _detect_clipboard; then
 			"${clipcmd}" "$@"
 		else
-			print "${clipcmd}: Platform $OSTYPE not supported or xclip/xsel not installed" >&2
+			print "${clipcmd}: Platform $OSTYPE not supported or no clipboard backend installed" >&2
 			return 1
 		fi
 	}
@@ -39,67 +61,33 @@ function cpaste() {
 	_cp_backend_paste "$@"
 }
 
-if [[ -n "$TMUX" && -n "$SSH_CLIENT$SSH_TTY$SSH_CONNECTION" ]]; then
-	function cpcopy() {
-		local threshold=1048576 # 1MB
-		if [[ -f "$1" ]]; then
-			_cp_backend_copy "$1"
-			tmux load-buffer - < "$1"
-			printf "\033]52;c;%s\a" "$(head -c 74994 -- "$1" | base64 | tr -d '\r\n')"
-		else
-			local chunk="$(head -c $((threshold + 1)))"
-			if (( ${#chunk} <= threshold )); then
-				[[ -z "$chunk" ]] && return 0
-				print -rn -- "$chunk" | _cp_backend_copy
-				print -rn -- "$chunk" | tmux load-buffer -
-				printf "\033]52;c;%s\a" "$(print -rn -- "$chunk" | base64 | tr -d '\r\n')"
-			else
-				local tmpfile="$(mktemp 2>/dev/null || mktemp -t "c.XXXXXX")" || return 1
-				trap "rm -f -- \"\$tmpfile\"" EXIT INT TERM HUP
-				(print -rn -- "$chunk"; cat) > "$tmpfile"
-				_cp_backend_copy "$tmpfile"
-				tmux load-buffer - < "$tmpfile"
-				printf "\033]52;c;%s\a" "$(head -c 74994 -- "$tmpfile" | base64 | tr -d '\r\n')"
-			fi
-		fi
-		}
-	return 0
-fi
-
-if [[ -n "$SSH_CLIENT$SSH_TTY$SSH_CONNECTION" ]]; then
-	function cpcopy() {
-		local threshold=1048576
-		if [[ -f "$1" ]]; then
-			_cp_backend_copy "$1"
-			printf "\033]52;c;%s\a" "$(head -c 74994 -- "$1" | base64 | tr -d '\r\n')"
-		else
-			local chunk="$(head -c $((threshold + 1)))"
-			if (( ${#chunk} <= threshold )); then
-				[[ -z "$chunk" ]] && return 0
-				print -rn -- "$chunk" | _cp_backend_copy
-				printf "\033]52;c;%s\a" "$(print -rn -- "$chunk" | base64 | tr -d '\r\n')"
-			else
-				local tmpfile="$(mktemp 2>/dev/null || mktemp -t "c.XXXXXX")" || return 1
-				trap "rm -f -- \"\$tmpfile\"" EXIT INT TERM HUP
-				(print -rn -- "$chunk"; cat) > "$tmpfile"
-				_cp_backend_copy "$tmpfile"
-				printf "\033]52;c;%s\a" "$(head -c 74994 -- "$tmpfile" | base64 | tr -d '\r\n')"
-			fi
-		fi
-	}
-	return 0
-fi
-
-if [[ -n "$TMUX" ]]; then
-	function cpcopy() {
-		cat -- "${1:-/dev/stdin}" | _cp_backend_copy
-		tmux load-buffer "${1:--}"
-	}
-	return 0
-fi
+# OSC52: copy through the terminal to the local (SSH client side) clipboard.
+# 74994 base64 bytes is the practical payload limit.
+function _cp_osc52() {
+	printf "\033]52;c;%s\a" "$(head -c 74994 -- | base64 | tr -d '\r\n')"
+}
 
 function cpcopy() {
-	cat -- "${1:-/dev/stdin}" | _cp_backend_copy
+	local input="${1:--}"
+	local stage="$input"
+
+	# File argument: copy the file as-is. stdin: stage it in a temp file so
+	# it can be re-read byte-exactly for the backend, the tmux buffer and
+	# OSC52 (command substitution would eat trailing newlines).
+	if [[ "$input" == "-" || ! -f "$input" ]]; then
+		stage="$(mktemp 2>/dev/null || mktemp -t "c.XXXXXX")" || return 1
+		cat > "$stage"
+		if [[ ! -s "$stage" ]]; then
+			rm -f -- "$stage"
+			return 0
+		fi
+	fi
+
+	_cp_backend_copy "$stage"
+	[[ -n "$TMUX" ]] && tmux load-buffer - < "$stage"
+	[[ -n "$SSH_CLIENT$SSH_TTY$SSH_CONNECTION" ]] && _cp_osc52 < "$stage"
+	[[ "$stage" != "$input" ]] && rm -f -- "$stage"
+	return 0
 }
 
 return 0

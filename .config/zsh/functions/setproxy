@@ -1,0 +1,575 @@
+emulate -L zsh
+	# Returns 0 on success, 1 if no usable proxy, 2 on usage errors,
+	# 3 if authentication is rejected, 4 if the proxy replies 403.
+	local IP="" PORT="" PROT="" explicit_ip=0 explicit_port=0 protocol_explicit=0
+	local no_check=0 arg octet
+	local proxy_user="" proxy_pass="" have_credentials=0 expect_user=0 url_seen=0
+	local read_array_opt="-A"
+	local -a octets=()
+	for arg in "$@"; do
+		if (( expect_user )); then
+			if [[ "$arg" == *://* ]]; then
+				echo "setproxy: pass the proxy URL directly, without --user" >&2
+				return 2
+			fi
+			if [[ -z "$arg" || "$arg" == -* ]]; then
+				echo "setproxy: --user expects USER or USER:PASS" >&2
+				return 2
+			fi
+			if [[ "$arg" == *:* ]]; then
+				proxy_user="${arg%%:*}"
+				proxy_pass="${arg#*:}"
+			else
+				proxy_user="$arg"
+				if [[ -t 0 || -t 1 ]]; then
+					printf 'Proxy password for %s: ' "$proxy_user" 2>/dev/null > /dev/tty || true
+					if ! IFS= read -r -s proxy_pass 2>/dev/null < /dev/tty; then
+						printf '\n' 2>/dev/null > /dev/tty || true
+						echo "setproxy: password input aborted" >&2
+						return 2
+					fi
+					printf '\n' 2>/dev/null > /dev/tty || true
+				else
+					echo "setproxy: no TTY for password prompt; use --user USER:PASS" >&2
+					return 2
+				fi
+			fi
+			if [[ -z "$proxy_user" || -z "$proxy_pass" ]]; then
+				echo "setproxy: --user expects a non-empty user and password" >&2
+				return 2
+			fi
+			if (( ${#proxy_user} > 255 || ${#proxy_pass} > 255 )); then
+				echo "setproxy: SOCKS5 user and password must be at most 255 characters" >&2
+				return 2
+			fi
+			if [[ "$proxy_user$proxy_pass" == *$'\n'* || "$proxy_user$proxy_pass" == *$'\r'* ]]; then
+				echo "setproxy: user and password must not contain newlines" >&2
+				return 2
+			fi
+			have_credentials=1
+			expect_user=0
+			continue
+		fi
+		case "$arg" in
+		"--user")
+			if (( have_credentials )); then
+				echo "setproxy: credentials specified more than once" >&2
+				return 2
+			fi
+			expect_user=1
+			;;
+		"--no-check")
+			no_check=1
+			;;
+		"-socks" | "-socks5" | "-socks5h") # set SOCKS5 proxy with remote DNS
+			if (( protocol_explicit )); then
+				echo "setproxy: protocol specified more than once: $PROT" >&2
+				return 2
+			fi
+			PROT="socks5h"
+			protocol_explicit=1
+			;;
+		"-http" | "-https") # set HTTP proxy
+			if (( protocol_explicit )); then
+				echo "setproxy: protocol specified more than once: $PROT" >&2
+				return 2
+			fi
+			PROT="http"
+			protocol_explicit=1
+			;;
+		*)
+			if [[ "$arg" == *://* ]]; then
+				local scheme rest authority userinfo hostport url_host url_port url_user url_pass after
+				if (( url_seen )); then
+					echo "setproxy: proxy URL specified more than once" >&2
+					return 2
+				fi
+				if (( explicit_ip || explicit_port || protocol_explicit )); then
+					echo "setproxy: proxy URL cannot be combined with host, port or protocol arguments" >&2
+					return 2
+				fi
+				scheme="${arg%%://*}"
+				scheme=$(printf '%s' "$scheme" | tr '[:upper:]' '[:lower:]')
+				case "$scheme" in
+				http) PROT="http" ;;
+				socks | socks5) PROT="socks5" ;;
+				socks5h) PROT="socks5h" ;;
+				https)
+					echo "setproxy: https:// proxy URLs are not supported; use http:// or socks5h://" >&2
+					return 2
+					;;
+				*)
+					echo "setproxy: unsupported proxy URL scheme: $scheme" >&2
+					return 2
+					;;
+				esac
+				rest="${arg#*://}"
+				authority="${rest%%/*}"
+				if [[ "$rest" != "$authority" && "$rest" != "$authority/" ]]; then
+					echo "setproxy: proxy URL must not contain a path: $arg" >&2
+					return 2
+				fi
+				if [[ -z "$authority" ]]; then
+					echo "setproxy: proxy URL is missing a host" >&2
+					return 2
+				fi
+				userinfo=""
+				hostport="$authority"
+				if [[ "$authority" == *@* ]]; then
+					userinfo="${authority%@*}"
+					hostport="${authority##*@}"
+					if [[ "$userinfo" == *@* ]]; then
+						echo "setproxy: encode @ in proxy URL credentials" >&2
+						return 2
+					fi
+					if [[ -z "$userinfo" || "$userinfo" != *:* ]]; then
+						echo "setproxy: proxy URL credentials must be USER:PASS" >&2
+						return 2
+					fi
+					url_user="${userinfo%%:*}"
+					url_pass="${userinfo#*:}"
+					url_user=$(__setproxy_urldecode "$url_user")
+					url_pass=$(__setproxy_urldecode "$url_pass")
+					if [[ -z "$url_user" || -z "$url_pass" ]]; then
+						echo "setproxy: proxy URL credentials must be non-empty" >&2
+						return 2
+					fi
+					if (( ${#url_user} > 255 || ${#url_pass} > 255 )); then
+						echo "setproxy: SOCKS5 user and password must be at most 255 characters" >&2
+						return 2
+					fi
+					if [[ "$url_user$url_pass" == *$'\n'* || "$url_user$url_pass" == *$'\r'* ]]; then
+						echo "setproxy: user and password must not contain newlines" >&2
+						return 2
+					fi
+					if (( have_credentials )); then
+						echo "setproxy: credentials specified more than once" >&2
+						return 2
+					fi
+					proxy_user="$url_user"
+					proxy_pass="$url_pass"
+					have_credentials=1
+				fi
+				if [[ "$hostport" == \[*\]* ]]; then
+					url_host="${hostport#\[}"
+					url_host="${url_host%%\]*}"
+					after="${hostport#*\]}"
+					if [[ -z "$url_host" ]]; then
+						echo "setproxy: proxy URL is missing a host" >&2
+						return 2
+					fi
+					if [[ -n "$after" ]]; then
+						if [[ "$after" != :* || "$after" == : ]]; then
+							echo "setproxy: invalid port in proxy URL: $after" >&2
+							return 2
+						fi
+						url_port="${after#:}"
+					else
+						url_port=""
+					fi
+					if [[ ! "$url_host" =~ ^[0-9A-Fa-f:.]+$ ]]; then
+						echo "setproxy: invalid IPv6 host in proxy URL: $url_host" >&2
+						return 2
+					fi
+				else
+					if [[ "$hostport" == *:* ]]; then
+						if [[ "$hostport" == *:*:* ]]; then
+							echo "setproxy: IPv6 hosts in proxy URLs must use brackets" >&2
+							return 2
+						fi
+						url_host="${hostport%%:*}"
+						url_port="${hostport#*:}"
+						if [[ -z "$url_port" ]]; then
+							echo "setproxy: invalid port in proxy URL: empty" >&2
+							return 2
+						fi
+					else
+						url_host="$hostport"
+						url_port=""
+					fi
+					if [[ -z "$url_host" ]]; then
+						echo "setproxy: proxy URL is missing a host" >&2
+						return 2
+					fi
+					if [[ "$url_host" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+						IFS=. read -r "$read_array_opt" octets <<<"$url_host"
+						for octet in "${octets[@]}"; do
+							if (( 10#$octet > 255 )); then
+								echo "setproxy: invalid IPv4 address in proxy URL: $url_host" >&2
+								return 2
+							fi
+						done
+					elif [[ ! "$url_host" =~ ^[A-Za-z0-9._-]+$ ]]; then
+						echo "setproxy: invalid host in proxy URL: $url_host" >&2
+						return 2
+					fi
+				fi
+				if [[ -z "$url_port" ]]; then
+					case "$scheme" in
+					http) url_port=80 ;;
+					socks | socks5 | socks5h) url_port=1080 ;;
+					esac
+				else
+					if [[ ! "$url_port" =~ ^[0-9]{1,5}$ ]]; then
+						echo "setproxy: invalid port in proxy URL: $url_port" >&2
+						return 2
+					fi
+				fi
+				url_port=$((10#$url_port))
+				if (( url_port < 1 || url_port > 65535 )); then
+					echo "setproxy: invalid port in proxy URL: $url_port" >&2
+					return 2
+				fi
+				IP="$url_host"
+				PORT="$url_port"
+				explicit_ip=1
+				explicit_port=1
+				protocol_explicit=1
+				url_seen=1
+				continue
+			fi
+			if [[ "$arg" =~ ^[0-9]+$ ]]; then
+				if (( explicit_port )); then
+					echo "setproxy: port specified more than once: $PORT and $arg" >&2
+					return 2
+				fi
+				if (( 10#$arg < 1 || 10#$arg > 65535 )); then
+					echo "setproxy: invalid port: $arg (must be 1-65535)" >&2
+					return 2
+				fi
+				PORT="$arg"
+				explicit_port=1
+			elif [[ "$arg" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+				if (( explicit_ip )); then
+					echo "setproxy: IP address specified more than once: $IP and $arg" >&2
+					return 2
+				fi
+				IFS=. read -r "$read_array_opt" octets <<<"$arg"
+				for octet in "${octets[@]}"; do
+					if (( 10#$octet > 255 )); then
+						echo "setproxy: invalid IPv4 address: $arg" >&2
+						return 2
+					fi
+				done
+				IP="$arg"
+				explicit_ip=1
+			else
+				echo "setproxy: unknown argument: $arg" >&2
+				echo "Usage: setproxy [OPTIONS] [IPv4] [PORT]" >&2
+				echo "       setproxy [OPTIONS] PROXY_URL" >&2
+				echo "       OPTIONS: -http -https -socks -socks5 -socks5h --no-check --user USER[:PASS]" >&2
+				echo "       --user USER prompts for the password." >&2
+				echo "       PROXY_URL: http://[USER:PASS@]HOST[:PORT], socks5[h]://..." >&2
+				return 2
+			fi
+			;;
+		esac
+	done
+
+	if (( expect_user )); then
+		echo "setproxy: --user expects USER or USER:PASS" >&2
+		return 2
+	fi
+
+	if (( no_check )); then
+		if (( ! explicit_ip || ! explicit_port || ! protocol_explicit )); then
+			echo "setproxy: --no-check requires an IP address, a port and a protocol" >&2
+			return 2
+		fi
+	fi
+
+	# Probing needs these; fail early with a clear message instead of a
+	# blanket "no working proxy found".
+	if (( ! no_check )); then
+		local probe_tool
+		for probe_tool in nc timeout od; do
+			if ! command -v "$probe_tool" >/dev/null 2>&1; then
+				echo "setproxy: '$probe_tool' is required for proxy probing" >&2
+				return 1
+			fi
+		done
+		if (( have_credentials )) && ! command -v base64 >/dev/null 2>&1; then
+			echo "setproxy: 'base64' is required for HTTP proxy authentication" >&2
+			return 1
+		fi
+	fi
+
+	local -a hosts=() ports=() protocols=()
+	local route iface addr candidate_host candidate_port candidate_prot
+	local probe_result=1 probe_http_code=""
+	local http_error_detail=""
+	local auth_required=0 auth_detail=""
+	local auth_rejected=0 auth_rejected_detail=""
+	local forbidden=0 forbidden_detail=""
+	local proxy_auth="" base64_checked=0
+	local chosen_host="" chosen_port="" chosen_proto=""
+	# Last successfully scanned non-loopback endpoint ("host|port|proto"),
+	# consulted only by zero-argument calls.
+	local cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/setproxy"
+	local cache_host="" cache_port="" cache_proto="" from_cache=0
+
+	if (( no_check )); then
+		chosen_host="$IP"
+		chosen_port="$PORT"
+		chosen_proto="$PROT"
+	else
+		# Zero-argument calls get one shot at the cached endpoint before the
+		# full scan; explicit arguments never touch the cache.
+		if (( $# == 0 )) && [[ -r "$cache_file" ]]; then
+			IFS='|' read -r cache_host cache_port cache_proto < "$cache_file"
+			if [[ -n "$cache_host" && "$cache_port" =~ ^[1-9][0-9]{0,4}$ &&
+				"$cache_proto" =~ ^(http|socks5|socks5h)$ ]] && (( 10#$cache_port <= 65535 )); then
+				local detail_host="$cache_host"
+				[[ "$detail_host" == *:* ]] && detail_host="[$detail_host]"
+				__setproxy_probe "$cache_host" "$cache_port" "$cache_proto"
+				if (( probe_result == 0 )); then
+					chosen_host="$cache_host"
+					chosen_port="$cache_port"
+					chosen_proto="$cache_proto"
+					from_cache=1
+				elif (( probe_result == 2 )); then
+					auth_required=1
+					auth_detail="$cache_proto://$detail_host:$cache_port"
+				fi
+			fi
+		fi
+		if [[ -z "$chosen_host" ]]; then
+			if (( explicit_ip )); then
+				hosts=("$IP")
+			else
+				# The proxy usually runs on the host OS, not in this guest.
+				# Candidate hosts in priority order, deduped and capped to
+				# bound scan time on firewalled networks:
+				#  - WSL2 mirrored / WSL1: loopback is shared with Windows, so
+				#    127.0.0.1 reaches a proxy bound to loopback, and our
+				#    global addresses are the host's LAN IPs, reaching proxies
+				#    bound only to a physical adapter.
+				#  - WSL2 NAT: the default gateway is the Windows host's
+				#    vEthernet (WSL) adapter; resolv.conf is not a candidate
+				#    because with DNS tunneling it names a virtual resolver.
+				#  - VMware: the NAT gateway, then the vmnet convention
+				#    addresses (host x.x.x.1, NAT device x.x.x.2; VMware's
+				#    layout, not a generic LAN convention) of every subnet we
+				#    own -- a host-only adapter has no route out at all -- then
+				#    ARP neighbours (dual adapters, custom vmnet addressing).
+				#  - Anything else: assume the proxy is local.
+				local -a cand=()
+				local gw src wsl_mode
+				local -A seen_hosts=()
+				if grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null; then
+					wsl_mode=""
+					command -v wslinfo >/dev/null 2>&1 && wsl_mode=$(wslinfo --networking-mode 2>/dev/null)
+					if [[ "$wsl_mode" != nat && "$wsl_mode" != mirrored ]]; then
+						# No wslinfo (pre-2.0 WSL): WSL2 uses NAT; WSL1 shares
+						# the Windows network stack, loopback included.
+						if [[ "$(< /proc/sys/kernel/osrelease)" == *-microsoft-standard* ]]; then
+							wsl_mode=nat
+						else
+							wsl_mode=mirrored
+						fi
+					fi
+					if [[ "$wsl_mode" == nat ]]; then
+						# Ask the kernel which route real traffic would take.
+						route=$(ip route get 223.5.5.5 2>/dev/null | head -n1) || route=""
+						gw=$(awk '{for (i=1;i<=NF;i++) if ($i=="via") {print $(i+1); exit}}' <<<"$route")
+						[[ -n "$gw" ]] && cand+=("$gw")
+						# A proxy may also run inside WSL itself.
+						cand+=("127.0.0.1")
+					else
+						cand+=("127.0.0.1")
+						while read -r src; do
+							cand+=("$src")
+						done < <(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1)
+					fi
+				elif grep -q VMware /sys/class/dmi/id/sys_vendor 2>/dev/null; then
+					# Ask the kernel which route real traffic would take; the
+					# src field is our own address on that interface.
+					route=$(ip route get 223.5.5.5 2>/dev/null | head -n1) || route=""
+					gw=$(awk '{for (i=1;i<=NF;i++) if ($i=="via") {print $(i+1); exit}}' <<<"$route")
+					src=$(awk '{for (i=1;i<=NF;i++) if ($i=="src") {print $(i+1); exit}}' <<<"$route")
+					[[ -n "$gw" ]] && cand+=("$gw")
+					[[ -n "$src" ]] && cand+=("${src%.*}.1" "${src%.*}.2")
+					while read -r addr; do
+						cand+=("${addr%.*}.1" "${addr%.*}.2")
+					done < <(ip -o -4 addr show scope global | awk '{print $4}' | cut -d/ -f1)
+					while read -r addr; do
+						cand+=("$addr")
+					done < <(ip -o -4 neigh show | awk '$NF!="FAILED" && $NF!="INCOMPLETE" {print $1}')
+				else
+					cand+=(127.0.0.1)
+				fi
+				for addr in "${cand[@]}"; do
+					(( ${#hosts[@]} >= 10 )) && break
+					if [[ -n "$addr" && -z "${seen_hosts[$addr]:-}" ]]; then
+						seen_hosts[$addr]=1
+						hosts+=("$addr")
+					fi
+				done
+			fi
+			if (( explicit_port )); then
+				ports=("$PORT")
+			else
+				ports=(7777 7897 7890 7891 7892 8080 8888 1080)
+			fi
+			if (( protocol_explicit )); then
+				protocols=("$PROT")
+			else
+				# Prefer SOCKS5h, then fall back to an HTTP proxy.
+				protocols=(socks5h http)
+			fi
+			# Expand all candidates in priority order, probe them in parallel
+			# waves of at most 64, then evaluate each wave in the original
+			# order so priority and diagnostics behave exactly like the
+			# sequential scan did.
+			local -a p_hosts=() p_ports=() p_protos=()
+			local n_candidates=0 ci cstart cend probe_dir=""
+			for candidate_host in "${hosts[@]}"; do
+				[[ -n "$candidate_host" ]] || continue
+				for candidate_port in "${ports[@]}"; do
+					for candidate_prot in "${protocols[@]}"; do
+						(( n_candidates++ ))
+						p_hosts[n_candidates]="$candidate_host"
+						p_ports[n_candidates]="$candidate_port"
+						p_protos[n_candidates]="$candidate_prot"
+					done
+				done
+			done
+			probe_dir=$(mktemp -d "${TMPDIR:-/tmp}/setproxy.XXXXXX" 2>/dev/null) || probe_dir=""
+			if [[ -z "$probe_dir" ]]; then
+				# No usable temp dir: degrade to sequential probing with the
+				# same classification.
+				for ((ci = 1; ci <= n_candidates; ci++)); do
+					__setproxy_probe "${p_hosts[ci]}" "${p_ports[ci]}" "${p_protos[ci]}"
+					__setproxy_classify "$ci" "$probe_result" "$probe_http_code"
+					[[ -n "$chosen_host" ]] && break
+				done
+			else
+				for ((cstart = 1; cstart <= n_candidates; cstart += 64)); do
+					(( cend = cstart + 63 ))
+					(( cend > n_candidates )) && cend=$n_candidates
+					# The wave runs in a foreground subshell: its & children are
+					# jobs of a non-interactive shell, so an interactive parent
+					# prints no "[n] pid"/"done" job notices, and the inner wait
+					# cannot block on jobs the user started themselves.
+					(
+						for ((ci = cstart; ci <= cend; ci++)); do
+							(
+								__setproxy_probe "${p_hosts[ci]}" "${p_ports[ci]}" "${p_protos[ci]}"
+								printf '%s %s\n' "$probe_result" "${probe_http_code:-}" > "$probe_dir/$ci"
+							) &
+						done
+						wait
+					)
+					for ((ci = cstart; ci <= cend; ci++)); do
+						local res=1 code=""
+						[[ -r "$probe_dir/$ci" ]] && IFS=' ' read -r res code < "$probe_dir/$ci"
+						__setproxy_classify "$ci" "$res" "$code"
+						[[ -n "$chosen_host" ]] && break
+					done
+					[[ -n "$chosen_host" ]] && break
+				done
+				# `command` bypasses the interactive `rm` alias (an echo warning)
+				# so the scratch dir is actually removed.
+				command rm -rf -- "$probe_dir"
+			fi
+		fi
+	fi
+
+	# Persist the winning endpoint for future zero-argument calls. Loopback
+	# endpoints scan in milliseconds, so only remote ones are worth caching.
+	if (( ! from_cache )) && [[ -n "$chosen_host" && "$chosen_host" != 127.* &&
+		"$chosen_host" != "::1" && "$chosen_host" != "localhost" ]]; then
+		mkdir -p -- "${cache_file%/*}" 2>/dev/null
+		printf '%s|%s|%s\n' "$chosen_host" "$chosen_port" "$chosen_proto" > "$cache_file" 2>/dev/null &&
+			chmod 600 "$cache_file" 2>/dev/null
+	fi
+
+	if [[ -z "$chosen_host" || -z "$chosen_port" || -z "$chosen_proto" ]]; then
+		if (( auth_required )) && (( ! have_credentials )); then
+			local login_user="" login_pass=""
+			if [[ -t 0 || -t 1 ]]; then
+				printf 'Proxy username: ' 2>/dev/null > /dev/tty || true
+				if ! IFS= read -r login_user 2>/dev/null < /dev/tty; then
+					printf '\n' 2>/dev/null > /dev/tty || true
+					login_user=""
+				fi
+			fi
+			if [[ -n "$login_user" ]]; then
+				if [[ -t 0 || -t 1 ]]; then
+					printf 'Proxy password for %s: ' "$login_user" 2>/dev/null > /dev/tty || true
+					if ! IFS= read -r -s login_pass 2>/dev/null < /dev/tty; then
+						printf '\n' 2>/dev/null > /dev/tty || true
+						login_pass=""
+					fi
+					printf '\n' 2>/dev/null > /dev/tty || true
+				fi
+			fi
+			if [[ -n "$login_user" && -n "$login_pass" ]]; then
+				if [[ "$login_user" == *:* ]]; then
+					echo "setproxy: proxy username must not contain ':'" >&2
+					return 2
+				fi
+				setproxy "$@" --user "$login_user:$login_pass"
+				return $?
+			fi
+		fi
+		if (( auth_rejected )) && [[ -n "$auth_rejected_detail" ]]; then
+			echo "setproxy: authentication rejected by $auth_rejected_detail" >&2
+			return 3
+		elif (( forbidden )) && [[ -n "$forbidden_detail" ]]; then
+			echo "setproxy: proxy denied the request: $forbidden_detail (403)" >&2
+			return 4
+		elif (( auth_required )) && [[ -n "$auth_detail" ]]; then
+			echo "setproxy: no working proxy found; $auth_detail requires username/password" >&2
+		elif [[ -n "$http_error_detail" ]]; then
+			echo "setproxy: no working proxy found; last HTTP response: $http_error_detail" >&2
+		else
+			echo "setproxy: no working proxy found" >&2
+		fi
+		return 1
+	fi
+
+	local base_no_proxy="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,127.0.0.0/8,169.254.0.0/16,::1/128,localhost,127.0.0.1,::1"
+	local -a no_proxy_items no_proxy_merged
+	local -A no_proxy_seen=()
+	local item merged_no_proxy
+	IFS=, read -r "$read_array_opt" no_proxy_items <<<"${no_proxy:-},${NO_PROXY:-},$base_no_proxy"
+	for item in "${no_proxy_items[@]}"; do
+		item=${item//[[:space:]]/}
+		[[ -n "$item" && "$item" != "<local>" ]] || continue
+		[[ -z "${no_proxy_seen["$item"]:-}" ]] || continue
+		no_proxy_seen["$item"]=1
+		no_proxy_merged+=("$item")
+	done
+	merged_no_proxy=$(IFS=,; printf '%s' "${no_proxy_merged[*]}")
+
+	local host_for_url="$chosen_host"
+	if [[ "$host_for_url" == *:* ]]; then
+		host_for_url="[$host_for_url]"
+	fi
+	local proxy_url
+	if (( have_credentials )); then
+		proxy_url="$chosen_proto://$(__setproxy_pct_encode "$proxy_user"):$(__setproxy_pct_encode "$proxy_pass")@$host_for_url:$chosen_port"
+	else
+		proxy_url="$chosen_proto://$host_for_url:$chosen_port"
+	fi
+
+	# Export both cases: tools disagree on variable names; curl only reads lowercase http_proxy for HTTP.
+	# Uppercase HTTP_PROXY is ignored by curl and risky in CGI; kept for tools that read it.
+	export http_proxy="$proxy_url" HTTP_PROXY="$proxy_url"
+	export https_proxy="$proxy_url" HTTPS_PROXY="$proxy_url"
+	export all_proxy="$proxy_url" ALL_PROXY="$proxy_url"
+	export no_proxy="$merged_no_proxy" NO_PROXY="$merged_no_proxy"
+	if (( have_credentials )); then
+		if (( no_check )); then
+			echo "Proxy set to: $chosen_proto://$host_for_url:$chosen_port (credentials supplied, not checked)"
+		else
+			echo "Proxy set to: $chosen_proto://$host_for_url:$chosen_port (authenticated)"
+		fi
+	else
+		if (( from_cache )); then
+			echo "Proxy set to: $proxy_url (cached)"
+		else
+			echo "Proxy set to: $proxy_url"
+		fi
+	fi

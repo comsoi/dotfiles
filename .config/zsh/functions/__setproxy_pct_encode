@@ -1,0 +1,16 @@
+emulate -L zsh
+
+# Percent-encode everything outside the unreserved userinfo set, byte-wise
+# (via od hex) so multi-byte UTF-8 credentials encode correctly in any locale.
+	local hex out="" i byte
+	hex=$(printf '%s' "$1" | od -An -v -tx1 | tr -d ' \n')
+	for ((i = 0; i < ${#hex}; i += 2)); do
+		byte="${hex:$i:2}"
+		case "$byte" in
+		4[1-9a-f] | 5[0-9a] | 6[1-9a-f] | 7[0-9a] | 3[0-9] | 2e | 7e | 5f | 2d)
+			out+=$(printf "\\x$byte")
+			;;
+		*) out+="%$byte" ;;
+		esac
+	done
+	printf '%s' "$out"

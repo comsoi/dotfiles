@@ -176,11 +176,18 @@ function gpr {
 extract() {
 	local c e i
 
+	# zsh needs kshglob for the @(...) case patterns below; scoped to this
+	# function so the rest of the shell keeps its matching rules.
+	if [[ -n "$ZSH_VERSION" ]]; then
+		setopt localoptions
+		setopt kshglob
+	fi
+
 	(($#)) || return
 
 	for i; do
 		c=''
-		e=1
+		e=0
 
 		if [[ ! -r $i ]]; then
 			echo "$0: file is unreadable: \`$i'" >&2
@@ -212,127 +219,67 @@ extract() {
 	return "$e"
 }
 
-function __get_model {
-	_unameOut=$(uname -a)
-	case "${_unameOut}" in
-	*Microsoft*) OS="WSL1" ;;
-	*microsoft*) OS="WSL2" ;;
-	Linux*) OS="Linux" ;;
-	Darwin*) OS="Mac" ;;
-	CYGWIN*) OS="Cygwin" ;;
-	MINGW*) OS="Windows" ;;
-	*Msys) OS="Windows" ;;
-	*) OS="UNKNOWN:${_unameOut}" ;;
-	esac
 
-	if [ "${OS}" = "Mac" ] && sysctl -n machdep.cpu.brand_string | grep -q 'Apple M'; then
-		OS="MacArm"
+# open: macOS-like, detached from terminal.
+#   open [files...]          default app via xdg-open
+#   open -d|-n|-t|-p|-c ...  force dolphin / nautilus / thunar / pcmanfm-qt / cosmic-files
+#   open -f <cmd> ...        force any file manager
+#   open -- ...              stop flag parsing (literal filenames)
+function open {
+	local fm="" arg
+	local -a paths=()
+	while (($#)); do
+		case "$1" in
+			-d) fm=dolphin ;;
+			-n) fm=nautilus ;;
+			-t) fm=thunar ;;
+			-p) fm=pcmanfm-qt ;;
+			-c) fm=cosmic-files ;;
+			-f) shift; fm="$1" ;;
+			--) shift; paths+=("$@"); break ;;
+			*)  paths+=("$1") ;;
+		esac
+		shift
+	done
+	((${#paths[@]})) || paths=(".")
+
+	local -a fixed=()
+	for arg in "${paths[@]}"; do
+		[[ "$arg" == -* ]] && arg="$PWD/$arg"
+		fixed+=("$arg")
+	done
+	paths=("${fixed[@]}")
+
+	if [[ -z "$fm" ]]; then
+		for arg in "${paths[@]}"; do
+			(xdg-open "$arg" >/dev/null 2>&1 &)
+		done
+	elif command -v "$fm" >/dev/null; then
+		("$fm" "${paths[@]}" >/dev/null 2>&1 &)
+	else
+		echo "open: '$fm' not found" >&2
+		return 1
 	fi
-	case $OS in
-	Linux)
-		if [[ -d /system/app/ && -d /system/priv-app ]]; then
-			model="$(getprop ro.product.brand) $(getprop ro.product.model)"
-
-		elif [[ -f /sys/devices/virtual/dmi/id/product_name ||
-			-f /sys/devices/virtual/dmi/id/product_version ]]; then
-			model=$(</sys/devices/virtual/dmi/id/product_name)
-			model+=" $(</sys/devices/virtual/dmi/id/product_version)"
-
-		elif [[ -f /sys/firmware/devicetree/base/model ]]; then
-			model=$(</sys/firmware/devicetree/base/model)
-
-		elif [[ -f /tmp/sysinfo/model ]]; then
-			model=$(</tmp/sysinfo/model)
-		fi
-		;;
-
-	"Mac OS X" | "macOS" | "Mac")
-		if [[ $(kextstat | grep -F -e "FakeSMC" -e "VirtualSMC") != "" ]]; then
-			model="Hackintosh (SMBIOS: $(sysctl -n hw.model))"
-		else
-			model=$(sysctl -n hw.model)
-		fi
-		;;
-
-	Windows)
-		model=$(wmic computersystem get manufacturer,model)
-		model=${model/Manufacturer/}
-		model=${model/Model/}
-		;;
-
-	esac
-
-	# Remove dummy OEM info.
-	model=${model//To be filled by O.E.M./}
-	model=${model//To Be Filled*/}
-	model=${model//OEM*/}
-	model=${model//Not Applicable/}
-	model=${model//System Product Name/}
-	model=${model//System Version/}
-	model=${model//Undefined/}
-	model=${model//Default string/}
-	model=${model//Not Specified/}
-	model=${model//Type1ProductConfigId/}
-	model=${model//INVALID/}
-	model=${model//All Series/}
-	model=${model//�/}
-
-	case $model in
-	"Standard PC"*) model="KVM/QEMU (${model})" ;;
-	OpenBSD*) model="vmm ($model)" ;;
-	esac
 }
 
 function noproxy {
-	unset all_proxy
-	unset http_proxy
-	unset https_proxy
-	unset no_proxy
+	unset all_proxy http_proxy https_proxy no_proxy \
+		ALL_PROXY HTTP_PROXY HTTPS_PROXY NO_PROXY
 	echo "Proxy settings removed."
 }
 
-function setproxy {
-	local IP="127.0.0.1"
-	local PORT="7897"
-	__get_model
-	if [[ ${model} == *"VMware"* ]]; then
-		local ip_address=$(ip a | grep 'scope global dynamic' | awk '{print $2}')
-		IP=$(echo "$ip_address" | sed 's/\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\.[0-9]\{1,3\}/\1.1/; s/\/[0-9]\{1,2\}//')
-		PORT="7897"
-	fi
-	local PROT="http"
-
-	local ip_set=0
-	for arg in "$@"; do
-		case "$arg" in
-		"-socks" | "-socks5") # set socks proxy
-			PROT="socks5"
-			;;
-		"-http" | "-https") # set HTTP proxy
-			PROT="http"
-			;;
-		*)
-			if [[ "$arg" != -* ]]; then
-				if [[ "$arg" =~ ^[0-9]+$ ]]; then
-					# If argument is numeric, treat as port
-					PORT="$arg"
-				elif [[ "$arg" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-					# If argument matches IP format, treat as IP
-					IP="$arg"
-				fi
-			fi
-			;;
-		esac
-	done
-
-	local PROXY="$PROT://$IP:$PORT"
-
-	export http_proxy="$PROXY"
-	export https_proxy="$PROXY"
-	export all_proxy="$PROXY"
-	export no_proxy="172.31.*,172.30.*,172.29.*,172.28.*,172.27.*,172.26.*,172.25.*,172.24.*,172.23.*,172.22.*,172.21.*,172.20.*,172.19.*,172.18.*,172.17.*,172.16.*,10.*,192.168.*,127.*,localhost,<local>"
-	echo "Proxy set to: $PROXY"
-}
+# setproxy is loaded on first use from setproxy.bash. Guarded so zsh (which
+# sources this file) keeps its own autoloaded port in ~/.config/zsh/functions.
+if [[ -n "$BASH_VERSION" ]]; then
+	function setproxy {
+		unset -f setproxy
+		if ! source "$HOME/.config/bash/setproxy.bash"; then
+			echo "setproxy: failed to load ~/.config/bash/setproxy.bash" >&2
+			return 1
+		fi
+		setproxy "$@"
+	}
+fi
 
 if [[ $EXTGLOB_WAS_ON -ne 0 && -n "$BASH_VERSION" ]]; then
 	shopt -u extglob

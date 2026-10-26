@@ -1,0 +1,24 @@
+emulate -L zsh
+
+# Classify one probe result (index into the p_hosts/p_ports/p_protos arrays,
+# kept in priority order) and update chosen_*/diagnostic globals. The first
+# success in evaluation order wins.
+	local i="$1" res="$2" code="$3"
+	local detail_host="${p_hosts[i]}"
+	[[ "$detail_host" == *:* ]] && detail_host="[$detail_host]"
+	if (( res == 0 )); then
+		chosen_host="${p_hosts[i]}"
+		chosen_port="${p_ports[i]}"
+		chosen_proto="${p_protos[i]}"
+	elif (( res == 2 )); then
+		auth_required=1
+		[[ -n "$auth_detail" ]] || auth_detail="${p_protos[i]}://$detail_host:${p_ports[i]}"
+	elif (( res == 3 )); then
+		auth_rejected=1
+		[[ -n "$auth_rejected_detail" ]] || auth_rejected_detail="${p_protos[i]}://$detail_host:${p_ports[i]}"
+	elif (( res == 4 )); then
+		forbidden=1
+		[[ -n "$forbidden_detail" ]] || forbidden_detail="${p_protos[i]}://$detail_host:${p_ports[i]}"
+	elif [[ -n "$code" && -z "$http_error_detail" ]]; then
+		http_error_detail="${p_protos[i]}://$detail_host:${p_ports[i]} HTTP $code"
+	fi

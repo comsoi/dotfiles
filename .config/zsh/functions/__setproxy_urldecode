@@ -1,0 +1,19 @@
+emulate -L zsh
+	local s="$1" out="" hex
+	while [[ "$s" == *%* ]]; do
+		out+="${s%%%*}"
+		s="${s#*%}"
+		hex="${s:0:2}"
+		if [[ "$hex" =~ ^[0-9A-Fa-f]{2}$ ]]; then
+			hex=$(printf '%d' "0x$hex")
+			# Append a sentinel before command substitution: it strips
+			# trailing newlines, which must survive for the credential check.
+			hex=$(printf "\\$(printf '%03o' "$hex")X")
+			hex=${hex%X}
+			out+="$hex"
+			s="${s:2}"
+		else
+			out+='%'
+		fi
+	done
+	printf '%s' "$out$s"

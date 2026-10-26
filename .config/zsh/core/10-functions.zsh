@@ -4,6 +4,8 @@ fpath=(${ZDOTDIR}/functions $fpath)
 autoload -Uz get_color_brightness env_append env_insert fuck 
 autoload -Uz cpcopy cpaste
 
+autoload -Uz setproxy __setproxy_urldecode __setproxy_probe __setproxy_pct_encode __setproxy_classify
+
 # Store commands in history only if successful
 autoload -Uz __fd18et_prevent_write __fd18et_save_last_successed
 add-zsh-hook zshaddhistory __fd18et_prevent_write

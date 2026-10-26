@@ -83,11 +83,9 @@ if (( HAS_LSD )); then
 fi
 
 if (( HAS_EZA )); then
-	alias l="eza -a --icons --group-directories-first --hyperlink"
-	alias ll="eza -al --icons --group-directories-first --hyperlink"
-	alias tree="eza --tree --icons --group-directories-first --hyperlink"
-	alias ld="eza -lD --icons --hyperlink"                                         # lists only directories
-	alias lf="eza -lf --icons --hyperlink"              # lists only files (no directories)
+	alias l="eza -a --icons --group-directories-first --hyperlink=auto"
+	alias ll="eza -al --icons --group-directories-first --hyperlink=auto"
+	alias tree="eza --tree --icons --group-directories-first --hyperlink=auto"
 	alias gs=eza_gs
 fi
 

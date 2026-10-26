@@ -1,0 +1,12 @@
+# bash-completion for setproxy; lazy-loaded from BASH_COMPLETION_USER_DIR
+_setproxy() {
+	local cur prev
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	if [[ "$prev" == "--user" ]]; then
+		return 0
+	fi
+	if [[ "$cur" == -* ]]; then
+		COMPREPLY=($(compgen -W "-http -https -socks -socks5 -socks5h --no-check --user" -- "$cur"))
+	fi
+} && complete -o default -F _setproxy setproxy
