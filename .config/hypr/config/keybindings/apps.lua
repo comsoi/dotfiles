@@ -3,7 +3,7 @@
 --------------------------
 
 -- Browser
-hypr.bind.leader_key("B", hypr.dsp.launch("zen-browser.desktop"))
+hypr.bind.leader_key("B", hypr.dsp.launch("zen.desktop"))
 hypr.bind.leader_key("ALT + B", hypr.dsp.exec("uwsm-app -- google-chrome-stable"))
 
 -- Editor
