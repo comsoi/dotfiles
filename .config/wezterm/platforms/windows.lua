@@ -44,47 +44,6 @@ M.launch_menu = {
 		label = "nushell",
 		args = { "D:/Scoop/apps/nu/current/nu.exe" },
 	},
-	{
-		label = "Zsh",
-		args = { "D:/Scoop/apps/git/current/usr/bin/zsh.exe", "-l" },
-	},
-	{
-		label = "PowerShell",
-		args = { "pwsh.exe", "-NoLogo" },
-	},
-	{
-		label = "MSYS2",
-		args = {
-			"D:/Scoop/apps/msys2/current/msys2_shell.cmd",
-			"-defterm",
-			"-no-start",
-			"-use-full-path",
-			"-here",
-			"-msys",
-			"-shell",
-			"fish",
-		},
-	},
-	{
-		label = "MSYS2/UCRT64",
-		args = {
-			"D:/Scoop/apps/msys2/current/msys2_shell.cmd",
-			"-defterm",
-			"-no-start",
-			"-here",
-			"-ucrt64",
-			"-shell",
-			"zsh",
-		},
-	},
-	{
-		label = "cmder",
-		args = { "cmd.exe", "/k", "title Cmder/Cmd & ", "%CMDER_ROOT%\\vendor\\init.bat" },
-	},
-	{
-		label = "nushell",
-		args = { "D:/Scoop/apps/nu/current/nu.exe" },
-	},
 }
 
 M.win_keybindings = {
@@ -209,7 +168,9 @@ function M.apply(config)
 	end
 
 	config.color_scheme = "Catppuccin Macchiato"
-	config.set_environment_variables = {}
+	-- 这里**故意不碰** config.set_environment_variables：它归 utils/init.lua 管
+	-- （SMART_SPLITS_WEZTERM 等）。原来这里赋空表是覆盖而不是合并，会把在 platforms
+	-- 之前 apply 的模块（style/、keybindings/）设过的变量在 Windows 上静默清掉。
 	config.win32_system_backdrop = "Acrylic"
 
 	return config

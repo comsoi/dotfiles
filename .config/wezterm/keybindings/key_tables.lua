@@ -1,4 +1,5 @@
-local act = require("wezterm").action
+local wezterm = require("wezterm")
+local act = wezterm.action
 
 local M = {}
 
@@ -49,8 +50,21 @@ M.key_tables = {
 		{ key = "Q", action = "PopKeyTable" },
 	},
 	move_tab = {
-		{ key = "P", action = act.MoveTab(999), mods = "SHIFT" },
-		{ key = "N", action = act.MoveTab(1), mods = "SHIFT" },
+		-- 与下面 activate_tab 表同约定：P = 第一个，N = 最后一个（索引 0 起）。
+		--
+		-- 别写成一个大数当"最后"：MoveTab 对越界不做钳位，
+		-- termwindow/mod.rs 的 `ensure!(tab_idx < max, "cannot move a tab out of range")`
+		-- 会直接返回 Err，而 keyevent.rs 又把 Err 当成"已处理"（`Err(_) => true`）——
+		-- 结果是按键静默无效，既不提示也不写日志。原来这里的 MoveTab(999) 就是死键。
+		{ key = "P", action = act.MoveTab(0), mods = "SHIFT" },
+		{
+			key = "N",
+			mods = "SHIFT",
+			action = wezterm.action_callback(function(window, pane)
+				-- 注意 window 是 GuiWindow，**没有** tabs()；pane:window() 返回的 MuxWindow 才有
+				window:perform_action(act.MoveTab(#pane:window():tabs() - 1), pane)
+			end),
+		},
 
 		{ key = "p", action = act.MoveTabRelative(-1) },
 		{ key = "n", action = act.MoveTabRelative(1) },
@@ -72,6 +86,7 @@ M.key_tables = {
 	},
 	-- wezterm show-keys --lua --key-table copy_mode
 	copy_mode = {
+		-- 编辑搜索模式（EditPattern）
 		{ key = "e", mods = "CTRL", action = act.CopyMode("EditPattern") },
 		{ key = "Space", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
 		{ key = "Enter", mods = "NONE", action = act.CopyMode("MoveToStartOfNextLine") },
@@ -90,7 +105,20 @@ M.key_tables = {
 		{ key = "O", mods = "SHIFT", action = act.CopyMode("MoveToSelectionOtherEndHoriz") },
 		{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
 		-- vim style keys
-		{ key = "Escape", mods = "NONE", action = act.CopyMode("ClearSelectionMode") },
+		-- Esc 两段式：有选区先取消选择（留在复制模式），没有选区才退出（回底 + 关闭）。
+		-- ClearSelectionMode 会连选区一起清（overlay/copy.rs 的 clear_selection_mode），
+		-- 所以判一次 get_selection_text_for_pane 是否为空就能区分"第一次 / 第二次"。
+		{
+			key = "Escape",
+			mods = "NONE",
+			action = wezterm.action_callback(function(window, pane)
+				if window:get_selection_text_for_pane(pane) ~= "" then
+					window:perform_action(act.CopyMode("ClearSelectionMode"), pane)
+				else
+					window:perform_action(act.Multiple({ "ScrollToBottom", { CopyMode = "Close" } }), pane)
+				end
+			end),
+		},
 		{ key = "c", mods = "CTRL", action = act.Multiple({ "ScrollToBottom", { CopyMode = "Close" } }) },
 		{ key = "i", mods = "NONE", action = act.Multiple({ act.ClearSelection, { CopyMode = "Close" } }) },
 		-- vim move
@@ -125,6 +153,7 @@ M.key_tables = {
 		{ key = "t", mods = "NONE", action = act.CopyMode({ JumpForward = { prev_char = true } }) },
 		{ key = ",", mods = "NONE", action = act.CopyMode("JumpReverse") },
 		{ key = ";", mods = "NONE", action = act.CopyMode("JumpAgain") },
+		-- 复制到剪贴板并回到底部
 		{
 			key = "y",
 			mods = "NONE",

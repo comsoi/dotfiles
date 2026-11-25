@@ -2,7 +2,7 @@ local wezterm = require("wezterm")
 local M = {}
 
 function M.apply(config)
-	config.font_size = 12.0
+	config.font_size = 13.0
 	config.freetype_load_flags = "NO_HINTING"
 	config.cell_widths = {
 		{ first = 0x2460, last = 0x2473, width = 1 }, -- ① .. ⑳

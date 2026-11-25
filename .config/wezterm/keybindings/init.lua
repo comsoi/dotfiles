@@ -1,5 +1,6 @@
 local M = {}
 
+-- 键位总览 / 可视化见 ../docs/keymap.html（由 docs/keymap_check.mjs 与本源核对）
 M.leader = {
 	key = "Space",
 	mods = "SHIFT",
