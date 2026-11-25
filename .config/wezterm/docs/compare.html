@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>前缀层三边对照 · wezterm / tmux / zellij</title>
+<!--
+  单文件、无外部依赖。数据手工维护（三边语义要人判断，没法全自动生成）；源文件：
+  keybindings/keys.lua、~/.config/tmux/conf/keys/*.tmux、~/.config/zellij/config.kdl。
+  改键位后跑 node compare_check.mjs：核对 wezterm 列与 keys.lua 的 Leader 键位，并校验下行 sha8。
+  快照源: wezterm=8c4891f6 tmux=072449a0 zellij=4e33bb93
+-->
+<style>
+  :root {
+    --base:#1e1e2e; --mantle:#181825; --crust:#11111b;
+    --surface0:#313244; --surface1:#45475a; --surface2:#585b70;
+    --text:#cdd6f4; --subtext:#a6adc8; --overlay:#7f849c;
+    --blue:#89b4fa; --teal:#94e2d5; --green:#a6e3a1; --yellow:#f9e2af;
+    --peach:#fab387; --red:#f38ba8; --mauve:#cba6f7; --lavender:#b4befe;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:24px; background:var(--base); color:var(--text);
+    font:14px/1.6 -apple-system,"Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif; }
+  .wrap { max-width:1280px; margin:0 auto; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--overlay); font-size:12.5px; }
+  .stats { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0; }
+  .stat { background:var(--surface0); border-radius:999px; padding:4px 12px; font-size:12.5px; color:var(--subtext); }
+  .stat b { color:var(--text); }
+  .controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:6px 0 14px; }
+  input[type=search] { background:var(--surface0); border:1px solid var(--surface1); border-radius:8px;
+    color:var(--text); padding:7px 10px; width:280px; font-size:13px; }
+  label.toggle { background:var(--surface0); border-radius:8px; padding:6px 11px; font-size:12.5px; color:var(--subtext); cursor:pointer; user-select:none; }
+  label.toggle input { vertical-align:-2px; margin-right:6px; }
+  table { border-collapse:collapse; width:100%; margin-top:6px; }
+  th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--surface0); font-size:13px; vertical-align:top; }
+  th { color:var(--overlay); font-weight:600; position:sticky; top:0; background:var(--base); }
+  tr.group td { background:var(--mantle); color:var(--overlay); font-size:12px; letter-spacing:.05em; }
+  tr.row:hover td { background:var(--mantle); }
+  tr.note td { background:var(--mantle); color:var(--peach); font-size:12.5px; }
+  code { background:var(--surface0); padding:1px 5px; border-radius:5px; font-size:12.5px; }
+  .key { font-family:ui-monospace,monospace; color:var(--yellow); white-space:nowrap; }
+  .chip { display:inline-block; border-radius:999px; padding:1px 9px; font-size:11.5px; white-space:nowrap; }
+  .same { color:var(--green); border:1px solid var(--green); }
+  .near { color:var(--teal); border:1px solid var(--teal); }
+  .diff { color:var(--red); border:1px solid var(--red); }
+  .only { color:var(--lavender); border:1px solid var(--lavender); }
+  .none { color:var(--overlay); border:1px solid var(--surface1); }
+  .legend { color:var(--overlay); font-size:12px; margin-top:10px; }
+  .exp { color:var(--peach); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>前缀层三边对照</h1>
+  <div class="sub">wezterm <code>Leader+</code>（Shift+Space）· tmux <code>C-s</code>（写「默认 → 你的覆盖」）· zellij 的 tmux 模式（同为 <code>C-s</code>）。点一行看差异说明。</div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="过滤：如 space / resize / 复制 / f">
+    <label class="toggle"><input type="checkbox" id="onlydiff">只看差异（⚠️ ▲）</label>
+    <label class="toggle"><input type="checkbox" id="onlyconflict">只看同键不同功能（⚠️）</label>
+    <label class="toggle"><input type="checkbox" id="hideonly">隐藏“仅某层有”（▲）</label>
+  </div>
+
+  <table>
+    <thead><tr><th style="width:16%">键</th><th style="width:29%">wezterm <code>Leader+</code></th><th style="width:29%">tmux <code>C-s</code></th><th style="width:22%">zellij tmux 模式</th><th style="width:4%">判定</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+  <div class="legend">
+    ✅ 一致 · ≈ 相近（细节不同） · ⚠️ 同键不同功能 · ▲ 仅某一层有 · — 该层没有绑定。
+    数据来源：<code>keybindings/keys.lua</code>、<code>~/.config/tmux/conf/keys/*.tmux</code>（默认值取自 <code>tmux.1</code> DEFAULT KEY BINDINGS）、<code>~/.config/zellij/config.kdl</code> 的 <code>tmux</code> 模式。
+  </div>
+</div>
+
+<script>
+// v: same / near / diff / only / none   note: 差异说明（点行展开）
+const DATA = [
+  { group: "字母键" },
+  { k: "c", w: "新建 tab", t: "c new-window（带 cwd）", z: "NewTab", v: "same" },
+  { k: "d", w: "detach domain", t: "d detach（默认）", z: "Detach", v: "same" },
+  { k: "e / E", w: "切换 / 上一个工作区", t: "e choose-session、E switch-client -l", z: "e session-manager 插件", v: "near" },
+  { k: "f", w: "跨 pane 模糊搜索并跳转（Lua 收集候选 + fzf）", t: "find-window（默认）→ 覆盖为 mux-find-pane.sh + fzf（display-popup）", z: "Run 浮动 pane 跑同一脚本（sh $HOME 调用）", v: "same",
+    note: "行为对齐、实现两套。wezterm：utils/find_pane.lua 用 Lua API 枚举所有 pane 取文本（零 CLI 进程），候选与预览读同一份落盘文本、候选前缀取前台进程 basename，预览用 fzf 的 +{3}/2 把选中行放到正中。tmux / zellij：~/.config/dotfiles/.config/tmux/scripts/mux-find-pane.sh（同样的行号列 + 同源预览 + 居中），只有宿主不同（tmux 用 display-popup、zellij 用 Run 的浮动 pane，选完自毁）。三边都已在真实会话里用过。tmux 默认的 find-window 只匹配窗口名/pane 标题/可见内容，且要手动选。" },
+  { k: "g", w: "Leader+g = 锁定/解锁", t: "C-s g = 挂起（新增；挂起状态下 C-s g 或 C-s C-s 恢复，F12 保留为备用）", z: "Ctrl+s g 进 / 出 Locked（Ctrl+g 兜底）", v: "same", note: "三边现在都是「前缀 + g」同一键进出：wezterm 用 config override 清空 keys，tmux 用 key-table off，zellij 用 locked 模式（其 locked 块里显式绑了 Ctrl+s 切回 tmux 模式，否则锁定会把前缀也写进内层）。实现机制不同但手感一致。" },
+  { k: "h j k l", w: "pane 移动（可连续）", t: "-r hjkl select-pane", z: "MoveFocus（可连续）", v: "same" },
+  { k: "H J K L", w: "调整 10 格", t: "-r H/J/K/L resize 5（另有 -r S-方向键 重复）", z: "Resize（1 格/次）", v: "near", note: "同键同义，步长不同：tmux ±5、wezterm ±10、zellij 每次 1 格但可连按。" },
+  { k: "i", w: "attach domain", t: "显示窗口信息（默认）", z: "—", v: "diff", note: "⚠️ 真正的语义冲突：tmux 默认 i 是显示信息。" },
+  { k: "m", w: "（已删）", t: "标记 pane（默认）", z: "—", v: "only", note: "wezterm 的 Leader+m 已移除；tmux 保留默认的 mark-pane。" },
+  { k: "M", w: "—", t: "清除标记（默认）", z: "—", v: "only" },
+  { k: "n / p", w: "下一个 / 上一个 tab", t: "next / prev window（默认）", z: "下一个 / 上一个 tab", v: "same", note: "三边少见的完全一致。" },
+  { k: "N / P", w: "右移 / 左移 tab", t: "swap-window +1 / -1", z: "MoveTab 右 / 左", v: "same" },
+  { k: "o / O", w: "本 tab 内下一个 / 上一个 pane（不切 tab，与 Alt+[ ] 同）", t: "o 下一个 pane（默认）；O 新增 select-pane -t :.-", z: "FocusNextPane / FocusPreviousPane", v: "near", note: "三边都有 o/O；差别在边界：wezterm 的 o/O 是纯轮转（切 tab 走 Leader+n/p），tmux 到边界不环绕。" },
+  { k: "q", w: "关 tab（不确认）", t: "kill-window（覆盖后）", z: "CloseTab", v: "same", note: "三边行为一致。注意 tmux 默认的 q 是“显示 pane 编号”，是你的配置把它覆盖成 kill-window 的。" },
+  { k: "r", w: "—（Ctrl+Leader+r = resize 表）", t: "强制重绘（默认）", z: "—", v: "diff" },
+  { k: "R", w: "—（Ctrl+Shift+Leader+R = move-tab 表）", t: "重载配置（source-file）", z: "—", v: "diff" },
+  { k: "s", w: "pane 编号选择（PaneSelect）", t: "display-panes（覆盖后）", z: "布局地图 + 编号表：hjkl 方向选 / 数字按编号直选（两位零填充 01、02…10、11） / 回车跳（display-panes.sh）", v: "near", note: "三边都是「显示编号 → 选 pane」：wezterm 用 PaneSelect 把标签叠在各自 pane 上、tmux 用 display-panes 叠加编号，zellij 因为插件/pane 都是不透明格子画不出叠加层，改成浮动 pane 里按 geometry 缩放的布局地图 + 编号表（编号按屏幕位置排、两位零填充十进制（01、02…09、10、11…）、初始选中当前 pane、hjkl 方向选、数字按标签累积输入随敲随选、回车跳、q/Esc 取消）。tmux 默认的 s 是 choose-tree。" },
+  { k: "S", w: "选定并交换 pane（标签选择）", t: "新增 display-panes + swap-pane -t（编号选择）", z: "自绘 TUI：布局地图 + 预览，hjkl/数字选，两步 swap（失败自动撤销）（swap-pane.sh）", v: "near", note: "三边都是「选一个 pane 与当前 pane 交换」：wezterm 用 PaneSelect 标签、tmux 用 display-panes 的 template（`%%` 换成选中的 pane ID），zellij 靠 `move-pane --pane-id <id> <dir>` 两步实现（先把目标挪到当前 pane 原位、再把当前 pane 挪到目标原位）。**但 zellij「跟哪个邻居换」是内部决定的、无法从几何预测**，相邻的能稳定换成功，跨位置的**可能换不成** —— 脚本做完会校验两者是否真的互换，失败就按记录反向退回，最差是「没换成」，不会把布局搞乱。界面是浮窗自绘 TUI（布局地图 + 内容预览 + hjkl/数字选择、光标初始在自己身上）。" },
+  { k: "t", w: "—", t: "显示时间（clock-mode，默认）", z: "—", v: "only", note: "两边为对齐而做的覆盖都撤回了：tmux 的 choose-tree 覆盖、zellij 的 Tab 模式入口都不再存在，t 只剩 tmux 默认的时钟模式。" },
+  { k: "v / V", w: "复制模式 + cell / line 选择", t: "—（copy-mode 内 v）", z: "—", v: "only", note: "zellij 没有键盘选区，只能鼠标选择 + OSC52/copy_command。" },
+  { k: "w", w: "tab 导航器", t: "choose-tree（窗口，默认）", z: "自绘 TUI：tab→pane 树 + 预览（pick-tab.sh）", v: "near" },
+  { k: "x", w: "关 pane", t: "kill-pane（默认）", z: "CloseFocus", v: "same" },
+  { k: "z", w: "zoom", t: "zoom（默认）", z: "全屏", v: "same" },
+
+  { group: "数字与标点" },
+  { k: "0-9", w: "切到第 N 个 tab", t: "select-window（默认）", z: "GoToTab 1-9（没有 0）", v: "near" },
+  { k: "[", w: "—（等价物：Leader+Escape / Leader+/）", t: "copy-mode（默认）", z: "Scroll", v: "only", note: "wezterm 没有 Leader+[：进复制模式用 Leader+Escape / Leader+/（Ctrl+Leader+[ 也行）；tmux、zellij 仍是 [。" },
+  { k: "]", w: "—", t: "paste-buffer（默认）", z: "—", v: "only" },
+  { k: "-", w: "纵向分割", t: "split -v（覆盖后）", z: "NewPane Down", v: "same", note: "三边一致。tmux 默认的 - 是删除最近 buffer。" },
+  { k: "\\", w: "横向分割", t: "split -h", z: "NewPane Right", v: "same" },
+  { k: ",", w: "重命名 tab", t: "rename-window（默认）", z: "RenameTab", v: "same" },
+  { k: ".", w: "pane 移出新窗口 / 指定工作区（空输入=新窗口）", t: "break-pane（覆盖后）", z: "—", v: "same", note: "tmux 默认的 . 是“把窗口移到指定编号”，已覆盖成 break-pane。" },
+  { k: ";", w: "—（等价物：Leader+O / Alt+[）", t: "last-pane（默认）", z: "FocusLastPane", v: "only", note: "wezterm 没有裸 Leader+;：上一个 pane 走 Leader+O（本 tab 内轮转）或 Alt+[（Alt 层，先判透传）。" },
+  { k: "!", w: "pane 移到新 tab", t: "break-pane（默认）", z: "BreakPane（新增）", v: "same" },
+  { k: "$", w: "重命名工作区", t: "rename-session（默认）", z: "—", v: "same" },
+  { k: "&", w: "关 tab（确认）", t: "kill-window（默认）", z: "CloseTab", v: "same" },
+  { k: "`", w: "域 / 工作区 / tab 启动器", t: "—", z: "—", v: "only" },
+  { k: "{ / }", w: "—（Ctrl+Alt+Shift+{ } = 移动 tab）", t: "swap-pane 前 / 后（默认）", z: "—", v: "diff", note: "⚠️ 键同层不同：wezterm 要带 Ctrl+Alt+Shift。" },
+
+  { group: "特殊键" },
+  { k: "Enter", w: "智能分割（按长宽比）", t: "split -v + 重排布局", z: "NewPane Down", v: "near" },
+  { k: "Esc", w: "进复制模式", t: "—", z: "回 Normal", v: "diff" },
+  { k: "Space", w: "启动器", t: "下一个预设布局（默认）", z: "下一个 swap 布局", v: "diff", note: "⚠️ 层级语义不同，建议保留差异，别强行统一。" },
+  { k: "Tab", w: "—（只有 Ctrl+Tab）", t: "—", z: "—", v: "none" },
+  { k: "F12", w: "debug overlay（Leader+F12）", t: "挂起按键（备用；主路径已统一为 C-s g）", z: "—（锁定用 Ctrl s g）", v: "diff", note: "「把键交给内层」这条主路径三边已经统一成前缀+g（Leader+g / C-s g / Ctrl s g）。F12 只剩各自的历史/备用含义：wezterm 是 debug overlay，tmux 是挂起的备用键（挂起后也能用 F12 恢复），zellij 没有绑定。" },
+  { k: "方向键", w: "pane-or-tab", t: "切 pane（默认）", z: "MoveFocus + 回 Normal", v: "near" },
+  { k: "PageUp", w: "—", t: "进 copy-mode 翻页（默认）", z: "—", v: "only" },
+  { k: "C-s（前缀自身）", w: "—", t: "send-prefix", z: "Write 19（等价）", v: "diff", note: "wezterm 没有“连按前缀送键”的等价物。" },
+  { k: "Ctrl+Leader+a/A/r/R/[ /o/v", w: "activate 表 / activate_tab 表 / resize 表 / move_tab 表 / 复制模式 / 透明度 / 复制 block", t: "—", z: "—", v: "only" },
+  { k: "# ~ : ? = ' ( ) &quot; % C-o M-1..5 M-n M-p", w: "—", t: "tmux 默认（列表 / 消息 / 命令 / 帮助 / buffer / 切会话 / 分割 / 轮转 / 预设布局 / 活动窗口跳转）", z: "—", v: "only" },
+];
+
+const VERDICT = { same: "✅ 一致", near: "≈ 相近", diff: "⚠️ 同键不同功能", only: "▲ 仅某层", none: "— 都无" };
+const show = (v) => VERDICT[v] || v;
+
+function render() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const onlyDiff = document.getElementById("onlydiff").checked;
+  const onlyConflict = document.getElementById("onlyconflict").checked;
+  const hideOnly = document.getElementById("hideonly").checked;
+
+  let html = "";
+  const counts = { same: 0, near: 0, diff: 0, only: 0, none: 0 };
+  let shown = 0;
+  let pendingGroup = null;
+
+  const flushGroup = () => {
+    if (pendingGroup !== null && pendingGroup.shown) {
+      html += "<tr class='group'><td colspan='5'>" + pendingGroup.name + "</td></tr>";
+    }
+  };
+
+  for (const row of DATA) {
+    if (row.group) { pendingGroup = { name: row.group, shown: false }; continue; }
+    counts[row.v] = (counts[row.v] || 0) + 1;
+
+    const hay = (row.k + " " + row.w + " " + row.t + " " + row.z + " " + (row.note || "")).toLowerCase();
+    if (q && !hay.includes(q)) continue;
+    if (onlyConflict && row.v !== "diff") continue;
+    if (onlyDiff && row.v !== "diff" && row.v !== "only") continue;
+    if (hideOnly && row.v === "only") continue;
+
+    flushGroup();
+    if (pendingGroup) pendingGroup.shown = true;
+    shown++;
+
+    const expand = row.note ? " style='cursor:pointer' onclick=\"this.nextElementSibling.style.display=this.nextElementSibling.style.display==='table-row'?'none':'table-row'\"" : "";
+    html += "<tr class='row'" + expand + ">"
+      + "<td class='key'>" + row.k + "</td>"
+      + "<td>" + row.w + "</td>"
+      + "<td>" + row.t + "</td>"
+      + "<td>" + row.z + "</td>"
+      + "<td><span class='chip " + row.v + "'>" + row.v + "</span></td></tr>";
+    if (row.note) {
+      html += "<tr class='note' style='display:none'><td colspan='5'>" + row.note + "</td></tr>";
+    }
+  }
+
+  document.getElementById("rows").innerHTML = html;
+  document.getElementById("stats").innerHTML =
+    "<div class='stat'>共 <b>" + Object.values(counts).reduce((a, b) => a + b, 0) + "</b> 个键位</div>"
+    + "<div class='stat'>一致 <b>" + counts.same + "</b></div>"
+    + "<div class='stat'>相近 <b>" + counts.near + "</b></div>"
+    + "<div class='stat' style='color:var(--red)'>同键不同功能 <b>" + counts.diff + "</b></div>"
+    + "<div class='stat'>仅某层 <b>" + counts.only + "</b></div>"
+    + "<div class='stat'>都无 <b>" + counts.none + "</b></div>"
+    + "<div class='stat'>当前显示 <b>" + shown + "</b></div>";
+}
+
+for (const id of ["q", "onlydiff", "onlyconflict", "hideonly"]) {
+  document.getElementById(id).addEventListener("input", render);
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>wezterm 键位可视化</title>
+<!--
+  单文件、无外部依赖。下面的 B 数据由 docs/keymap_check.mjs 生成：
+  说明文字取自 keys.lua / key_tables.lua / mouse.lua 里每条绑定上一行的注释，
+  分组与排版在脚本的 GROUPS 表里。改键位 / 说明后跑 `node docs/keymap_check.mjs --write` 重生成。
+  用浏览器直接打开即可：file:///home/xjk/.config/wezterm/docs/keymap.html
+-->
+<style>
+  :root {
+    --base:#1e1e2e; --mantle:#181825; --crust:#11111b;
+    --surface0:#313244; --surface1:#45475a; --surface2:#585b70;
+    --text:#cdd6f4; --subtext:#a6adc8; --overlay:#7f849c;
+    --blue:#89b4fa; --teal:#94e2d5; --green:#a6e3a1; --yellow:#f9e2af;
+    --peach:#fab387; --red:#f38ba8; --mauve:#cba6f7; --lavender:#b4befe;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; padding:24px; background:var(--base); color:var(--text);
+    font:14px/1.6 -apple-system,"Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif;
+  }
+  h1 { font-size:20px; margin:0 0 4px; }
+  h2 { font-size:15px; margin:28px 0 10px; color:var(--subtext); font-weight:600; }
+  .sub { color:var(--overlay); font-size:12.5px; }
+  .wrap { max-width:1180px; margin:0 auto; }
+  .row { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+
+  /* 顶部信息条 */
+  .chips { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 0; }
+  .chip {
+    background:var(--surface0); border:1px solid var(--surface1); border-radius:999px;
+    padding:4px 12px; font-size:12.5px; color:var(--subtext);
+  }
+  .chip b { color:var(--text); }
+
+  /* 层标签 */
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin:22px 0 6px; }
+  .tab {
+    background:var(--surface0); color:var(--subtext); border:1px solid transparent;
+    border-radius:8px; padding:6px 12px; cursor:pointer; font-size:13px;
+  }
+  .tab:hover { background:var(--surface1); color:var(--text); }
+  .tab.on { background:var(--surface1); color:var(--text); border-color:var(--accent,var(--blue)); }
+  .tab small { color:var(--overlay); margin-left:6px; font-size:11.5px; }
+  .layerhint { color:var(--overlay); font-size:12.5px; margin:2px 0 12px; }
+
+  /* 键盘 */
+  .kb { background:var(--mantle); border:1px solid var(--surface0); border-radius:12px; padding:12px; }
+  .kbrow { display:flex; gap:6px; margin-bottom:6px; }
+  .key {
+    flex:1 1 0; min-width:0; height:46px; border-radius:8px;
+    background:var(--surface0); color:var(--overlay);
+    display:flex; align-items:center; justify-content:center;
+    font-size:12.5px; cursor:default; position:relative; user-select:none;
+    border:1px solid transparent; transition:background .08s,color .08s;
+  }
+  .key.w15{flex-grow:1.5} .key.w175{flex-grow:1.75} .key.w2{flex-grow:2}
+  .key.w225{flex-grow:2.25} .key.w275{flex-grow:2.75} .key.w125{flex-grow:1.25}
+  .key.w625{flex-grow:6.25}
+  .key.wide { font-size:11.5px; }
+  .key.hit { background:var(--accentbg,var(--surface1)); color:var(--text); border-color:var(--accent,var(--blue)); cursor:pointer; }
+  .key.hit b { font-weight:600; }
+  .key.sel { outline:2px solid var(--yellow); outline-offset:-2px; }
+  .key .dot { position:absolute; right:5px; top:4px; width:5px; height:5px; border-radius:50%; background:var(--yellow); display:none; }
+  .key.sel .dot { display:block; }
+
+  /* 详情面板 */
+  .panel { flex:1 1 320px; min-width:300px; background:var(--mantle); border:1px solid var(--surface0); border-radius:12px; padding:14px; }
+  .panel h3 { margin:0 0 8px; font-size:14px; }
+  .panel .keyname { color:var(--yellow); font-family:ui-monospace,monospace; }
+  .bind { border-top:1px solid var(--surface0); padding:8px 0; }
+  .bind:first-of-type { border-top:0; }
+  .bind .layer { font-size:11.5px; color:var(--overlay); }
+  .bind .act { color:var(--text); }
+  .bind .note { color:var(--peach); font-size:12px; }
+  .empty { color:var(--overlay); }
+
+  /* 列表层（复制模式 / 鼠标） */
+  .list { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px; }
+  .card { background:var(--surface0); border-radius:8px; padding:9px 12px; }
+  .card .k { font-family:ui-monospace,monospace; color:var(--yellow); }
+  .card .a { color:var(--subtext); }
+
+  /* 流程图 */
+  .flow { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .box { background:var(--surface0); border:1px solid var(--surface1); border-radius:10px; padding:10px 14px; }
+  .box.q { border-color:var(--mauve); }
+  .box.p { border-color:var(--teal); }
+  .box.w { border-color:var(--blue); }
+  .arrow { color:var(--overlay); font-size:18px; }
+  .flowcol { display:flex; flex-direction:column; gap:8px; }
+
+  table { border-collapse:collapse; width:100%; margin-top:8px; }
+  th,td { text-align:left; padding:6px 10px; border-bottom:1px solid var(--surface0); font-size:13px; }
+  th { color:var(--overlay); font-weight:600; }
+  code { background:var(--surface0); padding:1px 5px; border-radius:5px; font-size:12.5px; }
+  .search { margin-top:10px; display:flex; gap:10px; align-items:center; }
+  input[type=search] {
+    background:var(--surface0); border:1px solid var(--surface1); border-radius:8px;
+    color:var(--text); padding:7px 10px; width:260px; font-size:13px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>wezterm 键位可视化</h1>
+  <div class="sub">数据来自 <code>keybindings/{keys,key_tables,mouse}.lua</code> · 点击键盘上的高亮键看它在各层的作用</div>
+  <div class="chips">
+    <div class="chip">Leader <b>Shift+Space</b>（3s）</div>
+    <div class="chip">默认键 <b>已全部禁用</b></div>
+    <div class="chip">kitty 键盘协议 <b>开启</b></div>
+    <div class="chip">在复用器/nvim 里 <b>Alt 系列会透传</b></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="layerhint" id="layerhint"></div>
+
+  <div class="row">
+    <div class="kb" id="kb" style="flex:2 1 620px"></div>
+    <div class="panel" id="panel">
+      <h3>按键详情</h3>
+      <div class="empty">点一个高亮键看看 →</div>
+    </div>
+  </div>
+
+  <h2>按键归属：谁在处理这个键</h2>
+  <div class="flow">
+    <div class="box">按下 <b>Alt+hjkl</b> / <b>Alt+方向键</b> / <b>Ctrl+Shift+T</b> …</div>
+    <div class="arrow">→</div>
+    <div class="box q">当前 pane 由谁在管？</div>
+    <div class="arrow">→</div>
+    <div class="flowcol">
+      <div class="box p">前台是 <b>zellij / tmux</b> → 原样透传进 pane</div>
+      <div class="box p">前台是 <b>nvim</b>（IS_NVIM）→ 透传进 pane</div>
+      <div class="box w">都不是 → <b>wezterm 自己处理</b></div>
+    </div>
+  </div>
+  <div class="sub" style="margin-top:8px">
+    判定顺序：user var（TMUX/ZELLIJ，兼容信号）→ 标签栏渲染缓存的 <code>foreground_process_name</code>（5s 内采信）→ 直查进程名（2s TTL）→ 稳态零额外 <code>/proc</code>。
+  </div>
+
+  <h2>层级自适应的四个键（单 tab 时透传）</h2>
+  <table>
+    <tr><th>键</th><th>序列</th><th>说明</th></tr>
+    <tr><td><b>Ctrl+Shift+T</b></td><td><code>\x1b[84;6u</code></td><td>码位是大写 <b>T</b>=84；<code>SendKey</code> 会归一化成小写 116，不可用</td></tr>
+    <tr><td><b>Ctrl+Shift+W</b></td><td><code>\x1b[87;6u</code></td><td>大写 <b>W</b>=87</td></tr>
+    <tr><td><b>Ctrl+Tab</b></td><td><code>\x1b[9;5u</code></td><td>Tab=9，5 = 1 + Ctrl</td></tr>
+    <tr><td><b>Ctrl+Shift+Tab</b></td><td><code>\x1b[9;6u</code></td><td>6 = 1 + Shift + Ctrl</td></tr>
+  </table>
+  <div class="sub" style="margin-top:6px">多个 wezterm tab 时这四个键由 wezterm 自己处理（新建/关闭/前后切换），只有单个 tab 才写进 pane 交给内层。</div>
+
+  <h2>全部绑定（可按关键字过滤）</h2>
+  <div class="search">
+    <input type="search" id="q" placeholder="过滤：如 copy / pane / 复制 / Ctrl+Shift">
+    <span class="sub" id="qcount"></span>
+  </div>
+  <div id="alltable"></div>
+
+</div>
+
+<script>
+// ---------- 数据 ----------
+// grid: 对应键盘上的键位（小写字母/数字/特殊键名），用于高亮；没有表示只在列表里出现
+const LAYERS = [
+  { id:"global",  name:"全局",        hint:"无前缀，任何地方都生效（Ctrl+C 例外）", accent:"var(--blue)",     accentbg:"rgba(137,180,250,.18)" },
+  { id:"alt",     name:"Alt 系列",     hint:"先判断是否在 mux/nvim 里：是则透传进 pane，否则 wezterm 自己处理", accent:"var(--teal)", accentbg:"rgba(148,226,213,.16)" },
+  { id:"ctrlalt", name:"Ctrl+Alt",     hint:"不判断透传，直接由 wezterm 处理（多用于 wezterm 自己的 pane/tab）", accent:"var(--green)", accentbg:"rgba(166,227,161,.16)" },
+  { id:"leader",  name:"Leader",       hint:"Shift+Space 之后（3s 超时）", accent:"var(--mauve)", accentbg:"rgba(203,166,247,.18)" },
+  { id:"sleader", name:"Shift+Leader", hint:"Shift+Space 之后按 Shift+键", accent:"var(--peach)", accentbg:"rgba(250,179,135,.16)" },
+  { id:"cleader", name:"Ctrl+Leader",  hint:"Shift+Space 之后按 Ctrl+键（进入独立 key table）", accent:"var(--yellow)", accentbg:"rgba(249,226,175,.16)" },
+  { id:"copy",    name:"复制模式",      hint:"Leader Esc / Leader / 或 Ctrl+Leader [ 进入", accent:"var(--lavender)", accentbg:"rgba(180,190,254,.16)", list:true },
+  { id:"mouse",   name:"鼠标",         hint:"mouse.lua", accent:"var(--red)", accentbg:"rgba(243,139,168,.16)", list:true },
+];
+
+const B = [
+  /* gen:B:start —— 由 docs/keymap_check.mjs 生成，勿手改；改 GROUPS 或 Lua 注释 */
+  { l:"global", k:"Ctrl+Shift+V", g:"v", a:"粘贴系统剪贴板" },
+  { l:"global", k:"Ctrl+Shift+S", g:"s", a:"粘贴主选区" },
+  { l:"global", k:"Ctrl+Shift+C", g:"c", a:"复制到剪贴板" },
+  { l:"global", k:"Ctrl+Shift+F", g:"f", a:"搜索" },
+  { l:"global", k:"Ctrl+Shift+P", g:"p", a:"命令面板" },
+  { l:"global", k:"Ctrl+Shift+Space", g:"space", a:"QuickSelect（快速选字词）" },
+  { l:"global", k:"Ctrl+Shift++ / _ / )", g:["equal","minus","0"], a:"字号 + / − / 重置（Ctrl+滚轮 同效）" },
+  { l:"global", k:"Ctrl+C", g:"c", a:"有选区则复制，否则原样透传给 pane" },
+  { l:"global", k:"Ctrl+Shift+A", g:"a", a:"tab 导航器（A = all tabs）" },
+  { l:"global", k:"Ctrl+Shift+← / →", g:["left","right"], a:"上一个 / 下一个 tab" },
+  { l:"global", k:"Ctrl+Shift+PageUp / PageDown", g:["pgup","pgdn"], a:"整页滚动（Shift 单独为半页）" },
+  { l:"global", k:"Ctrl+Shift+K / J", g:["k","j"], a:"上 / 下滚 3 行" },
+  { l:"global", k:"Ctrl+Shift+↑ / ↓", g:["up","down"], a:"上 / 下滚 1 行" },
+  { l:"global", k:"Ctrl+Shift+Home / End", g:["home","end"], a:"滚到顶 / 底" },
+  { l:"global", k:"Ctrl+Shift+Delete", g:"del", a:"清空 scrollback（同 Super+k）" },
+  { l:"global", k:"Super+k", g:"k", a:"清空 scrollback（同 Ctrl+Shift+Delete）" },
+  { l:"global", k:"Ctrl+Shift+< / >", g:["comma","period"], a:"向左 / 右移动 tab" },
+  { l:"global", k:"F11", g:"f11", a:"全屏切换" },
+  { l:"global", k:"Ctrl+Shift+T", g:"t", a:"新建 tab（插在当前 tab 右边）：多 tab 时 wezterm 建；单 tab 时把 CSI 字节写进 pane" },
+  { l:"global", k:"Ctrl+Shift+W", g:"w", a:"关闭 tab：多 tab 时关；单 tab 时透传进 pane" },
+  { l:"global", k:"Ctrl+Shift+Enter", g:"enter", a:"智能分割（按 pane 长宽比，同 Leader+Enter）" },
+  { l:"global", k:"Ctrl+Tab / Ctrl+Shift+Tab", g:"tab", a:"下一个 / 上一个 tab：多 tab 时自己切；单 tab 时透传进 pane" },
+  { l:"global", k:"Shift+↑ / Shift+↓", g:["up","down"], a:"普通模式下的 prompt 跳转（ScrollToPrompt）" },
+  { l:"alt", k:"Alt+h / j / k / l", g:["h","j","k","l"], a:"mux/nvim 里透传；否则切 wezterm pane（左右到边界切 tab，且落到新 tab 里方向一致的那一侧）" },
+  { l:"alt", k:"Alt+[ / Alt+]", g:["lbracket","rbracket"], a:"上一个 / 下一个 pane（同样先判断透传）" },
+  { l:"alt", k:"Alt+方向键", g:["left","right","up","down"], a:"调整 pane 大小 5 格（在 mux/nvim 里交给内层）" },
+  { l:"alt", k:"Alt+n", g:"n", a:"智能分割：按 pane 长宽比选上下或左右" },
+  { l:"alt", k:"Alt+0-9", g:["0","1","2","3","4","5","6","7","8","9"], a:"切到第 N 个 tab（0 = 最后一个）" },
+  { l:"ctrlalt", k:"Ctrl+Alt+h / l", g:["h","l"], a:"pane-or-tab 左 / 右（直接执行）" },
+  { l:"ctrlalt", k:"Ctrl+Alt+j / k", g:["j","k"], a:"上 / 下 pane" },
+  { l:"ctrlalt", k:"Ctrl+Alt+[ / ]", g:["lbracket","rbracket"], a:"上一个 / 下一个 tab" },
+  { l:"ctrlalt", k:"Ctrl+Alt+0-9", g:["0","1","2","3","4","5","6","7","8","9"], a:"切到第 N 个 tab（0 = 最后一个）" },
+  { l:"ctrlalt", k:"Ctrl+Alt+- / \\", g:["minus","backslash"], a:"纵向 / 横向分割" },
+  { l:"ctrlalt", k:"Ctrl+Alt+Enter", g:"enter", a:"智能分割" },
+  { l:"ctrlalt", k:"Ctrl+Alt+Shift+{ / }", g:["lbracket","rbracket"], a:"向左 / 右移动 tab（另一组键）" },
+  { l:"ctrlalt", k:"Ctrl+Alt+Shift+C", g:"c", a:"把最近一次命令输出写进剪贴板（OSC133 + wl-copy）" },
+  { l:"ctrlalt", k:"Ctrl+Alt+Shift+H J K L", g:["h","j","k","l"], a:"调整 pane 大小 10 格（不判断透传，直接调外层 wezterm）" },
+  { l:"leader", k:"Leader+h j k l / 方向键", g:["h","j","k","l","up","down","left","right"], a:"pane-or-tab 移动，可连续按（进入 activate_pane 表）" },
+  { l:"leader", k:"Leader+o / O", g:"o", a:"本 tab 内下一个 / 上一个 pane（不切 tab，与 Alt+[ ] 同；带 activate_pane 表）", n:"O = Shift+o；切 tab 用 Leader+n / p" },
+  { l:"leader", k:"Leader+Alt+o / O", g:"o", a:"轮转 pane（RotatePanes 顺时针 / 逆时针）" },
+  { l:"leader", k:"Leader+s", g:"s", a:"pane 编号选择（1-9）" },
+  { l:"leader", k:"Leader+f", g:"f", a:"跨 pane 模糊搜索（Lua 收集候选 + fzf 显示，右侧预览定位到选中行）→ 可见区 + 全部 scrollback、无上限，零 CLI 进程" },
+  { l:"leader", k:"Leader+x", g:"x", a:"关闭当前 pane" },
+  { l:"leader", k:"Leader+z", g:"z", a:"切换 pane zoom" },
+  { l:"leader", k:"Leader+e", g:"e", a:"切换工作区（smart_workspace_switcher）" },
+  { l:"leader", k:"Leader+g", g:"g", a:"锁定 / 解锁：所有键原样交给 pane 内程序（等价 zellij Locked），再按一次退出" },
+  { l:"leader", k:"Leader+c", g:"c", a:"新建 tab（wezterm 原生 SpawnTab，新 tab 追加到标签栏末尾，不接管落点）" },
+  { l:"leader", k:"Leader+q", g:"q", a:"关闭 tab（不确认）" },
+  { l:"leader", k:"Leader+n / p", g:["n","p"], a:"下一个 / 上一个 tab（进入 activate_tab 表）" },
+  { l:"leader", k:"Leader+0-9", g:["0","1","2","3","4","5","6","7","8","9"], a:"切到第 N 个 tab（0 = 最后一个）" },
+  { l:"leader", k:"Leader+- / \\", g:["minus","backslash"], a:"纵向 / 横向分割" },
+  { l:"leader", k:"Leader+Enter", g:"enter", a:"智能分割" },
+  { l:"leader", k:"Leader+Space", g:"space", a:"启动器（ShowLauncher）" },
+  { l:"leader", k:"Leader+`", g:"backtick", a:"启动器：domains / workspaces / tabs" },
+  { l:"leader", k:"Leader+w", g:"w", a:"tab 导航器" },
+  { l:"leader", k:"Leader+i / d", g:["i","d"], a:"附接 / 分离 unix domain（≈ attach/detach）" },
+  { l:"leader", k:"Leader+.", g:"period", a:"把 pane 移到新窗口 / 指定工作区（空输入=新窗口）" },
+  { l:"leader", k:"Leader+,", g:"comma", a:"重命名当前 tab" },
+  { l:"leader", k:"Leader+Escape / /", g:["escape","slash"], a:"进入复制模式（Leader+[ 已不存在，改用 Ctrl+Leader+[）" },
+  { l:"leader", k:"Leader+v", g:"v", a:"复制模式 + cell 选择" },
+  { l:"leader", k:"Leader+F12", g:"f12", a:"显示 debug overlay" },
+  { l:"sleader", k:"Shift+Leader+H J K L / 方向键", g:["h","j","k","l","up","down","left","right"], a:"调整 pane 10 格，并进入 resize_pane 表（表内 1 格 / Shift 10 格）" },
+  { l:"sleader", k:"Shift+Leader+V", g:"v", a:"复制模式 + line 选择" },
+  { l:"sleader", k:"Shift+Leader+E", g:"e", a:"切换到上一个工作区" },
+  { l:"sleader", k:"Shift+Leader+F", g:"f", a:"借用 wezterm 原生搜索（同 Ctrl+Shift+F 的 action）：搜当前 pane 的屏幕 + 滚动历史" },
+  { l:"sleader", k:"Shift+Leader+$", g:"4", a:"重命名工作区" },
+  { l:"sleader", k:"Shift+Leader+!", g:"1", a:"把 pane 移到新 tab" },
+  { l:"sleader", k:"Shift+Leader+&", g:"7", a:"关闭 tab（与 Leader+q 同）" },
+  { l:"sleader", k:"Shift+Leader+P / N", g:["p","n"], a:"向左 / 右移动 tab（进入 move_tab 表）" },
+  { l:"sleader", k:"Shift+Leader+S", g:"s", a:"选中 pane 并与当前 pane 交换（PaneSelect SwapWithActive）" },
+  { l:"cleader", k:"Ctrl+Leader+a", g:"a", a:"进入 activate_pane 表：h j k l / 方向键 / o O，q 或 Esc 退出" },
+  { l:"cleader", k:"Ctrl+Shift+Leader+A", g:"a", a:"进入 activate_tab 表：n p 相对切、N P 到末/首，q 或 Esc 退出" },
+  { l:"cleader", k:"Ctrl+Leader+r", g:"r", a:"进入 resize_pane 表：方向键 / hjkl 1 格、Shift 10 格，q 或 Esc 退出" },
+  { l:"cleader", k:"Ctrl+Shift+Leader+R", g:"r", a:"进入 move_tab 表：p n 相对移、P N 到首/末，q 或 Esc 退出" },
+  { l:"cleader", k:"Ctrl+Leader+[", g:"lbracket", a:"进入复制模式" },
+  { l:"cleader", k:"Ctrl+Leader+o", g:"o", a:"切换窗口透明度（配置值 ↔ 完全不透明）" },
+  { l:"cleader", k:"Ctrl+Leader+v", g:"v", a:"复制模式 + block 选择" },
+  { l:"copy", k:"h j k l / 方向键", g:["h","j","k","l","left","right","up","down"], a:"移动光标" },
+  { l:"copy", k:"w b e / Ctrl+← →", g:["w","b","e","left","right"], a:"按词移动" },
+  { l:"copy", k:"0 ^ $", g:["0","6","4"], a:"行首 / 首个非空 / 行尾" },
+  { l:"copy", k:"H M L", g:["h","m","l"], a:"视口 顶 / 中 / 底" },
+  { l:"copy", k:"g G", g:"g", a:"scrollback 顶 / 底" },
+  { l:"copy", k:"Ctrl+u / Ctrl+d / Ctrl+b / Ctrl+f", g:["u","d","b","f"], a:"半页 / 整页滚动（u d 半页、b f 整页）" },
+  { l:"copy", k:"f t F T ; ,", g:["f","t","semicolon","comma"], a:"字符跳转（vi 风格）" },
+  { l:"copy", k:"v / V / Ctrl+v / Space", g:["v","space"], a:"cell / line / block 选择（Space 也是 cell）" },
+  { l:"copy", k:"Tab / Shift+Tab", g:"tab", a:"下一个 / 上一个词（MoveForwardWord / MoveBackwardWord）" },
+  { l:"copy", k:"o / O", g:"o", a:"跳到选区另一端" },
+  { l:"copy", k:"y", g:"y", a:"复制到剪贴板并回到底部" },
+  { l:"copy", k:"Ctrl+c / i / Escape", g:["c","i","escape"], a:"关闭复制模式：Esc 有选区先取消、否则回底退出；i / Ctrl+c 直接退出" },
+  { l:"copy", k:"Ctrl+e", g:"e", a:"编辑搜索模式（EditPattern）" },
+  { l:"copy", k:"J K n p x z", g:["j","k","n","p","x","z"], a:"按 OSC133 语义区（输出块）跳转" },
+  { l:"copy", k:"Enter / PageUp / PageDown / Home / End", g:["enter","pgup","pgdn","home","end"], a:"光标移动（Enter 到下一行行首）" },
+  { l:"mouse", k:"右键", a:"有选区则复制，否则粘贴" },
+  { l:"mouse", k:"Ctrl+左键", a:"打开光标下的链接" },
+  { l:"mouse", k:"左键抬起", a:"不自动打开链接（默认行为被关闭）" },
+  { l:"mouse", k:"Ctrl+滚轮", a:"放大 / 缩小字号" },
+  { l:"mouse", k:"左键四连击", a:"按语义区（SemanticZone）选中" },
+  /* gen:B:end */
+];
+
+// ---------- 键盘布局 ----------
+// 每行：[显示文本, grid id, 宽度类]
+const ROWS = [
+  [["Esc","escape"],["F1","f1"],["F11","f11"],["F12","f12"],["","","grow"],["`","backtick"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"],["6","6"],["7","7"],["8","8"],["9","9"],["0","0"],["-","minus"],["=","equal"],["Backspace","bksp","w2"]],
+  [["Tab","tab","w15"],["Q","q"],["W","w"],["E","e"],["R","r"],["T","t"],["Y","y"],["U","u"],["I","i"],["O","o"],["P","p"],["[","lbracket"],["]","rbracket"],["\\","backslash","w15"]],
+  [["Caps","caps","w175"],["A","a"],["S","s"],["D","d"],["F","f"],["G","g"],["H","h"],["J","j"],["K","k"],["L","l"],[";","semicolon"],["'","quote"],["Enter","enter","w225"]],
+  [["Shift","lshift","w225"],["Z","z"],["X","x"],["C","c"],["V","v"],["B","b"],["N","n"],["M","m"],[",","comma"],[".","period"],["/","slash"],["Shift","rshift","w275"]],
+  [["Ctrl","lctrl","w125"],["Alt","lalt","w125"],["Space","space","w625"],["Alt","ralt","w125"],["Ctrl","rctrl","w125"],["↑","up"],["↓","down"],["←","left"],["→","right"],["PgUp","pgup"],["PgDn","pgdn"],["Del","del"],["Home","home"],["End","end"]],
+];
+
+const byLayer = (id) => B.filter(b => b.l === id);
+const gridsOf = (b) => !b.g ? [] : (Array.isArray(b.g) ? b.g : [b.g]);
+const gridKeysOf = (id) => new Set(byLayer(id).flatMap(gridsOf));
+
+let activeLayer = LAYERS[0].id;
+let selectedKey = null;
+
+function renderTabs() {
+  const el = document.getElementById("tabs");
+  el.innerHTML = "";
+  for (const L of LAYERS) {
+    const b = document.createElement("button");
+    b.className = "tab" + (L.id === activeLayer ? " on" : "");
+    b.style.setProperty("--accent", L.accent);
+    b.innerHTML = L.name + " <small>" + byLayer(L.id).length + "</small>";
+    b.onclick = () => { activeLayer = L.id; renderTabs(); renderKb(); renderHint(); renderAll(); };
+    el.appendChild(b);
+  }
+}
+
+function renderHint() {
+  const L = LAYERS.find(x => x.id === activeLayer);
+  document.getElementById("layerhint").textContent = L.hint;
+}
+
+function renderKb() {
+  const kb = document.getElementById("kb");
+  const L = LAYERS.find(x => x.id === activeLayer);
+  kb.style.setProperty("--accent", L.accent);
+  kb.style.setProperty("--accentbg", L.accentbg);
+  const hits = gridKeysOf(activeLayer);
+  kb.innerHTML = "";
+  for (const row of ROWS) {
+    const r = document.createElement("div");
+    r.className = "kbrow";
+    for (const [label, id, w] of row) {
+      const d = document.createElement("div");
+      d.className = "key " + (w || "") + (id && hits.has(id) ? " hit wide" : "");
+      d.textContent = label;
+      if (id && hits.has(id)) {
+        d.dataset.key = id;
+        d.innerHTML = "<b>" + label + "</b>";
+        if (selectedKey === id) d.classList.add("sel");
+        d.onclick = () => { selectedKey = (selectedKey === id ? null : id); renderKb(); renderPanel(); };
+      }
+      r.appendChild(d);
+    }
+    kb.appendChild(r);
+  }
+}
+
+function renderPanel() {
+  const p = document.getElementById("panel");
+  if (activeLayer === "copy" || activeLayer === "mouse") {
+    p.innerHTML = "<h3>" + (activeLayer === "copy" ? "复制模式" : "鼠标") + "</h3>" +
+      '<div class="sub">这一层是表/鼠标绑定，不是键盘高亮：见下方“全部绑定”。</div>';
+    return;
+  }
+  if (!selectedKey) {
+    p.innerHTML = "<h3>按键详情</h3><div class='empty'>点一个高亮键看看 →</div>";
+    return;
+  }
+  const cell = ROWS.flat().find(x => x[1] === selectedKey);
+  const label = cell ? cell[0] : selectedKey;
+  const hits = B.filter(b => gridsOf(b).includes(selectedKey));
+  let html = "<h3>键 <span class='keyname'>" + label + "</span></h3>";
+  if (!hits.length) html += "<div class='empty'>（本层没有绑定）</div>";
+  for (const b of hits) {
+    const L = LAYERS.find(x => x.id === b.l);
+    html += "<div class='bind'><div class='layer'>" + L.name + "</div>" +
+            "<div class='act'>" + b.k + " → " + b.a + "</div>" +
+            (b.n ? "<div class='note'>注：" + b.n + "</div>" : "") + "</div>";
+  }
+  p.innerHTML = html;
+}
+
+function renderAll() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  let rows = "";
+  let n = 0;
+  for (const L of LAYERS) {
+    for (const b of byLayer(L.id)) {
+      const hay = (b.k + " " + b.a + " " + (b.n || "") + " " + L.name).toLowerCase();
+      if (q && !hay.includes(q)) continue;
+      n++;
+      rows += "<tr><td style='color:" + L.accent + "'>" + L.name + "</td><td><code>" + b.k + "</code></td><td>" +
+              b.a + (b.n ? " <span class='sub'>（" + b.n + "）</span>" : "") + "</td></tr>";
+    }
+  }
+  document.getElementById("alltable").innerHTML =
+    "<table><tr><th>层</th><th>键</th><th>动作</th></tr>" + rows + "</table>";
+  document.getElementById("qcount").textContent = n + " 条";
+}
+
+document.getElementById("q").addEventListener("input", renderAll);
+renderTabs(); renderHint(); renderKb(); renderPanel(); renderAll();
+</script>
+</body>
+</html>
