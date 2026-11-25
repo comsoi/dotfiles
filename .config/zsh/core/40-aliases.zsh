@@ -20,7 +20,6 @@ alias gcl="git clone --depth 1 --single-branch"
 alias gf="git fetch --all"
 alias gb="git branch"
 alias gr="git rebase"
-alias gt='cd "$(git rev-parse --show-toplevel)"'
 alias lg=lazygit
 
 alias ppwd="pwd | cbcopy"

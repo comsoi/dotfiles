@@ -64,6 +64,8 @@ fi
 FZF_DEFAULT_OPTS='--bind "tab:down,shift-tab:up,ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
 
 # zoxide
+# --no-cmd：只初始化 __zoxide_z/__zoxide_zi 和目录记录钩子，不定义公开命令；
+# 公开的 j/ji 由共享的 30-functions.bash 统一定义（j 在 Git 仓库内无参数时跳根目录，其余交给 zoxide）。
 if (( HAS_ZOXIDE )); then
-	eval "$(zoxide init zsh --cmd j)"
+	eval "$(zoxide init zsh --no-cmd)"
 fi

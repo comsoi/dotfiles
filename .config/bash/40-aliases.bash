@@ -29,3 +29,8 @@ done
 unset _commands_vars
 
 [[ -f ~/.config/zsh/core/40-aliases.zsh ]] && source ~/.config/zsh/core/40-aliases.zsh
+
+# 初始化 zoxide 后接回 Git 根目录包装器：仓库内无参数时到根目录，否则使用 zoxide。
+if (( HAS_ZOXIDE )); then
+	eval "$(zoxide init bash --no-cmd)"
+fi

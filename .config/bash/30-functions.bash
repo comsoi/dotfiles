@@ -134,6 +134,36 @@ function cd_func {
 	return 0
 }
 
+# 在 Git 仓库中无参数时跳到仓库根目录，否则交给 zoxide。
+# zoxide 使用 --no-cmd，只提供 __zoxide_z/__zoxide_zi，不覆盖这里的 j/ji。
+function j {
+	local root
+	if root=$(git rev-parse --show-toplevel 2>/dev/null); then
+		if [[ $# -eq 0 ]]; then
+			builtin cd -- "$root"
+			return
+		fi
+	fi
+
+	if command -v __zoxide_z >/dev/null 2>&1; then
+		__zoxide_z "$@"
+		return
+	fi
+
+	echo "j: zoxide 尚未初始化" >&2
+	return 127
+}
+
+function ji {
+	if command -v __zoxide_zi >/dev/null 2>&1; then
+		__zoxide_zi "$@"
+		return
+	fi
+
+	echo "ji: zoxide 尚未初始化" >&2
+	return 127
+}
+
 function eza_gs {
 	eza -al --group-directories-first --git --git-ignore --no-user --no-filesize --no-time --no-permissions --tree --color=always | awk '$1 !~ /--/ { print }'
 }
